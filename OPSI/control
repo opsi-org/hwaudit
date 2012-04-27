@@ -1,0 +1,32 @@
+[Package]
+version: 3
+depends: 
+incremental: False
+
+[Product]
+type: localboot
+id: hwaudit
+name: Client Hardwareinventarisierung
+description: Hardwareinventarisierung auf Basis von WMI / Registry.
+advice: 
+version: 4.0.4
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: hwaudit.ins
+uninstallScript: 
+updateScript: 
+alwaysScript: hwaudit.ins
+onceScript: 
+customScript: 
+userLoginScript: 
+
+[ProductProperty]
+type: unicode
+name: timeout
+multivalue: False
+editable: False
+description: TimeOutSeconds hwaudit.exe
+values: ["300", "600", "90", "notimeout"]
+default: ["90"]
+

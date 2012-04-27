@@ -1,0 +1,102 @@
+; Copyright (c) uib GmbH (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+
+[Initial]
+SetLogLevel = 6
+; Log Errors in Logfile but do not abort:
+ExitOnError=false
+; Show syntax errors in the script:
+ScriptErrorMessages=on
+; Dont trace step by step through the script:
+TraceMode=off
+; let started programs run in front of the winst window
+StayOnTop=false
+
+[Aktionen]
+DefVar $ProductId$
+DefVar $loglevel$
+DefVar $exitcode$
+DefVar $logfile$
+DefVar $timeout$
+
+set $ProductId$ = "hwaudit"
+set $loglevel$ = "3"
+
+Message "Running hardware audit..."
+
+Set $timeout$ = GetProductProperty("timeout","")
+
+ShowBitmap /3 "%SCRIPTPATH%\hwaudit.png" "Hardware Inventarisierung"
+Files_copy_hwaudit
+;DosInAnIcon_hwaudit
+if $timeout$ = "90"
+	comment " $timeout$ =	" +  $timeout$
+	Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+	else
+	if $timeout$ = "300"
+		comment " $timeout$ =	" +  $timeout$
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 300
+		else
+		if $timeout$ = "600"
+			comment " $timeout$ =	" +  $timeout$
+			Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 600
+			else
+			if $timeout$ = "notimeout"
+				comment " $timeout$ =	" +  $timeout$
+				Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe"
+				else
+				;default
+				comment " default 90	"
+				Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+				
+			endif ; notimeout
+		endif ; timeout 600 Seconds
+	endif ; timeout 300 Secons
+endif
+set $exitcode$ = getLastExitCode
+killtask "hwaudit.exe"
+
+if not (FileExists("%SCRIPTPATH%"))
+	DosInAnIcon_TryToReconnect
+endif 
+
+set $logfile$ = "c:\tmp\hwaudit.log"
+if fileExists ($logfile$)
+	DosInAnIcon_type_log
+endif
+set $logfile$ = "c:\tmp\hwaudit\hwaudit.exe.log"
+if fileExists ($logfile$)
+	DosInAnIcon_type_log
+endif
+if not (($exitcode$ = "0") or ($exitcode$ = "259")) 
+	logError "Fatal: hwaudit exit code = "+$exitcode$
+	isFatalError
+endif
+
+[Files_copy_hwaudit]
+copy -su "%SCRIPTPATH%\*.*" "c:\tmp\hwaudit"
+delete "c:\tmp\hwaudit.log"
+delete "c:\tmp\hwaudit\hwaudit.exe.log"
+
+[DosInAnIcon_hwaudit]
+"c:\tmp\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$
+
+[winbatch_hwaudit]
+"c:\tmp\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$
+
+[DosInAnIcon_type_log]
+type $logfile$
+
+[DosInAnIcon_TryToReconnect]
+net use
+set TIMEOUT=
+:TRY
+if exist "%SCRIPTPATH%\hwaudit.exe" goto READY
+%ScriptDrive%
+set TIMEOUT=%TIMEOUT%1
+if %TIMEOUT% == 1111111111111111 goto READY
+"c:\tmp\hwaudit\sleep.exe" 10
+net use
+goto TRY
+:READY
