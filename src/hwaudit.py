@@ -11,7 +11,7 @@ from OPSI.Types import *
 from OPSI.System import *
 from OPSI.Logger import *
 
-__version__ = "4.0.5"
+__version__ = "4.0.5.1"
 
 # Get logger instance
 logger = Logger()
