@@ -1,3 +1,17 @@
+hwaudit (4.0.5-1) stable; urgency=low
+
+  * added dell-expresscode to computer_system
+  * added option log-file
+
+ -- Erol Ueluekmen <e.ueluekmen@uib.de>  31 Jul 2012
+
+hwaudit (4.0.4-3) stable; urgency=low
+
+  * get timeout from property
+  * Ticketid 2012021510000025
+
+ -- Bardo Wolf <b.wolf@uib.de>  23 Feb 2012
+
 hwaudit (4.0.4-3) stable; urgency=low
   
   * get timeout from property

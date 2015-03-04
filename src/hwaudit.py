@@ -722,6 +722,63 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
 	return opsiValues
+	
+def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
+	from OPSI.System.Windows import execute
+	
+	regex = re.compile("^#(?P<cmd>.*)#(?P<extend>.*)$")
+	for oneClass in conf:
+		if not oneClass.get('Class') or not oneClass['Class'].get('Opsi'):
+			continue
+		
+		opsiName = oneClass['Class']['Opsi']
+		for item in oneClass['Values']:
+			cmdline = item.get('Cmd')
+			if not cmdline:
+				continue
+			condition = item.get("Condition")
+			if condition:
+				val = condition.split("=")[0]
+				r = condition.split("=")[1]
+				if val and r:
+					conditionregex = re.compile(r)
+					
+					logger.info("Condition found, try to find the Condition")
+					for i in range(len(opsiValues[opsiName])):
+                                                value = opsiValues[opsiName][i].get(val, "")
+                                                if value:
+                                                        conditionmatch = re.search(conditionregex, value)
+                                                        
+                                                                  
+					if not conditionmatch:
+						continue
+			match = re.search(regex, cmdline)
+			if not match:
+				logger.error(u"Bad Cmd entry '%s'" % cmdline)
+				continue
+			matchresult = match.groupdict()
+			executeCommand = matchresult.get("cmd")
+			extend = matchresult.get("extend")
+			
+			logger.info(u"Executing: %s" % executeCommand)
+			try:
+				value = ''
+				result = execute(executeCommand)
+				if result and extend:
+					res = result[0]
+					value = eval("res%s" % extend)
+					
+			except Exception,e:
+                                logger.logException(e)
+				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, e))
+				continue
+			if type(value) is unicode:
+				value = value.encode('utf-8')
+			if not opsiValues.has_key(opsiName):
+				opsiValues[opsiName].append({})
+			for i in range(len(opsiValues[opsiName])):
+				opsiValues[opsiName][i][item['Opsi']] = value
+	return opsiValues
 
 def usage():
 	print "\nUsage: %s -a <address> -u <username> -h <hostid> -p <password>" % os.path.basename(sys.argv[0])
@@ -743,8 +800,8 @@ def main(argv):
 	if (sys.getwindowsversion()[0] == 5) and (sys.getwindowsversion()[1] == 0):
 		win2k = True
 	try:
-		(opts, args) = getopt.getopt(argv, "u:p:a:l:h",
-					[ "username=", "password=", "address=", "loglevel", "help" ])
+		(opts, args) = getopt.getopt(argv, "u:p:a:l:f:h",
+					[ "username=", "password=", "address=", "log-level", "loglevel", "help" ])
 	except getopt.GetoptError:
 		usage()
 		sys.exit(1)
@@ -768,6 +825,9 @@ def main(argv):
 		elif opt in ("-l", "--loglevel"):
 			global LOGLEVEL
 			LOGLEVEL = int(arg)
+		elif opt in ("-f", "--log-file"):
+                        logger.setLogFile(arg)
+                        
 		
 	if ADDRESS.startswith(u"https://"):
 		ADDRESS = ADDRESS + u"/rpc"
@@ -810,6 +870,9 @@ def main(argv):
 	
 	logger.notice(u"Fetching hardware information from Registry")
 	values = getHardwareInformationFromRegistry(config, values)
+	
+	logger.notice(u"Fetching hardware information from Executing Command")
+	values = getHardwareInformationFromExecuteCommand(config, values)
 	
 	logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
 	logger.notice(u"Sending hardware information to service")
