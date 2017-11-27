@@ -534,7 +534,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 		filter = None
 		if win2k:
 			idx = wmiQuery.lower().find('where')
-			if (idx != -1):
+			if idx != -1:
 				filter = wmiQuery[idx+5:].strip()
 				if 'like' not in filter.lower():
 					filter = None
@@ -564,7 +564,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 					at = filter.split()[0]
 					op = filter.split()[1]
 					va = filter.split()[2][1:-1].replace('\\', '\\\\').replace('%', '.*')
-					if (op.lower() != 'like'):
+					if op.lower() != 'like':
 						raise Exception(u"Operator LIKE expected but '%s' found" % op)
 					regex = re.compile(va)
 					v = getattr(obj, at)
@@ -580,7 +580,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 			obj2 = None
 			if mapClass:
 				assoc = obj.associators(mapClass)
-				if (len(assoc) > 0):
+				if len(assoc) > 0:
 					obj2 = assoc[0]
 
 			opsiValues[opsiName].append({})
@@ -601,7 +601,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 							a = match.group(1)
 							op = match.group(2)
 
-						if (c == wmiClass) and hasattr(obj, a):
+						if c == wmiClass and hasattr(obj, a):
 							v = getattr(obj, a)
 						elif obj2 and hasattr(obj2, a):
 							v = getattr(obj2, a)
@@ -655,7 +655,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 							v = forceList(v)
 							for i in range(len(v)):
 								v[i] = VALUE_MAPPING["%s.%s" % (c, a)].get(str(v[i]), v[i])
-							if (len(v) == 1):
+							if len(v) == 1:
 								v = v[0]
 						if type(v) in (list, tuple):
 							v = u', '.join(forceUnicodeList(v))
@@ -663,7 +663,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 						if item['Type'].startswith('varchar'):
 							v = forceUnicode(v)
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
-							if (len(v) > maxLen):
+							if len(v) > maxLen:
 								logger.warning(u"Truncating value '%s': string is to long" % v)
 								v = v[:maxLen]
 						if v is not None:
@@ -702,6 +702,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 			if not key.find('\\'):
 				logger.error(u"Bad registry query '%s'" % registryQuery)
 				continue
+
 			(key, subKey) = key.split('\\', 1)
 			valueName = match.group(2)
 
@@ -891,7 +892,7 @@ def main(argv):
 	logger.notice(u"Sending hardware information to service")
 	auditHardwareOnHosts = []
 	for (hardwareClass, devices) in values.items():
-		if (hardwareClass == 'SCANPROPERTIES'):
+		if hardwareClass == 'SCANPROPERTIES':
 			continue
 
 		for device in devices:
