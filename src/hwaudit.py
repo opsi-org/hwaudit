@@ -9,8 +9,8 @@ import wmi
 
 # OPSI imports
 from OPSI.Backend.JSONRPC import JSONRPCBackend
-from OPSI.Util import *
-from OPSI.Object import *
+from OPSI.Util import objectToBeautifiedText
+from OPSI.Object import AuditHardwareOnHost
 from OPSI.Types import (
 	forceHardwareDeviceId, forceHardwareVendorId, forceInt, forceList,
 	forceUnicode, forceUnicodeList)
