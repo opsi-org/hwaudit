@@ -550,8 +550,8 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 		objects = []
 		try:
 			objects = wmiObj.query(wmiQuery)
-		except Exception, e:
-			logger.error(u"Query failed: %s" % e)
+		except Exception as error:
+			logger.error(u"Query failed: %s" % error)
 			continue
 
 		# first element? make new array for multiple devices
@@ -577,8 +577,8 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 						logger.info(u"Object matches filter '%s'" % filter)
 					else:
 						continue
-				except Exception, e:
-					logger.error("Filter '%s' failed: %s" % (filter, e))
+				except Exception as error:
+					logger.error("Filter '%s' failed: %s" % (filter, error))
 					continue
 
 			obj2 = None
@@ -615,8 +615,9 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 									logger.warning(u"%s.%s: failed to get attribute '%s' from objects %s" % (opsiName, item['Opsi'], a, [obj.__repr__(), obj2.__repr__()]))
 								else:
 									logger.warning(u"%s.%s: failed to get attribute '%s' from object '%s'" % (opsiName, item['Opsi'], a, obj.__repr__()))
-							except Exception, e:
-								logger.error(e)
+							except Exception as error:
+								logger.error(error)
+
 							continue
 
 						if type(v) is tuple and (len(v) == 1):
@@ -625,23 +626,23 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 						if meth and not v is None:
 							try:
 								v = eval('v.%s' % meth)
-							except Exception, e:
+							except Exception:
 								logger.warning(u"Method '%s' failed on value '%s'" % (meth, v))
 						if op and not v is None:
 							try:
 								v = eval('v%s' % op)
-							except Exception, e:
+							except Exception:
 								logger.warning(u"Operation '%s' failed on value '%s'" % (op, v))
 
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
 								v = forceHardwareVendorId(v)
-							except:
+							except Exception:
 								v = None
 						elif item['Opsi'] in ('deviceId', 'subsystemDeviceId'):
 							try:
 								v = forceHardwareDeviceId(v)
-							except:
+							except Exception:
 								v = None
 
 						if v is None:
@@ -716,9 +717,10 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 				continue
 			try:
 				value = getRegistryValue(key, subKey, valueName)
-			except Exception, e:
-				logger.error(u"Failed to get '%s': %s" % (registryQuery, e))
+			except Exception as error:
+				logger.error(u"Failed to get '%s': %s" % (registryQuery, error))
 				continue
+
 			if type(value) is unicode:
 				value = value.encode('utf-8')
 			if not opsiValues.has_key(opsiName):
@@ -772,10 +774,9 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				if result and extend:
 					res = result[0]
 					value = eval("res%s" % extend)
-					
-			except Exception,e:
-                                logger.logException(e)
-				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, e))
+			except Exception as error:
+				logger.logException(error)
+				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, error))
 				continue
 			if type(value) is unicode:
 				value = value.encode('utf-8')
@@ -903,8 +904,8 @@ def main(argv):
 if __name__ == "__main__":
 	try:
 		main(sys.argv[1:])
-	except Exception, e:
-		logger.logException(e)
+	except Exception as error:
+		logger.logException(error)
 		sys.exit(1)
 
 sys.exit(0)
