@@ -536,7 +536,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 			idx = wmiQuery.lower().find('where')
 			if (idx != -1):
 				filter = wmiQuery[idx+5:].strip()
-				if filter.lower().find('like') == -1:
+				if 'like' not in filter.lower():
 					filter = None
 				else:
 					wmiQuery = wmiQuery[:idx].strip()
@@ -559,7 +559,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 			# Filter objects (Win2k does not support "LIKE")
 			if filter:
 				try:
-					if (filter.lower().find(' and ') != -1) or (filter.lower().find(' or ') != -1):
+					if ' and ' in filter.lower() or ' or ' in filter.lower():
 						raise Exception(u"Filter '%s' not supported" % filter)
 					at = filter.split()[0]
 					op = filter.split()[1]
@@ -590,11 +590,11 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 					for a in item['WMI'].split('||'):
 						a = a.strip()
 						c = wmiClass
-						if (a.find('::') != -1):
+						if '::' in a:
 							(c, a) = a.split('::', 1)
 						meth = None
 						op = None
-						if (a.find('.') != -1):
+						if '.' in a:
 							(a, meth) = a.split('.', 1)
 						match = re.search('^(\w+)([\*\/\+\-\%]\d.*)$', a)
 						if match:
