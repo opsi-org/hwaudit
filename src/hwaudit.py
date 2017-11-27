@@ -859,17 +859,11 @@ def main(argv):
 	
 	logger.notice(u"Connecting to service at '%s' as '%s'" % (ADDRESS, USERNAME))
 	backend = JSONRPCBackend(username = USERNAME, password = PASSWORD, address = ADDRESS, application = 'opsi hwaudit %s' % __version__)
-	if backend.isOpsi4():
-		logger.notice(u"Connected to opsi4 server")
-	else:
-		logger.notice(u"Using legacy methods")
-	
+	logger.notice(u"Connected to opsi server")
+
 	logger.notice(u"Fetching opsi hw audit configuration")
-	if backend.isOpsi4():
-		config = backend.auditHardware_getConfig()
-	else:
-		config = backend.getOpsiHWAuditConf()
-	
+	config = backend.auditHardware_getConfig()
+
 	logger.notice(u"Fetching hardware information from WMI")
 	values = getHardwareInformationFromWMI(config, win2k)
 	
@@ -881,28 +875,23 @@ def main(argv):
 	
 	logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
 	logger.notice(u"Sending hardware information to service")
-	if backend.isOpsi4():
-		auditHardwareOnHosts = []
-		for (hardwareClass, devices) in values.items():
-			if (hardwareClass == 'SCANPROPERTIES'):
-				continue
-			for device in devices:
-				data = { 'hardwareClass': hardwareClass }
-				for (attribute, value) in device.items():
-					data[str(attribute)] = value
-				data['hostId'] = HOST_ID
-				auditHardwareOnHosts.append( AuditHardwareOnHost.fromHash(data) )
-		backend.auditHardwareOnHost_setObsolete(HOST_ID)
-		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
-	else:
-		values['SCANPROPERTIES'] = [ { "scantime": time.strftime("%Y-%m-%d %H:%M:%S") } ]
-		backend.setHardwareInformation(HOST_ID, values)
-	
+	auditHardwareOnHosts = []
+	for (hardwareClass, devices) in values.items():
+		if (hardwareClass == 'SCANPROPERTIES'):
+			continue
+
+		for device in devices:
+			data = {'hardwareClass': hardwareClass}
+			for (attribute, value) in device.items():
+				data[str(attribute)] = value
+			data['hostId'] = HOST_ID
+			auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
+
+	backend.auditHardwareOnHost_setObsolete(HOST_ID)
+	backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
+
 	logger.notice(u"Exiting...")
-	if backend.isOpsi4():
-		backend.backend_exit()
-	else:
-		backend.exit()
+	backend.backend_exit()
 
 if (__name__ == "__main__"):
 	try:
