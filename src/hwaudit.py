@@ -11,7 +11,9 @@ import wmi
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Util import *
 from OPSI.Object import *
-from OPSI.Types import *
+from OPSI.Types import (
+	forceHardwareDeviceId, forceHardwareVendorId, forceInt, forceList,
+	forceUnicode, forceUnicodeList)
 from OPSI.System import *
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
