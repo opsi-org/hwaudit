@@ -838,27 +838,31 @@ def main(argv):
 		
 	if ADDRESS.startswith(u"https://"):
 		ADDRESS = ADDRESS + u"/rpc"
-	
+
 	if not ADDRESS:
 		logger.critical(u"Address not set")
-		sys.exit(1)
+		raise RuntimeError("Address not set")
+
 	if not USERNAME:
 		if HOST_ID:
 			USERNAME = HOST_ID
 		else:
 			logger.critical(u"Host id and username not set")
-			sys.exit(1)
+			raise RuntimeError("Host id and username not set")
+
 	if not HOST_ID:
 		if USERNAME:
 			HOST_ID = USERNAME
 		else:
 			logger.critical(u"Host id and username not set")
-			sys.exit(1)
+			raise RuntimeError("Host id and username not set")
+
 	if not PASSWORD:
 		logger.critical(u"Password not set")
-		sys.exit(1)
+		raise RuntimeError("No password set!")
+
 	logger.setConsoleLevel(LOGLEVEL)
-	
+
 	logger.notice(u"Connecting to service at '%s' as '%s'" % (ADDRESS, USERNAME))
 	backend = JSONRPCBackend(username = USERNAME, password = PASSWORD, address = ADDRESS, application = 'opsi hwaudit %s' % __version__)
 	logger.notice(u"Connected to opsi server")
