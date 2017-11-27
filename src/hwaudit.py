@@ -915,6 +915,3 @@ if __name__ == "__main__":
 	except Exception as error:
 		logger.logException(error)
 		sys.exit(1)
-
-sys.exit(0)
-
