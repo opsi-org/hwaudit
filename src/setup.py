@@ -13,7 +13,7 @@ if os.path.exists('dist'):
 	shutil.rmtree('dist')
 
 if RUNS_ON_WINDOWS:
-	import py2exe
+	import py2exe  # Required for build under Windows
 
 	# If run without args, build executables, in quiet mode.
 	if len(sys.argv) == 1:
