@@ -533,7 +533,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 		
 		mapSep = '&'
 		temp = wmiQuery.split(mapSep)
-		if ( len(temp) == 2 ):
+		if len(temp) == 2:
 			wmiQuery = temp[0]
 			mapClass = temp[1]
 		
@@ -542,7 +542,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 			idx = wmiQuery.lower().find('where')
 			if (idx != -1):
 				filter = wmiQuery[idx+5:].strip()
-				if ( filter.lower().find('like') == -1):
+				if filter.lower().find('like') == -1:
 					filter = None
 				else:
 					wmiQuery = wmiQuery[:idx].strip()
@@ -893,7 +893,8 @@ def main(argv):
 	logger.notice(u"Exiting...")
 	backend.backend_exit()
 
-if (__name__ == "__main__"):
+
+if __name__ == "__main__":
 	try:
 		main(sys.argv[1:])
 	except Exception, e:
