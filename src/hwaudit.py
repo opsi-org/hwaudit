@@ -552,7 +552,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 			continue
 
 		# first element? make new array for multiple devices
-		if not opsiValues.has_key(opsiName):
+		if opsiName not in opsiValues:
 			opsiValues[opsiName] = []
 
 		for obj in objects:
@@ -619,13 +619,14 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 
 						if type(v) is tuple and (len(v) == 1):
 							v = v[0]
-						
-						if meth and not v is None:
+
+						if meth and v is not None:
 							try:
 								v = eval('v.%s' % meth)
 							except Exception:
 								logger.warning(u"Method '%s' failed on value '%s'" % (meth, v))
-						if op and not v is None:
+
+						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
 							except Exception:
@@ -651,7 +652,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 							v = v.strip()
 
 						logger.debug(u"Searching mapping for '%s.%s'" % (c, a))
-						if VALUE_MAPPING.has_key("%s.%s" % (c, a)):
+						if "%s.%s" % (c, a) in VALUE_MAPPING:
 							v = forceList(v)
 							for i in range(len(v)):
 								v[i] = VALUE_MAPPING["%s.%s" % (c, a)].get(str(v[i]), v[i])
@@ -666,7 +667,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 							if (len(v) > maxLen):
 								logger.warning(u"Truncating value '%s': string is to long" % v)
 								v = v[:maxLen]
-						if not v is None:
+						if v is not None:
 							break
 				opsiValues[opsiName][-1][item['Opsi']] = v
 			logger.debug(u"Hardware object is now: %s" % opsiValues[opsiName][-1])
@@ -720,7 +721,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 
 			if type(value) is unicode:
 				value = value.encode('utf-8')
-			if not opsiValues.has_key(opsiName):
+			if opsiName not in opsiValues:
 				opsiValues[opsiName].append({})
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
@@ -775,9 +776,10 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				logger.logException(error)
 				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, error))
 				continue
+
 			if type(value) is unicode:
 				value = value.encode('utf-8')
-			if not opsiValues.has_key(opsiName):
+			if opsiName not in opsiValues:
 				opsiValues[opsiName].append({})
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
