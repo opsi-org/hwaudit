@@ -17,12 +17,9 @@ from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 __version__ = "4.0.5.1"
 
-# Get logger instance
 logger = Logger()
 
-(ADDRESS, USERNAME, HOST_ID, PASSWORD, LOGLEVEL) = (u'', u'', u'', u'', LOG_ERROR)
 
-logger.setConsoleLevel(LOGLEVEL)
 
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
@@ -817,61 +814,61 @@ def main(argv):
 		usage()
 		sys.exit(1)
 
+	address = u''
+	username = u''
+	host_id = u''
+	password = u''
+	loglevel = LOG_ERROR
+
 	for (opt, arg) in opts:
 		if opt in ("--help",):
 			usage()
 			sys.exit(0)
 		elif opt in ("-u", "--username"):
-			global USERNAME
-			USERNAME = arg
+			username = arg
 		elif opt in ("-h", "--hostid"):
-			global HOST_ID
-			HOST_ID = arg
+			host_id = arg
 		elif opt in ("-p", "--password"):
-			global PASSWORD
-			PASSWORD = arg
+			password = arg
 		elif opt in ("-a", "--address"):
-			global ADDRESS
-			ADDRESS = arg
+			address = arg
 		elif opt in ("-l", "--loglevel"):
-			global LOGLEVEL
-			LOGLEVEL = int(arg)
+			loglevel = int(arg)
 		elif opt in ("-f", "--log-file"):
-                        logger.setLogFile(arg)
-                        
-		
-	if ADDRESS.startswith(u"https://"):
-		ADDRESS = ADDRESS + u"/rpc"
+			logger.setLogFile(arg)
 
-	if not ADDRESS:
+	if address.startswith(u"https://"):
+		address = address + u"/rpc"
+
+	if not address:
 		logger.critical(u"Address not set")
 		raise RuntimeError("Address not set")
 
-	if not USERNAME:
-		if HOST_ID:
-			USERNAME = HOST_ID
+	if not username:
+		if host_id:
+			username = host_id
 		else:
 			logger.critical(u"Host id and username not set")
 			raise RuntimeError("Host id and username not set")
 
-	if not HOST_ID:
-		if USERNAME:
-			HOST_ID = USERNAME
+	if not host_id:
+		if username:
+			host_id = username
 		else:
 			logger.critical(u"Host id and username not set")
 			raise RuntimeError("Host id and username not set")
 
-	if not PASSWORD:
+	if not password:
 		logger.critical(u"Password not set")
 		raise RuntimeError("No password set!")
 
-	logger.setConsoleLevel(LOGLEVEL)
+	logger.setConsoleLevel(loglevel)
 
-	logger.notice(u"Connecting to service at '%s' as '%s'" % (ADDRESS, USERNAME))
+	logger.notice(u"Connecting to service at '%s' as '%s'" % (address, username))
 	backend = JSONRPCBackend(
-		username=USERNAME,
-		password=PASSWORD,
-		address=ADDRESS,
+		username=username,
+		password=password,
+		address=address,
 		application='opsi hwaudit %s' % __version__
 	)
 	logger.notice(u"Connected to opsi server")
@@ -899,10 +896,10 @@ def main(argv):
 			data = {'hardwareClass': hardwareClass}
 			for (attribute, value) in device.items():
 				data[str(attribute)] = value
-			data['hostId'] = HOST_ID
+			data['hostId'] = host_id
 			auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
 
-	backend.auditHardwareOnHost_setObsolete(HOST_ID)
+	backend.auditHardwareOnHost_setObsolete(host_id)
 	backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
 
 	logger.notice(u"Exiting...")
@@ -910,6 +907,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
+	logger.setConsoleLevel(LOG_ERROR)
 	try:
 		main(sys.argv[1:])
 	except Exception as error:
