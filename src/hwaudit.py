@@ -14,7 +14,6 @@ from OPSI.Object import AuditHardwareOnHost
 from OPSI.Types import (
 	forceHardwareDeviceId, forceHardwareVendorId, forceInt, forceList,
 	forceUnicode, forceUnicodeList)
-from OPSI.System import *
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 __version__ = "4.0.7.1"
