@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
 # Imports
-import sys, wmi, re, os, copy, getopt, time
+import getopt
+import os
+import re
+import sys
+import time
+import wmi
 
 # OPSI imports
 from OPSI.Backend.JSONRPC import JSONRPCBackend
