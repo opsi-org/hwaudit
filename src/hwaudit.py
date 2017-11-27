@@ -806,6 +806,7 @@ def main(argv):
 	win2k = False
 	if (sys.getwindowsversion()[0] == 5) and (sys.getwindowsversion()[1] == 0):
 		win2k = True
+
 	try:
 		(opts, args) = getopt.getopt(
 			argv,
