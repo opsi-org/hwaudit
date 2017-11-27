@@ -519,24 +519,23 @@ VALUE_MAPPING = {
 
 def getHardwareInformationFromWMI(conf, win2k=False):
 	wmiObj = wmi.WMI()
-	
+
 	opsiValues = {}
-	
-	
+
 	for oneClass in conf:
 		if not oneClass.get('Class') or not oneClass['Class'].get('Opsi') or not oneClass['Class'].get('WMI'):
 			continue
-		
+
 		opsiName = oneClass['Class']['Opsi']
 		wmiQuery = oneClass['Class']['WMI']
 		mapClass = ''
-		
+
 		mapSep = '&'
 		temp = wmiQuery.split(mapSep)
 		if len(temp) == 2:
 			wmiQuery = temp[0]
 			mapClass = temp[1]
-		
+
 		filter = None
 		if win2k:
 			idx = wmiQuery.lower().find('where')
@@ -546,7 +545,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 					filter = None
 				else:
 					wmiQuery = wmiQuery[:idx].strip()
-		
+
 		logger.info(u"Querying: %s" % wmiQuery)
 		logger.info(u"Filter: %s" % filter)
 		objects = []
@@ -555,12 +554,11 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 		except Exception, e:
 			logger.error(u"Query failed: %s" % e)
 			continue
-		
+
 		# first element? make new array for multiple devices
 		if not opsiValues.has_key(opsiName):
 			opsiValues[opsiName] = []
-		
-		
+
 		for obj in objects:
 			wmiClass = obj.ole_object.GetObjectText_().split()[2]
 			# Filter objects (Win2k does not support "LIKE")
@@ -583,13 +581,13 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 				except Exception, e:
 					logger.error("Filter '%s' failed: %s" % (filter, e))
 					continue
-			
+
 			obj2 = None
 			if mapClass:
 				assoc = obj.associators(mapClass)
 				if (len(assoc) > 0):
 					obj2 = assoc[0]
-			
+
 			opsiValues[opsiName].append({})
 			for item in oneClass['Values']:
 				v = None
@@ -607,7 +605,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 						if match:
 							a = match.group(1)
 							op = match.group(2)
-						
+
 						if (c == wmiClass) and hasattr(obj, a):
 							v = getattr(obj, a)
 						elif obj2 and hasattr(obj2, a):
@@ -621,7 +619,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 							except Exception, e:
 								logger.error(e)
 							continue
-						
+
 						if type(v) is tuple and (len(v) == 1):
 							v = v[0]
 						
@@ -635,7 +633,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 								v = eval('v%s' % op)
 							except Exception, e:
 								logger.warning(u"Operation '%s' failed on value '%s'" % (op, v))
-						
+
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
 								v = forceHardwareVendorId(v)
@@ -646,15 +644,15 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 								v = forceHardwareDeviceId(v)
 							except:
 								v = None
-						
+
 						if v is None:
 							continue
-						
+
 						if type(v) is str:
 							v = forceUnicode(v)
 						if type(v) is unicode:
 							v = v.strip()
-						
+
 						logger.debug(u"Searching mapping for '%s.%s'" % (c, a))
 						if VALUE_MAPPING.has_key("%s.%s" % (c, a)):
 							v = forceList(v)
@@ -664,7 +662,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 								v = v[0]
 						if type(v) in (list, tuple):
 							v = u', '.join(forceUnicodeList(v))
-						
+
 						if item['Type'].startswith('varchar'):
 							v = forceUnicode(v)
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
@@ -678,28 +676,30 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 			if not opsiValues[opsiName][-1]:
 				logger.info(u"Skipping empty object")
 				opsiValues[opsiName].pop()
+
 	return opsiValues
+
 
 def getHardwareInformationFromRegistry(conf, opsiValues={}):
 	from OPSI.System.Windows import HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER, getRegistryValue
-	
+
 	regex = re.compile('^\[\s*([^\]]+)\s*\]\s*(\S+.*)\s*$')
 	for oneClass in conf:
 		if not oneClass.get('Class') or not oneClass['Class'].get('Opsi'):
 			continue
-		
+
 		opsiName = oneClass['Class']['Opsi']
 		for item in oneClass['Values']:
 			registryQuery = item.get('Registry')
 			if not registryQuery:
 				continue
-			
+
 			logger.info(u"Querying: %s" % registryQuery)
 			match = re.search(regex, registryQuery)
 			if not match:
 				logger.error(u"Bad registry query '%s'" % registryQuery)
 				continue
-			
+
 			logger.info(match)
 			key = match.group(1)
 			if not key.find('\\'):
@@ -707,7 +707,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 				continue
 			(key, subKey) = key.split('\\', 1)
 			valueName = match.group(2)
-			
+
 			if key in ('HKEY_LOCAL_MACHINE', 'HKLM'):
 				key = HKEY_LOCAL_MACHINE
 			elif key in ('HKEY_CURRENT_USER', 'HKCU'):
@@ -727,15 +727,16 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
 	return opsiValues
-	
+
+
 def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 	from OPSI.System.Windows import execute
-	
+
 	regex = re.compile("^#(?P<cmd>.*)#(?P<extend>.*)$")
 	for oneClass in conf:
 		if not oneClass.get('Class') or not oneClass['Class'].get('Opsi'):
 			continue
-		
+
 		opsiName = oneClass['Class']['Opsi']
 		for item in oneClass['Values']:
 			cmdline = item.get('Cmd')
@@ -747,7 +748,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				r = condition.split("=")[1]
 				if val and r:
 					conditionregex = re.compile(r)
-					
+
 					logger.info("Condition found, try to find the Condition")
 					for i in range(len(opsiValues[opsiName])):
                                                 value = opsiValues[opsiName][i].get(val, "")
@@ -764,7 +765,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 			matchresult = match.groupdict()
 			executeCommand = matchresult.get("cmd")
 			extend = matchresult.get("extend")
-			
+
 			logger.info(u"Executing: %s" % executeCommand)
 			try:
 				value = ''
@@ -785,6 +786,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				opsiValues[opsiName][i][item['Opsi']] = value
 	return opsiValues
 
+
 def usage():
 	print "\nUsage: %s -a <address> -u <username> -h <hostid> -p <password>" % os.path.basename(sys.argv[0])
 	print "Options:"
@@ -794,13 +796,14 @@ def usage():
 	print "  -p, --password       Password"
 	print "  -a, --address        Address of opsiconfd"
 	print ""
-	
+
+
 def main(argv):
 	logger.setLogFile('c:\\tmp\\hwaudit.log')
 	logger.setFileLevel(LOG_DEBUG2)
-	
+
 	logger.notice("starting hardware audit")
-	
+
 	win2k = False
 	if (sys.getwindowsversion()[0] == 5) and (sys.getwindowsversion()[1] == 0):
 		win2k = True
@@ -810,7 +813,7 @@ def main(argv):
 	except getopt.GetoptError:
 		usage()
 		sys.exit(1)
-	
+
 	for (opt, arg) in opts:
 		if opt in ("--help",):
 			usage()
@@ -866,13 +869,13 @@ def main(argv):
 
 	logger.notice(u"Fetching hardware information from WMI")
 	values = getHardwareInformationFromWMI(config, win2k)
-	
+
 	logger.notice(u"Fetching hardware information from Registry")
 	values = getHardwareInformationFromRegistry(config, values)
-	
+
 	logger.notice(u"Fetching hardware information from Executing Command")
 	values = getHardwareInformationFromExecuteCommand(config, values)
-	
+
 	logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
 	logger.notice(u"Sending hardware information to service")
 	auditHardwareOnHosts = []
