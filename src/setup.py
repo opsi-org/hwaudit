@@ -12,6 +12,14 @@ if os.path.exists('dist'):
 	print("Removing old 'dist' directory")
 	shutil.rmtree('dist')
 
+setup_opts = {
+	"name": "hwaudit",
+	"description": 'hwaudit for opsi',
+	"url": 'http://www.opsi.org/',
+	"author": "uib GmbH <info@uib.de>",
+	"author_email": "info@uib.de",
+}
+
 if RUNS_ON_WINDOWS:
 	import py2exe  # Required for build under Windows
 
@@ -51,23 +59,18 @@ if RUNS_ON_WINDOWS:
 		"PIL._imagingtk", "ImageTk", "PIL.ImageTk", "FixTk"
 	]
 
-	setup_opts = {
-		"options": {
-			"py2exe": {
-				"compressed": 1,
-				# "bundle_files": 1,
-				"optimize": 2,
-				"excludes": excludes,
-				"packages": ["OPSI"]
-			}
-		},
-		"data_files": [],
-		"zipfile": "lib/library.zip",
-		"console": [hwaudit],
+	setup_opts["options"] = {
+		"py2exe": {
+			"compressed": 1,
+			# "bundle_files": 1,
+			"optimize": 2,
+			"excludes": excludes,
+			"packages": ["OPSI"]
+		}
 	}
-
-else:
-	setup_opts = {}
+	setup_opts["data_files"] = []
+	setup_opts["zipfile"] = "lib/library.zip"
+	setup_opts["console"] = [hwaudit]
 
 setup(**setup_opts)
 
