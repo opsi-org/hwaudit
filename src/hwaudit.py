@@ -808,8 +808,11 @@ def main(argv):
 	if (sys.getwindowsversion()[0] == 5) and (sys.getwindowsversion()[1] == 0):
 		win2k = True
 	try:
-		(opts, args) = getopt.getopt(argv, "u:p:a:l:f:h",
-					[ "username=", "password=", "address=", "log-level", "loglevel", "help" ])
+		(opts, args) = getopt.getopt(
+			argv,
+			"u:p:a:l:f:h",
+			["username=", "password=", "address=", "log-level", "loglevel", "help"]
+		)
 	except getopt.GetoptError:
 		usage()
 		sys.exit(1)
@@ -865,7 +868,12 @@ def main(argv):
 	logger.setConsoleLevel(LOGLEVEL)
 
 	logger.notice(u"Connecting to service at '%s' as '%s'" % (ADDRESS, USERNAME))
-	backend = JSONRPCBackend(username = USERNAME, password = PASSWORD, address = ADDRESS, application = 'opsi hwaudit %s' % __version__)
+	backend = JSONRPCBackend(
+		username=USERNAME,
+		password=PASSWORD,
+		address=ADDRESS,
+		application='opsi hwaudit %s' % __version__
+	)
 	logger.notice(u"Connected to opsi server")
 
 	logger.notice(u"Fetching opsi hw audit configuration")
