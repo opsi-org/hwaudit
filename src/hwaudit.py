@@ -14,7 +14,7 @@ from OPSI.Util import *
 from OPSI.Object import *
 from OPSI.Types import *
 from OPSI.System import *
-from OPSI.Logger import *
+from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 __version__ = "4.0.5.1"
 
