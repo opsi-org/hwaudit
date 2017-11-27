@@ -750,13 +750,13 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 
 					logger.info("Condition found, try to find the Condition")
 					for i in range(len(opsiValues[opsiName])):
-                                                value = opsiValues[opsiName][i].get(val, "")
-                                                if value:
-                                                        conditionmatch = re.search(conditionregex, value)
-                                                        
-                                                                  
-					if not conditionmatch:
-						continue
+						value = opsiValues[opsiName][i].get(val, "")
+						if value:
+							conditionmatch = re.search(conditionregex, value)
+
+							if not conditionmatch:
+								continue
+
 			match = re.search(regex, cmdline)
 			if not match:
 				logger.error(u"Bad Cmd entry '%s'" % cmdline)
