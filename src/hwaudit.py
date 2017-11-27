@@ -5,7 +5,6 @@ import getopt
 import os
 import re
 import sys
-import time
 import wmi
 
 # OPSI imports
