@@ -48,6 +48,8 @@ excludes = [	"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
 		"PIL._imagingtk", "ImageTk", "PIL.ImageTk", "FixTk"
 ]
 
+includes = [    "wmi"   ]
+
 setup(
 	options = {
 		"py2exe": {
@@ -55,6 +57,7 @@ setup(
 			#"bundle_files": 1,
 			"optimize": 2,
 			"excludes": excludes,
+                        "includes": includes,
 			"packages": ["OPSI"]
 		}
 	},
