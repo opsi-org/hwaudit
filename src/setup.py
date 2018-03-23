@@ -48,7 +48,7 @@ excludes = [	"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
 		"PIL._imagingtk", "ImageTk", "PIL.ImageTk", "FixTk"
 ]
 
-includes = [	"wmi", "_cffi_backend" ]
+includes = [	"wmi", "_cffi_backend", "Crypto.Cipher" ]
 
 setup(
 	options = {
