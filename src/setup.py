@@ -48,7 +48,7 @@ excludes = [	"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
 		"PIL._imagingtk", "ImageTk", "PIL.ImageTk", "FixTk"
 ]
 
-includes = [    "wmi"   ]
+includes = [	"wmi", "_cffi_backend" ]
 
 setup(
 	options = {
@@ -57,7 +57,7 @@ setup(
 			#"bundle_files": 1,
 			"optimize": 2,
 			"excludes": excludes,
-                        "includes": includes,
+			"includes": includes,
 			"packages": ["OPSI"]
 		}
 	},
@@ -65,6 +65,8 @@ setup(
 	zipfile = "lib/library.zip",
 	console = [ hwaudit ],
 )
+
+os.unlink(os.path.join("dist", "w9xpopen.exe"))
 
 print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 print "!!!   On the target machine always replace exe AND lib   !!!"
