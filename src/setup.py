@@ -34,12 +34,12 @@ if RUNS_ON_WINDOWS:
 			self.company_name = "uib GmbH"
 			self.copyright = "uib GmbH"
 			self.version = ""
-			f = open(self.script, 'r')
-			for line in f.readlines():
-				if (line.find("__version__") != -1):
-					self.version = line.split('=', 1)[1].strip()[1:-1]
-					break
-			f.close()
+			with open(self.script, 'r') as f:
+				for line in f:
+					if "__version__" in line:
+						self.version = line.split('=', 1)[1].strip()[1:-1]
+						break
+
 			if not self.version:
 				print >> sys.stderr, "Failed to find version of script '%s'" % self.script
 
