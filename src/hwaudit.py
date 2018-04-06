@@ -16,7 +16,7 @@ from OPSI.Types import (
 	forceUnicode, forceUnicodeList)
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
-__version__ = "4.1.0.1"
+__version__ = "4.1.0.2"
 
 logger = Logger()
 
@@ -802,7 +802,12 @@ def usage():
 
 
 def main(argv):
-	logger.setLogFile('c:\\tmp\\hwaudit.log')
+	if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
+		logDir = os.path.join('C:', 'opsi.org', 'log')
+	else:
+		logDir = os.path.join('C:', 'tmp')
+
+	logger.setLogFile(os.path.join(logDir, 'hwaudit.log'))
 	logger.setFileLevel(LOG_DEBUG2)
 
 	logger.notice("starting hardware audit")
