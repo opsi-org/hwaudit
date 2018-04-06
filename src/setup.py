@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import sys
 import os
 import shutil
@@ -41,7 +43,7 @@ if RUNS_ON_WINDOWS:
 						break
 
 			if not self.version:
-				print >> sys.stderr, "Failed to find version of script '%s'" % self.script
+				print("Failed to find version of script '%s'" % self.script, file=sys.stderr)
 
 	hwaudit = Target(
 		name="hwaudit",
@@ -79,6 +81,6 @@ setup(**setup_opts)
 if RUNS_ON_WINDOWS:
 	os.unlink(os.path.join("dist", "w9xpopen.exe"))
 
-	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-	print "!!!   On the target machine always replace exe AND lib   !!!"
-	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	print("!!!   On the target machine always replace exe AND lib   !!!")
+	print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
