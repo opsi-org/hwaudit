@@ -621,13 +621,15 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 						if meth and v is not None:
 							try:
 								v = eval('v.%s' % meth)
-							except Exception:
+							except Exception as evalError:
+								logger.debug("Method {0!r} on function value {1!r} failed: {2!r}", meth, v, evalError)
 								logger.warning(u"Method '%s' failed on value '%s'" % (meth, v))
 
 						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
-							except Exception:
+							except Exception as evalError:
+								logger.debug("Operation {0!r} on function value {1!r} failed: {2!r}", op, v, evalError)
 								logger.warning(u"Operation '%s' failed on value '%s'" % (op, v))
 
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
