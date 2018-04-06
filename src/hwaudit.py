@@ -528,8 +528,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 		mapSep = '&'
 		temp = wmiQuery.split(mapSep)
 		if len(temp) == 2:
-			wmiQuery = temp[0]
-			mapClass = temp[1]
+			wmiQuery, mapClass = temp
 
 		filter = None
 		if win2k:
