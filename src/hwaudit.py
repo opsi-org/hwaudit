@@ -658,6 +658,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 								v[i] = VALUE_MAPPING["%s.%s" % (c, a)].get(str(v[i]), v[i])
 							if len(v) == 1:
 								v = v[0]
+
 						if type(v) in (list, tuple):
 							v = u', '.join(forceUnicodeList(v))
 
@@ -667,6 +668,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 							if len(v) > maxLen:
 								logger.warning(u"Truncating value '%s': string is to long" % v)
 								v = v[:maxLen]
+
 						if v is not None:
 							break
 				opsiValues[opsiName][-1][item['Opsi']] = v
