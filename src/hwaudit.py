@@ -747,6 +747,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				r = condition.split("=")[1]
 				if val and r:
 					conditionregex = re.compile(r)
+					conditionmatch = None
 
 					logger.info("Condition found, try to find the Condition")
 					for i in range(len(opsiValues[opsiName])):

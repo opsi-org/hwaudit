@@ -58,12 +58,14 @@ if RUNS_ON_WINDOWS:
 		"Tkconstants", "Tkinter", "tcl", "_imagingtk",
 		"PIL._imagingtk", "ImageTk", "PIL.ImageTk", "FixTk"
 	]
+	includes = ["wmi", "_cffi_backend"]
 
 	setup_opts["options"] = {
 		"py2exe": {
 			"compressed": 1,
 			# "bundle_files": 1,
 			"optimize": 2,
+			"includes": includes,
 			"excludes": excludes,
 			"packages": ["OPSI"]
 		}
@@ -75,6 +77,8 @@ if RUNS_ON_WINDOWS:
 setup(**setup_opts)
 
 if RUNS_ON_WINDOWS:
+	os.unlink(os.path.join("dist", "w9xpopen.exe"))
+
 	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	print "!!!   On the target machine always replace exe AND lib   !!!"
 	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
