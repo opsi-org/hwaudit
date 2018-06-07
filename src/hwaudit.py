@@ -768,8 +768,8 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 			extend = matchresult.get("extend")
 
 			logger.info(u"Executing: %s" % executeCommand)
+			value = ''
 			try:
-				value = ''
 				result = execute(executeCommand)
 				if result and extend:
 					res = result[0]
