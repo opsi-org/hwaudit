@@ -876,46 +876,48 @@ def main(argv):
 
 	logger.setConsoleLevel(loglevel)
 
-	logger.notice(u"Connecting to service at '%s' as '%s'" % (address, username))
-	backend = JSONRPCBackend(
+	logger.notice(u"Connecting to service at '{}' as '{}'", address, username)
+
+	backendConfig = dict(
 		username=username,
 		password=password,
 		address=address,
 		application='opsi hwaudit %s' % __version__
 	)
-	logger.notice(u"Connected to opsi server")
 
-	logger.notice(u"Fetching opsi hw audit configuration")
-	config = backend.auditHardware_getConfig()
+	with JSONRPCBackend(**backendConfig) as backend:
+		logger.notice(u"Connected to opsi server")
 
-	logger.notice(u"Fetching hardware information from WMI")
-	values = getHardwareInformationFromWMI(config, win2k)
+		logger.notice(u"Fetching opsi hw audit configuration")
+		config = backend.auditHardware_getConfig()
 
-	logger.notice(u"Fetching hardware information from Registry")
-	values = getHardwareInformationFromRegistry(config, values)
+		logger.notice(u"Fetching hardware information from WMI")
+		values = getHardwareInformationFromWMI(config, win2k)
 
-	logger.notice(u"Fetching hardware information from Executing Command")
-	values = getHardwareInformationFromExecuteCommand(config, values)
+		logger.notice(u"Fetching hardware information from Registry")
+		values = getHardwareInformationFromRegistry(config, values)
 
-	logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
-	logger.notice(u"Sending hardware information to service")
-	auditHardwareOnHosts = []
-	for (hardwareClass, devices) in values.items():
-		if hardwareClass == 'SCANPROPERTIES':
-			continue
+		logger.notice(u"Fetching hardware information from Executing Command")
+		values = getHardwareInformationFromExecuteCommand(config, values)
 
-		for device in devices:
-			data = {'hardwareClass': hardwareClass}
-			for (attribute, value) in device.items():
-				data[str(attribute)] = value
-			data['hostId'] = host_id
-			auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
+		logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
+		logger.notice(u"Sending hardware information to service")
+		auditHardwareOnHosts = []
+		for (hardwareClass, devices) in values.items():
+			if hardwareClass == 'SCANPROPERTIES':
+				continue
 
-	backend.auditHardwareOnHost_setObsolete(host_id)
-	backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
+			for device in devices:
+				data = {'hardwareClass': hardwareClass}
+				for (attribute, value) in device.items():
+					data[str(attribute)] = value
+				data['hostId'] = host_id
+				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
+
+		backend.auditHardwareOnHost_setObsolete(host_id)
+		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
 
 	logger.notice(u"Exiting...")
-	backend.backend_exit()
 
 
 if __name__ == "__main__":
