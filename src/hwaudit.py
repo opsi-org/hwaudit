@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Imports
 import getopt
 import os
 import re
 import sys
 import wmi
 
-# OPSI imports
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Util import objectToBeautifiedText
 from OPSI.Object import AuditHardwareOnHost
