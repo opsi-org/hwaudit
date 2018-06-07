@@ -903,15 +903,15 @@ def main(argv):
 		logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
 		logger.notice(u"Sending hardware information to service")
 		auditHardwareOnHosts = []
-		for (hardwareClass, devices) in values.items():
+		for hardwareClass, devices in values.items():
 			if hardwareClass == 'SCANPROPERTIES':
 				continue
 
 			for device in devices:
-				data = {'hardwareClass': hardwareClass}
-				for (attribute, value) in device.items():
-					data[str(attribute)] = value
+				data = {str(attribute): value for attribute, value in device.items()}
+				data['hardwareClass'] = hardwareClass
 				data['hostId'] = host_id
+
 				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
 
 		backend.auditHardwareOnHost_setObsolete(host_id)
