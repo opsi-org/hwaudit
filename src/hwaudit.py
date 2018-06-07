@@ -781,10 +781,13 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 
 			if type(value) is unicode:
 				value = value.encode('utf-8')
+
 			if opsiName not in opsiValues:
 				opsiValues[opsiName].append({})
+
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
+
 	return opsiValues
 
 
