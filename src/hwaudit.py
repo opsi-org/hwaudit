@@ -16,8 +16,6 @@ from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 __version__ = "4.1.0.2"
 
-logger = Logger()
-
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
 		"0": u"x86",
@@ -508,6 +506,8 @@ VALUE_MAPPING = {
 		"24": u"Sealed-Case PC"
 	}
 }
+
+logger = Logger()
 
 
 def getHardwareInformationFromWMI(conf, win2k=False):
