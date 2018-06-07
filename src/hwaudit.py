@@ -872,6 +872,8 @@ def main(argv):
 		logger.critical(u"Password not set")
 		raise RuntimeError("No password set!")
 
+	logger.addConfidentialString(password)
+
 	logger.setConsoleLevel(loglevel)
 
 	logger.notice(u"Connecting to service at '%s' as '%s'" % (address, username))
