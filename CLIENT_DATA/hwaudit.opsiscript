@@ -1,0 +1,124 @@
+; Copyright (c) uib GmbH (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+
+[Actions]
+requiredWinstVersion >= "4.11.4.7"
+AutoActivityDisplay = true
+ScriptErrorMessages=off
+
+DefVar $ProductId$
+DefVar $loglevel$
+DefVar $logfile$
+DefVar $exitcode$
+DefVar $timeout$
+DefVar $tempdir$
+DefVar $taillines$
+DefVar $force_install$
+DefVar $copy_option$
+DefVar $OCD_DIST_DIR$
+DefVar $INST_NTVersion$
+
+set $tempdir$ = "%Systemdrive%\opsi.org\tmp"
+set $ProductId$ = "hwaudit"
+set $loglevel$ = getProductProperty("loglevel", "3")
+set $logfile$ = getProductProperty("logfile", $tempdir$ + "\hwaudit.log")
+Set $timeout$ = GetProductProperty("timeout","")
+Set $taillines$ = GetProductProperty("tail-lines", "0")
+Set $force_install$ = GetProductProperty("force_install", "false")
+Set $OCD_DIST_DIR$ = "dist"
+set $INST_NTVersion$ = GetMsVersionInfo
+
+Switch $INST_NTVersion$
+        Case "6.1"
+                set $OCD_DIST_DIR$ = "dist.win7"
+        Endcase
+        Case "6.2"
+                set $OCD_DIST_DIR$ = "dist.win8"
+        Endcase
+        Case "6.3"
+                set $OCD_DIST_DIR$ = "dist.win81"
+        Endcase
+Endswitch
+
+if CompareDotSeparatedNumbers($INST_NTVersion$,"10.0") >= "0"
+        set $OCD_DIST_DIR$ = "dist.win10"
+endif
+
+
+Message "Running hardware audit..."
+
+
+
+ShowBitmap "%SCRIPTPATH%\hwaudit.png" "Hardware Inventarisierung"
+set $copy_option$ = "-su"
+if $force_install$ = "true"
+	set $copy_option$ = "-s"
+endif
+Files_copy_hwaudit
+;DosInAnIcon_hwaudit
+changeDirectory $tempdir$ + "\hwaudit"
+if $timeout$ = "90"
+	comment " $timeout$ =	" +  $timeout$
+	Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+	else
+	if $timeout$ = "300"
+		comment " $timeout$ =	" +  $timeout$
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 300
+		else
+		if $timeout$ = "600"
+			comment " $timeout$ =	" +  $timeout$
+			Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 600
+			else
+			if $timeout$ = "notimeout"
+				comment " $timeout$ =	" +  $timeout$
+				Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe"
+				else
+				;default
+				comment " default 90	"
+				Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+				
+			endif ; notimeout
+		endif ; timeout 600 Seconds
+	endif ; timeout 300 Secons
+endif
+set $exitcode$ = getLastExitCode
+killtask "hwaudit.exe"
+
+if not (FileExists("%SCRIPTPATH%"))
+	DosInAnIcon_TryToReconnect
+endif 
+
+if fileExists ($logfile$)
+	comment "Try to include hwaudit.log file in instlog"
+	includelog $logfile$ $taillines$
+endif
+if not (($exitcode$ = "0") or ($exitcode$ = "259")) 
+	logError "Fatal: hwaudit exit code = "+$exitcode$
+	isFatalError
+endif
+
+[Files_copy_hwaudit]
+copy $copy_option$ "%SCRIPTPATH%\$OCD_DIST_DIR$\*.*" "$tempdir$\hwaudit"
+copy $copy_option$ "%SCRIPTPATH%\common\*.*" "$tempdir$\hwaudit"
+del "$logfile$"
+
+
+[DosInAnIcon_hwaudit]
+"$tempdir$\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
+
+[winbatch_hwaudit]
+"$tempdir$\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
+
+[DosInAnIcon_TryToReconnect]
+net use
+set TIMEOUT=
+:TRY
+if exist "%SCRIPTPATH%\hwaudit.exe" goto READY
+%ScriptDrive%
+set TIMEOUT=%TIMEOUT%1
+if %TIMEOUT% == 1111111111111111 goto READY
+"c:\tmp\hwaudit\sleep.exe" 10
+net use
+goto TRY
+:READY
