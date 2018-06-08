@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Imports
 import getopt
 import os
 import re
 import sys
 import wmi
 
-# OPSI imports
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Util import objectToBeautifiedText
 from OPSI.Object import AuditHardwareOnHost
@@ -17,8 +15,6 @@ from OPSI.Types import (
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 __version__ = "4.1.0.2"
-
-logger = Logger()
 
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
@@ -511,6 +507,8 @@ VALUE_MAPPING = {
 	}
 }
 
+logger = Logger()
+
 
 def getHardwareInformationFromWMI(conf):
 	wmiObj = wmi.WMI()
@@ -584,7 +582,7 @@ def getHardwareInformationFromWMI(conf):
 
 							continue
 
-						if type(v) is tuple and (len(v) == 1):
+						if isinstance(v, tuple) and len(v) == 1:
 							v = v[0]
 
 						if meth and v is not None:
@@ -615,9 +613,9 @@ def getHardwareInformationFromWMI(conf):
 						if v is None:
 							continue
 
-						if type(v) is str:
+						if isinstance(v, str):
 							v = forceUnicode(v)
-						if type(v) is unicode:
+						if isinstance(v, unicode):
 							v = v.strip()
 
 						logger.debug(u"Searching mapping for '%s.%s'" % (c, a))
@@ -628,19 +626,23 @@ def getHardwareInformationFromWMI(conf):
 							if len(v) == 1:
 								v = v[0]
 
-						if type(v) in (list, tuple):
+						if isinstance(v, (list, tuple)):
 							v = u', '.join(forceUnicodeList(v))
 
 						if item['Type'].startswith('varchar'):
 							v = forceUnicode(v)
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
+
 							if len(v) > maxLen:
-								logger.warning(u"Truncating value '%s': string is to long" % v)
+								logger.warning(u"Truncating value {!r}: string is to long (maximum length: {})", v, maxLen)
 								v = v[:maxLen]
+								logger.debug(u"New value: {!r}", v)
 
 						if v is not None:
 							break
+
 				opsiValues[opsiName][-1][item['Opsi']] = v
+
 			logger.debug(u"Hardware object is now: %s" % opsiValues[opsiName][-1])
 			if not opsiValues[opsiName][-1]:
 				logger.info(u"Skipping empty object")
@@ -685,18 +687,22 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 			else:
 				logger.error(u"Unhandled registry key '%s'" % key)
 				continue
+
 			try:
 				value = getRegistryValue(key, subKey, valueName)
 			except Exception as error:
 				logger.error(u"Failed to get '%s': %s" % (registryQuery, error))
 				continue
 
-			if type(value) is unicode:
+			if isinstance(value, unicode):
 				value = value.encode('utf-8')
+
 			if opsiName not in opsiValues:
 				opsiValues[opsiName].append({})
+
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
+
 	return opsiValues
 
 
@@ -739,8 +745,8 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 			extend = matchresult.get("extend")
 
 			logger.info(u"Executing: %s" % executeCommand)
+			value = ''
 			try:
-				value = ''
 				result = execute(executeCommand)
 				if result and extend:
 					res = result[0]
@@ -750,12 +756,15 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, error))
 				continue
 
-			if type(value) is unicode:
+			if isinstance(value, unicode):
 				value = value.encode('utf-8')
+
 			if opsiName not in opsiValues:
 				opsiValues[opsiName].append({})
+
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
+
 	return opsiValues
 
 
@@ -839,48 +848,53 @@ def main(argv):
 		logger.critical(u"Password not set")
 		raise RuntimeError("No password set!")
 
+	logger.addConfidentialString(password)
+
 	logger.setConsoleLevel(loglevel)
 
-	logger.notice(u"Connecting to service at '%s' as '%s'" % (address, username))
-	backend = JSONRPCBackend(
+	logger.notice(u"Connecting to service at '{}' as '{}'", address, username)
+
+	backendConfig = dict(
 		username=username,
 		password=password,
 		address=address,
 		application='opsi hwaudit %s' % __version__
 	)
-	logger.notice(u"Connected to opsi server")
 
-	logger.notice(u"Fetching opsi hw audit configuration")
-	config = backend.auditHardware_getConfig()
+	with JSONRPCBackend(**backendConfig) as backend:
+		logger.notice(u"Connected to opsi server")
 
-	logger.notice(u"Fetching hardware information from WMI")
-	values = getHardwareInformationFromWMI(config)
+		logger.notice(u"Fetching opsi hw audit configuration")
+		config = backend.auditHardware_getConfig()
 
-	logger.notice(u"Fetching hardware information from Registry")
-	values = getHardwareInformationFromRegistry(config, values)
+		logger.notice(u"Fetching hardware information from WMI")
+		values = getHardwareInformationFromWMI(config)
 
-	logger.notice(u"Fetching hardware information from Executing Command")
-	values = getHardwareInformationFromExecuteCommand(config, values)
+		logger.notice(u"Fetching hardware information from Registry")
+		values = getHardwareInformationFromRegistry(config, values)
 
-	logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
-	logger.notice(u"Sending hardware information to service")
-	auditHardwareOnHosts = []
-	for (hardwareClass, devices) in values.items():
-		if hardwareClass == 'SCANPROPERTIES':
-			continue
+		logger.notice(u"Fetching hardware information from Executing Command")
+		values = getHardwareInformationFromExecuteCommand(config, values)
 
-		for device in devices:
-			data = {'hardwareClass': hardwareClass}
-			for (attribute, value) in device.items():
-				data[str(attribute)] = value
-			data['hostId'] = host_id
-			auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
+		logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
+		auditHardwareOnHosts = []
+		for hardwareClass, devices in values.items():
+			if hardwareClass == 'SCANPROPERTIES':
+				continue
 
-	backend.auditHardwareOnHost_setObsolete(host_id)
-	backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
+			for device in devices:
+				data = {str(attribute): value for attribute, value in device.items()}
+				data['hardwareClass'] = hardwareClass
+				data['hostId'] = host_id
+
+				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
+
+		logger.info(u"Obsoleting old hardware audit data")
+		backend.auditHardwareOnHost_setObsolete(host_id)
+		logger.notice(u"Sending hardware information to service")
+		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
 
 	logger.notice(u"Exiting...")
-	backend.backend_exit()
 
 
 if __name__ == "__main__":
