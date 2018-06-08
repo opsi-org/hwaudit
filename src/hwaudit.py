@@ -613,7 +613,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 
 							continue
 
-						if type(v) is tuple and (len(v) == 1):
+						if isinstance(v, tuple) and len(v) == 1:
 							v = v[0]
 
 						if meth and v is not None:
@@ -644,9 +644,9 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 						if v is None:
 							continue
 
-						if type(v) is str:
+						if isinstance(v, str):
 							v = forceUnicode(v)
-						if type(v) is unicode:
+						if isinstance(v, unicode):
 							v = v.strip()
 
 						logger.debug(u"Searching mapping for '%s.%s'" % (c, a))
@@ -657,7 +657,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 							if len(v) == 1:
 								v = v[0]
 
-						if type(v) in (list, tuple):
+						if isinstance(v, (list, tuple)):
 							v = u', '.join(forceUnicodeList(v))
 
 						if item['Type'].startswith('varchar'):
@@ -725,7 +725,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 				logger.error(u"Failed to get '%s': %s" % (registryQuery, error))
 				continue
 
-			if type(value) is unicode:
+			if isinstance(value, unicode):
 				value = value.encode('utf-8')
 
 			if opsiName not in opsiValues:
@@ -787,7 +787,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, error))
 				continue
 
-			if type(value) is unicode:
+			if isinstance(value, unicode):
 				value = value.encode('utf-8')
 
 			if opsiName not in opsiValues:
