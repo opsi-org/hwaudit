@@ -911,7 +911,6 @@ def main(argv):
 		values = getHardwareInformationFromExecuteCommand(config, values)
 
 		logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
-		logger.notice(u"Sending hardware information to service")
 		auditHardwareOnHosts = []
 		for hardwareClass, devices in values.items():
 			if hardwareClass == 'SCANPROPERTIES':
@@ -924,7 +923,9 @@ def main(argv):
 
 				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
 
+		logger.info(u"Obsoleting old hardware audit data")
 		backend.auditHardwareOnHost_setObsolete(host_id)
+		logger.notice(u"Sending hardware information to service")
 		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
 
 	logger.notice(u"Exiting...")
