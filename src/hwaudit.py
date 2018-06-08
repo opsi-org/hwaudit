@@ -663,13 +663,16 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 						if item['Type'].startswith('varchar'):
 							v = forceUnicode(v)
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
+
 							if len(v) > maxLen:
 								logger.warning(u"Truncating value '%s': string is to long" % v)
 								v = v[:maxLen]
 
 						if v is not None:
 							break
+
 				opsiValues[opsiName][-1][item['Opsi']] = v
+
 			logger.debug(u"Hardware object is now: %s" % opsiValues[opsiName][-1])
 			if not opsiValues[opsiName][-1]:
 				logger.info(u"Skipping empty object")
@@ -714,6 +717,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 			else:
 				logger.error(u"Unhandled registry key '%s'" % key)
 				continue
+
 			try:
 				value = getRegistryValue(key, subKey, valueName)
 			except Exception as error:
@@ -722,10 +726,13 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 
 			if type(value) is unicode:
 				value = value.encode('utf-8')
+
 			if opsiName not in opsiValues:
 				opsiValues[opsiName].append({})
+
 			for i in range(len(opsiValues[opsiName])):
 				opsiValues[opsiName][i][item['Opsi']] = value
+
 	return opsiValues
 
 
