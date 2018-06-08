@@ -7,3 +7,4 @@
 *.swo
 # Compiled files
 *.exe
+*.dll
