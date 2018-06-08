@@ -1,0 +1,10 @@
+*.opsi
+*.opsi.md5
+*.opsi.zsync
+# Temporary files
+*~
+*.swp
+*.swo
+# Compiled files
+*.exe
+*.dll
