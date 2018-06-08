@@ -1,0 +1,7 @@
+*.opsi
+*.opsi.md5
+*.opsi.zsync
+# Temporary files
+*~
+*.swp
+*.swo
