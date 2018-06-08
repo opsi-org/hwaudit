@@ -512,7 +512,7 @@ VALUE_MAPPING = {
 }
 
 
-def getHardwareInformationFromWMI(conf, win2k=False):
+def getHardwareInformationFromWMI(conf):
 	wmiObj = wmi.WMI()
 
 	opsiValues = {}
@@ -530,18 +530,7 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 		if len(temp) == 2:
 			wmiQuery, mapClass = temp
 
-		filter = None
-		if win2k:
-			idx = wmiQuery.lower().find('where')
-			if idx != -1:
-				filter = wmiQuery[idx+5:].strip()
-				if 'like' not in filter.lower():
-					filter = None
-				else:
-					wmiQuery = wmiQuery[:idx].strip()
-
 		logger.info(u"Querying: %s" % wmiQuery)
-		logger.info(u"Filter: %s" % filter)
 		objects = []
 		try:
 			objects = wmiObj.query(wmiQuery)
@@ -555,26 +544,6 @@ def getHardwareInformationFromWMI(conf, win2k=False):
 
 		for obj in objects:
 			wmiClass = obj.ole_object.GetObjectText_().split()[2]
-			# Filter objects (Win2k does not support "LIKE")
-			if filter:
-				try:
-					if ' and ' in filter.lower() or ' or ' in filter.lower():
-						raise Exception(u"Filter '%s' not supported" % filter)
-					at = filter.split()[0]
-					op = filter.split()[1]
-					va = filter.split()[2][1:-1].replace('\\', '\\\\').replace('%', '.*')
-					if op.lower() != 'like':
-						raise Exception(u"Operator LIKE expected but '%s' found" % op)
-					regex = re.compile(va)
-					v = getattr(obj, at)
-					logger.info(u"Testing if '%s' matches '%s'" % (v, va))
-					if re.search(regex, v):
-						logger.info(u"Object matches filter '%s'" % filter)
-					else:
-						continue
-				except Exception as error:
-					logger.error("Filter '%s' failed: %s" % (filter, error))
-					continue
 
 			obj2 = None
 			if mapClass:
@@ -812,10 +781,6 @@ def main(argv):
 
 	logger.notice("starting hardware audit")
 
-	win2k = False
-	if (sys.getwindowsversion()[0] == 5) and (sys.getwindowsversion()[1] == 0):
-		win2k = True
-
 	try:
 		(opts, args) = getopt.getopt(
 			argv,
@@ -889,7 +854,7 @@ def main(argv):
 	config = backend.auditHardware_getConfig()
 
 	logger.notice(u"Fetching hardware information from WMI")
-	values = getHardwareInformationFromWMI(config, win2k)
+	values = getHardwareInformationFromWMI(config)
 
 	logger.notice(u"Fetching hardware information from Registry")
 	values = getHardwareInformationFromRegistry(config, values)
