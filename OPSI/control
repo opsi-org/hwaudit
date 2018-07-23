@@ -8,7 +8,7 @@ id: hwaudit
 name: Client Hardwareinventarisierung
 description: Hardwareinventarisierung auf Basis von WMI / Registry.
 advice: 
-version: 4.1.0.3
+version: 4.1.0.4
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -63,6 +63,12 @@ description: Should we always reinstall the hwaudit software
 default: False
 
 [Changelog]
+hwaudit (4.1.0.4-1) stable; urgency=low
+
+  * extended Chassis types
+
+ -- Mathias Radtke <m.radtke@uib.de> Mon, 23 Jul 2018 12:33:00 +0200
+
 hwaudit (4.1.0.3-1) stable; urgency=low
 
   * Drop support for Windows 2000.
