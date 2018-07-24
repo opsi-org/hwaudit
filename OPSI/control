@@ -1,5 +1,5 @@
 [Package]
-version: 1
+version: 2
 depends: 
 
 [Product]
@@ -63,6 +63,12 @@ description: Should we always reinstall the hwaudit software
 default: False
 
 [Changelog]
+hwaudit (4.1.0.4-21) stable; urgency=low
+
+  * corrected error in build process
+
+ -- Mathias Radtke <m.radtke@uib.de> Tue, 24 Jul 2018 10:13:00 +0200
+
 hwaudit (4.1.0.4-1) stable; urgency=low
 
   * extended Chassis types
