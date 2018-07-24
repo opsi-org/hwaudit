@@ -503,18 +503,18 @@ VALUE_MAPPING = {
 		"21": u"Peripheral Chassis",
 		"22": u"Storage Chassis",
 		"23": u"Rack Mount Chassis",
-		"24": u"Sealed-Case PC"
-		"25": u"Multi-system chassis"
-		"26": u"Compact PCI"
-		"27": u"Advanced TCA"
-		"28": u"Blade"
-		"29": u"Blade Enclosure"
-		"30": u"Tablet"
-		"31": u"Convertible"
-		"32": u"Detachable"
-		"33": u"IoT Gateway"
-		"34": u"Embedded PC"
-		"35": u"Mini PC"
+		"24": u"Sealed-Case PC",
+		"25": u"Multi-system chassis",
+		"26": u"Compact PCI",
+		"27": u"Advanced TCA",
+		"28": u"Blade",
+		"29": u"Blade Enclosure",
+		"30": u"Tablet",
+		"31": u"Convertible",
+		"32": u"Detachable",
+		"33": u"IoT Gateway",
+		"34": u"Embedded PC",
+		"35": u"Mini PC",
 		"36": u"Stick PC"
 	}
 }
