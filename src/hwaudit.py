@@ -655,7 +655,7 @@ def getHardwareInformationFromWMI(conf):
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
 
 							if len(v) > maxLen:
-								logger.warning(u"Truncating value {!r}: string is to long (maximum length: {})", v, maxLen)
+								logger.warning(u"Truncating value {!r}: string is too long (maximum length: {})", v, maxLen)
 								v = v[:maxLen]
 								logger.debug(u"New value: {!r}", v)
 
