@@ -635,11 +635,13 @@ def getHardwareInformationFromWMI(conf):
 						if isinstance(v, unicode):
 							v = v.strip()
 
-						logger.debug(u"Searching mapping for '%s.%s'" % (c, a))
-						if "%s.%s" % (c, a) in VALUE_MAPPING:
+						valueMappingKey = "%s.%s" % (c, a)
+						logger.debug(u"Searching mapping for {!r}", valueMappingKey)
+						if valueMappingKey in VALUE_MAPPING:
 							v = forceList(v)
 							for i in range(len(v)):
-								v[i] = VALUE_MAPPING["%s.%s" % (c, a)].get(str(v[i]), v[i])
+								v[i] = VALUE_MAPPING[valueMappingKey].get(str(v[i]), v[i])
+
 							if len(v) == 1:
 								v = v[0]
 
