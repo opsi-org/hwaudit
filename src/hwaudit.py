@@ -617,12 +617,14 @@ def getHardwareInformationFromWMI(conf):
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
 								v = forceHardwareVendorId(v)
-							except Exception:
+							except Exception as hwVendError:
+								logger.debug("Forcing hardware vendor id on {!r} failed: {}", v, hwVendError)
 								v = None
 						elif item['Opsi'] in ('deviceId', 'subsystemDeviceId'):
 							try:
 								v = forceHardwareDeviceId(v)
-							except Exception:
+							except Exception as hwDevError:
+								logger.debug("Forcing hardware device id on {!r} failed: {}", v, hwDevError)
 								v = None
 
 						if v is None:
