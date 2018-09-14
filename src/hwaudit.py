@@ -645,6 +645,8 @@ def getHardwareInformationFromWMI(conf):
 							if len(v) == 1:
 								v = v[0]
 
+							logger.debug("Mapping applied. Value: {!r}", v)
+
 						if isinstance(v, (list, tuple)):
 							v = u', '.join(forceUnicodeList(v))
 
