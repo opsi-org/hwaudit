@@ -605,14 +605,14 @@ def getHardwareInformationFromWMI(conf):
 								v = eval('v.%s' % meth)
 							except Exception as evalError:
 								logger.debug("Method {0!r} on function value {1!r} failed: {2!r}", meth, v, evalError)
-								logger.warning(u"Method '%s' failed on value '%s'" % (meth, v))
+								logger.warning(u"Method '{0}' failed on value '{1}'", meth, v)
 
 						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
 							except Exception as evalError:
 								logger.debug("Operation {0!r} on function value {1!r} failed: {2!r}", op, v, evalError)
-								logger.warning(u"Operation '%s' failed on value '%s'" % (op, v))
+								logger.warning(u"Operation '{0}' failed on value '{1}'", op, v)
 
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
@@ -658,7 +658,7 @@ def getHardwareInformationFromWMI(conf):
 
 				opsiValues[opsiName][-1][item['Opsi']] = v
 
-			logger.debug(u"Hardware object is now: %s" % opsiValues[opsiName][-1])
+			logger.debug(u"Hardware object is now: {!r}", opsiValues[opsiName][-1])
 			if not opsiValues[opsiName][-1]:
 				logger.info(u"Skipping empty object")
 				opsiValues[opsiName].pop()
