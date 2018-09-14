@@ -809,7 +809,7 @@ def main(argv):
 	logger.setLogFile(os.path.join(logDir, 'hwaudit.log'))
 	logger.setFileLevel(LOG_DEBUG2)
 
-	logger.notice("starting hardware audit")
+	logger.notice("starting hardware audit (script version {})", __version__)
 
 	try:
 		(opts, args) = getopt.getopt(
