@@ -568,12 +568,15 @@ def getHardwareInformationFromWMI(conf):
 					for a in item['WMI'].split('||'):
 						a = a.strip()
 						c = wmiClass
+
 						if '::' in a:
 							(c, a) = a.split('::', 1)
+
 						meth = None
-						op = None
 						if '.' in a:
 							(a, meth) = a.split('.', 1)
+
+						op = None
 						match = re.search('^(\w+)([\*\/\+\-\%]\d.*)$', a)
 						if match:
 							a = match.group(1)
