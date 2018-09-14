@@ -63,7 +63,7 @@ description: Should we always reinstall the hwaudit software
 default: False
 
 [Changelog]
-hwaudit (4.1.0.4-21) stable; urgency=low
+hwaudit (4.1.0.4-2) stable; urgency=low
 
   * corrected error in build process
 
