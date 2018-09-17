@@ -14,7 +14,7 @@ from OPSI.Types import (
 	forceUnicode, forceUnicodeList)
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
-__version__ = "4.1.0.3"
+__version__ = "4.1.0.5"
 
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
@@ -568,12 +568,15 @@ def getHardwareInformationFromWMI(conf):
 					for a in item['WMI'].split('||'):
 						a = a.strip()
 						c = wmiClass
+
 						if '::' in a:
 							(c, a) = a.split('::', 1)
+
 						meth = None
-						op = None
 						if '.' in a:
 							(a, meth) = a.split('.', 1)
+
+						op = None
 						match = re.search('^(\w+)([\*\/\+\-\%]\d.*)$', a)
 						if match:
 							a = match.group(1)
@@ -602,24 +605,26 @@ def getHardwareInformationFromWMI(conf):
 								v = eval('v.%s' % meth)
 							except Exception as evalError:
 								logger.debug("Method {0!r} on function value {1!r} failed: {2!r}", meth, v, evalError)
-								logger.warning(u"Method '%s' failed on value '%s'" % (meth, v))
+								logger.warning(u"Method '{0}' failed on value '{1}'", meth, v)
 
 						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
 							except Exception as evalError:
 								logger.debug("Operation {0!r} on function value {1!r} failed: {2!r}", op, v, evalError)
-								logger.warning(u"Operation '%s' failed on value '%s'" % (op, v))
+								logger.warning(u"Operation '{0}' failed on value '{1}'", op, v)
 
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
 								v = forceHardwareVendorId(v)
-							except Exception:
+							except Exception as hwVendError:
+								logger.debug("Forcing hardware vendor id on {!r} failed: {}", v, hwVendError)
 								v = None
 						elif item['Opsi'] in ('deviceId', 'subsystemDeviceId'):
 							try:
 								v = forceHardwareDeviceId(v)
-							except Exception:
+							except Exception as hwDevError:
+								logger.debug("Forcing hardware device id on {!r} failed: {}", v, hwDevError)
 								v = None
 
 						if v is None:
@@ -630,13 +635,17 @@ def getHardwareInformationFromWMI(conf):
 						if isinstance(v, unicode):
 							v = v.strip()
 
-						logger.debug(u"Searching mapping for '%s.%s'" % (c, a))
-						if "%s.%s" % (c, a) in VALUE_MAPPING:
+						valueMappingKey = "%s.%s" % (c, a)
+						logger.debug(u"Searching mapping for {!r}", valueMappingKey)
+						if valueMappingKey in VALUE_MAPPING:
 							v = forceList(v)
 							for i in range(len(v)):
-								v[i] = VALUE_MAPPING["%s.%s" % (c, a)].get(str(v[i]), v[i])
+								v[i] = VALUE_MAPPING[valueMappingKey].get(str(v[i]), v[i])
+
 							if len(v) == 1:
 								v = v[0]
+
+							logger.debug("Mapping applied. Value: {!r}", v)
 
 						if isinstance(v, (list, tuple)):
 							v = u', '.join(forceUnicodeList(v))
@@ -646,7 +655,7 @@ def getHardwareInformationFromWMI(conf):
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
 
 							if len(v) > maxLen:
-								logger.warning(u"Truncating value {!r}: string is to long (maximum length: {})", v, maxLen)
+								logger.warning(u"Truncating value {!r}: string is too long (maximum length: {})", v, maxLen)
 								v = v[:maxLen]
 								logger.debug(u"New value: {!r}", v)
 
@@ -655,7 +664,7 @@ def getHardwareInformationFromWMI(conf):
 
 				opsiValues[opsiName][-1][item['Opsi']] = v
 
-			logger.debug(u"Hardware object is now: %s" % opsiValues[opsiName][-1])
+			logger.debug(u"Hardware object is now: {!r}", opsiValues[opsiName][-1])
 			if not opsiValues[opsiName][-1]:
 				logger.info(u"Skipping empty object")
 				opsiValues[opsiName].pop()
@@ -800,7 +809,7 @@ def main(argv):
 	logger.setLogFile(os.path.join(logDir, 'hwaudit.log'))
 	logger.setFileLevel(LOG_DEBUG2)
 
-	logger.notice("starting hardware audit")
+	logger.notice("starting hardware audit (script version {})", __version__)
 
 	try:
 		(opts, args) = getopt.getopt(
