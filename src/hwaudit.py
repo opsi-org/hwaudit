@@ -14,7 +14,7 @@ from OPSI.Types import (
 	forceUnicode, forceUnicodeList)
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
-__version__ = "4.1.0.5"
+__version__ = "4.1.0.6"
 
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
