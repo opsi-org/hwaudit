@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import getopt
+import argparse
 import os
 import re
 import sys
@@ -14,7 +14,7 @@ from OPSI.Types import (
 	forceUnicode, forceUnicodeList)
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
-__version__ = "4.1.0.5"
+__version__ = "4.1.0.6"
 
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
@@ -789,61 +789,47 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 	return opsiValues
 
 
-def usage():
-	print "\nUsage: %s -a <address> -u <username> -h <hostid> -p <password>" % os.path.basename(sys.argv[0])
-	print "Options:"
-	print "      --help           Display this text"
-	print "  -u, --username       Username"
-	print "  -h, --hostid         Host id"
-	print "  -p, --password       Password"
-	print "  -a, --address        Address of opsiconfd"
-	print ""
-
-
 def main(argv):
 	if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
 		logDir = os.path.join('C:', 'opsi.org', 'log')
 	else:
 		logDir = os.path.join('C:', 'tmp')
 
-	logger.setLogFile(os.path.join(logDir, 'hwaudit.log'))
+	logFile = os.path.join(logDir, 'hwaudit.log')
+
+	parser = argparse.ArgumentParser(
+		description="Perform hardware audit on a client and sent the result to an opsi server.",
+		add_help=False
+	)
+	parser.add_argument('--help', help="Display help.")
+	parser.add_argument('--version', action='version', version=__version__)
+	parser.add_argument(
+		'--log-level', '--loglevel', '-l', default=LOG_ERROR,
+		dest="logLevel", type=int, choices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+		help="Set the desired loglevel."
+	)
+	parser.add_argument('--log-file', '-f', dest="logFile", default=logFile, path="Path to file where debug logs will be written.")
+	parser.add_argument('--hostid', '-h', help="Hostid that will be used. If nothing is set the value from --username will be used.")
+	parser.add_argument('--username', '-u', help="Username to connect to the service. If nothing is set the value from --hostid will be used.")
+	parser.add_argument('--password', '-p', required=True, help="Password for authentication")
+	parser.add_argument('--address', '-a', required=True, help="Address to connect to. Example: https://server.domain.local:4447")
+
+	opts = parser.parse_args()
+
+	if opts.help:
+		parser.print_help()
+		sys.exit(0)
+
+	password = opts.password
+
+	logger.addConfidentialString(password)
+	logger.setConsoleLevel(opts.logLevel)
+	logger.setLogFile(opts.logFile)
 	logger.setFileLevel(LOG_DEBUG2)
 
 	logger.notice("starting hardware audit (script version {})", __version__)
 
-	try:
-		(opts, args) = getopt.getopt(
-			argv,
-			"u:p:a:l:f:h",
-			["username=", "password=", "address=", "log-level", "loglevel", "help"]
-		)
-	except getopt.GetoptError:
-		usage()
-		sys.exit(1)
-
-	address = u''
-	username = u''
-	host_id = u''
-	password = u''
-	loglevel = LOG_ERROR
-
-	for (opt, arg) in opts:
-		if opt in ("--help",):
-			usage()
-			sys.exit(0)
-		elif opt in ("-u", "--username"):
-			username = arg
-		elif opt in ("-h", "--hostid"):
-			host_id = arg
-		elif opt in ("-p", "--password"):
-			password = arg
-		elif opt in ("-a", "--address"):
-			address = arg
-		elif opt in ("-l", "--loglevel"):
-			loglevel = int(arg)
-		elif opt in ("-f", "--log-file"):
-			logger.setLogFile(arg)
-
+	address = opts.address
 	if address.startswith(u"https://"):
 		address = address + u"/rpc"
 
@@ -851,27 +837,11 @@ def main(argv):
 		logger.critical(u"Address not set")
 		raise RuntimeError("Address not set")
 
-	if not username:
-		if host_id:
-			username = host_id
-		else:
-			logger.critical(u"Host id and username not set")
-			raise RuntimeError("Host id and username not set")
+	host_id = opts.hostid or opts.username
+	username = opts.username or opts.hostid
 
-	if not host_id:
-		if username:
-			host_id = username
-		else:
-			logger.critical(u"Host id and username not set")
-			raise RuntimeError("Host id and username not set")
-
-	if not password:
-		logger.critical(u"Password not set")
-		raise RuntimeError("No password set!")
-
-	logger.addConfidentialString(password)
-
-	logger.setConsoleLevel(loglevel)
+	if not (username and host_id):
+		raise RuntimeError("Host id and username not set")
 
 	logger.notice(u"Connecting to service at '{}' as '{}'", address, username)
 
