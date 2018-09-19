@@ -808,7 +808,7 @@ def main(argv):
 		dest="logLevel", type=int, choices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 		help="Set the desired loglevel."
 	)
-	parser.add_argument('--log-file', '-f', dest="logFile", default=logFile, path="Path to file where debug logs will be written.")
+	parser.add_argument('--log-file', '-f', dest="logFile", default=logFile, help="Path to file where debug logs will be written.")
 	parser.add_argument('--hostid', '-h', help="Hostid that will be used. If nothing is set the value from --username will be used.")
 	parser.add_argument('--username', '-u', help="Username to connect to the service. If nothing is set the value from --hostid will be used.")
 	parser.add_argument('--password', '-p', required=True, help="Password for authentication")
