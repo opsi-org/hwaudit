@@ -67,13 +67,13 @@ hwaudit (4.1.0.6-2) stable; urgency=low
 
   * Refactored installation script.
 
- -- Niko Wenselowski <n.wenselowski@uib.de> Fri, 18 Sep 2018 12:14:52 +0200
+ -- Niko Wenselowski <n.wenselowski@uib.de> Tue, 18 Sep 2018 12:14:52 +0200
 
 hwaudit (4.1.0.6-1) stable; urgency=low
 
   * Refactored handling of commandline arguments.
 
- -- Niko Wenselowski <n.wenselowski@uib.de> Fri, 18 Sep 2018 12:14:52 +0200
+ -- Niko Wenselowski <n.wenselowski@uib.de> Tue, 18 Sep 2018 12:14:52 +0200
 
 hwaudit (4.1.0.5-1) stable; urgency=low
 
