@@ -14,7 +14,7 @@ from OPSI.Types import (
 	forceUnicode, forceUnicodeList)
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
-__version__ = "4.1.0.6"
+__version__ = "4.1.0.8"
 
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
@@ -801,7 +801,7 @@ def main(argv):
 		description="Perform hardware audit on a client and sent the result to an opsi server.",
 		add_help=False
 	)
-	parser.add_argument('--help', help="Display help.")
+	parser.add_argument('--help', action="store_true", help="Display help.")
 	parser.add_argument('--version', action='version', version=__version__)
 	parser.add_argument(
 		'--log-level', '--loglevel', '-l', default=LOG_ERROR,
