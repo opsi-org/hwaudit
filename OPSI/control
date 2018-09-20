@@ -8,7 +8,7 @@ id: hwaudit
 name: Client Hardwareinventarisierung
 description: Hardwareinventarisierung auf Basis von WMI / Registry.
 advice: 
-version: 4.1.0.7
+version: 4.1.0.8
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -63,6 +63,18 @@ description: Should we always reinstall the hwaudit software
 default: False
 
 [Changelog]
+hwaudit (4.1.0.8-1) stable; urgency=low
+
+  * Improve handling of --help.
+
+ -- Niko Wenselowski <n.wenselowski@uib.de> Wed, 20 Sep 2018 15:22:24 +0200
+
+hwaudit (4.1.0.7-2) stable; urgency=low
+
+  * Re-packaged.
+
+ -- Niko Wenselowski <n.wenselowski@uib.de> Wed, 20 Sep 2018 14:57:53 +0200
+
 hwaudit (4.1.0.7-1) stable; urgency=low
 
   * Fix bug in commandline parsing.
