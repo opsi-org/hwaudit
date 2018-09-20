@@ -45,43 +45,37 @@ if CompareDotSeparatedNumbers($INST_NTVersion$,"10.0") >= "0"
         set $OCD_DIST_DIR$ = "dist.win10"
 endif
 
-
 Message "Running hardware audit..."
-
-
-
 ShowBitmap "%SCRIPTPATH%\hwaudit.png" "Hardware Inventarisierung"
+
 set $copy_option$ = "-su"
 if $force_install$ = "true"
 	set $copy_option$ = "-s"
 endif
+
 Files_copy_hwaudit
-;DosInAnIcon_hwaudit
+
 changeDirectory $tempdir$ + "\hwaudit"
-if $timeout$ = "90"
-	comment " $timeout$ =	" +  $timeout$
-	Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
-	else
-	if $timeout$ = "300"
-		comment " $timeout$ =	" +  $timeout$
+comment "$timeout$ = " +  $timeout$
+Switch $timeout$
+	Case "90"
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+	EndCase
+	Case "300"
 		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 300
-		else
-		if $timeout$ = "600"
-			comment " $timeout$ =	" +  $timeout$
-			Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 600
-			else
-			if $timeout$ = "notimeout"
-				comment " $timeout$ =	" +  $timeout$
-				Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe"
-				else
-				;default
-				comment " default 90	"
-				Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
-				
-			endif ; notimeout
-		endif ; timeout 600 Seconds
-	endif ; timeout 300 Secons
-endif
+	EndCase
+	Case "600"
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 600
+	EndCase
+	Case "notimeout"
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe"
+	EndCase
+	DefaultCase
+		comment "default 90"
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+	EndCase
+EndSwitch
+
 set $exitcode$ = getLastExitCode
 killtask "hwaudit.exe"
 
@@ -103,10 +97,6 @@ copy $copy_option$ "%SCRIPTPATH%\$OCD_DIST_DIR$\*.*" "$tempdir$\hwaudit"
 copy $copy_option$ "%SCRIPTPATH%\common\*.*" "$tempdir$\hwaudit"
 del "$logfile$"
 
-
-[DosInAnIcon_hwaudit]
-"$tempdir$\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
-
 [winbatch_hwaudit]
 "$tempdir$\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
 
@@ -122,3 +112,4 @@ if %TIMEOUT% == 1111111111111111 goto READY
 net use
 goto TRY
 :READY
+

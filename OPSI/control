@@ -7,8 +7,8 @@ type: localboot
 id: hwaudit
 name: Client Hardwareinventarisierung
 description: Hardwareinventarisierung auf Basis von WMI / Registry.
-advice:
-version: 4.1.0.6
+advice: 
+version: 4.1.0.7
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -63,11 +63,23 @@ description: Should we always reinstall the hwaudit software
 default: False
 
 [Changelog]
+hwaudit (4.1.0.7-1) stable; urgency=low
+
+  * Fix bug in commandline parsing.
+
+ -- Niko Wenselowski <n.wenselowski@uib.de> Wed, 19 Sep 2018 10:06:12 +0200
+
+hwaudit (4.1.0.6-2) stable; urgency=low
+
+  * Refactored installation script.
+
+ -- Niko Wenselowski <n.wenselowski@uib.de> Tue, 18 Sep 2018 12:14:52 +0200
+
 hwaudit (4.1.0.6-1) stable; urgency=low
 
   * Refactored handling of commandline arguments.
 
- -- Niko Wenselowski <n.wenselowski@uib.de> Fri, 18 Sep 2018 12:14:52 +0200
+ -- Niko Wenselowski <n.wenselowski@uib.de> Tue, 18 Sep 2018 12:14:52 +0200
 
 hwaudit (4.1.0.5-1) stable; urgency=low
 
@@ -261,3 +273,4 @@ hwaudit (1.2.1-1) stable; urgency=low
   * Added mapping for system enclosure types
 
  -- Jan Schneider <j.schneider@uib.de>  Fri, 21 Nov 2008 16:33:00 +0100
+
