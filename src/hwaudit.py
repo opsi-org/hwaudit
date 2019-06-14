@@ -14,7 +14,7 @@ from OPSI.Types import (
 	forceUnicode, forceUnicodeList)
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
-__version__ = "4.1.0.8"
+__version__ = "4.2.0.1"
 
 VALUE_MAPPING = {
 	"Win32_Processor.Architecture": {
@@ -631,9 +631,9 @@ def getHardwareInformationFromWMI(conf):
 							continue
 
 						if isinstance(v, str):
-							v = forceUnicode(v)
-						if isinstance(v, unicode):
-							v = v.strip()
+							v = forceUnicode(v.strip())
+						#if isinstance(v, bytes):
+						#	v = v.strip()
 
 						valueMappingKey = "%s.%s" % (c, a)
 						logger.debug(u"Searching mapping for {!r}", valueMappingKey)
@@ -715,7 +715,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 				logger.error(u"Failed to get '%s': %s" % (registryQuery, error))
 				continue
 
-			if isinstance(value, unicode):
+			if isinstance(value, bytes):
 				value = value.encode('utf-8')
 
 			if opsiName not in opsiValues:
@@ -777,7 +777,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, error))
 				continue
 
-			if isinstance(value, unicode):
+			if isinstance(value, bytes):
 				value = value.encode('utf-8')
 
 			if opsiName not in opsiValues:
