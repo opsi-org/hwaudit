@@ -9,6 +9,7 @@ from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 __version__ = "4.2.0.1"
 
+logger = Logger()
 
 def main(argv):
 	if os.path.exists("/var/log/opsi"):
