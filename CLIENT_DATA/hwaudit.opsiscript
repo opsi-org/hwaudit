@@ -16,8 +16,9 @@ DefVar $tempdir$
 DefVar $taillines$
 DefVar $force_install$
 DefVar $copy_option$
-DefVar $OCD_DIST_DIR$
+DefVar $hwaudit$
 DefVar $INST_NTVersion$
+DefVar $systemtype$
 
 set $tempdir$ = "%Systemdrive%\opsi.org\tmp"
 set $ProductId$ = "hwaudit"
@@ -26,24 +27,23 @@ set $logfile$ = getProductProperty("logfile", $tempdir$ + "\hwaudit.log")
 Set $timeout$ = GetProductProperty("timeout","")
 Set $taillines$ = GetProductProperty("tail-lines", "0")
 Set $force_install$ = GetProductProperty("force_install", "false")
-Set $OCD_DIST_DIR$ = "dist"
+
+set $systemtype$ = GetSystemType
+
 set $INST_NTVersion$ = GetMsVersionInfo
 
-Switch $INST_NTVersion$
-        Case "6.1"
-                set $OCD_DIST_DIR$ = "dist.win7"
+Switch $systemtype$
+        Case "x86 System"
+                set $hwaudit$ = "hwaudit.exe"
         Endcase
-        Case "6.2"
-                set $OCD_DIST_DIR$ = "dist.win8"
+        Case "64 Bit System"
+                set $hwaudit$ = "hwaudit-x64.exe"
         Endcase
-        Case "6.3"
-                set $OCD_DIST_DIR$ = "dist.win81"
+        DefaultCase
+        	comment "Systemtype " + $systemtype$ + " not known. Trying 32Bit for luck"
+        	set $hwaudit$ = "hwaudit.exe"
         Endcase
 Endswitch
-
-if CompareDotSeparatedNumbers($INST_NTVersion$,"10.0") >= "0"
-        set $OCD_DIST_DIR$ = "dist.win10"
-endif
 
 Message "Running hardware audit..."
 ShowBitmap "%SCRIPTPATH%\hwaudit.png" "Hardware Inventarisierung"
@@ -59,25 +59,25 @@ changeDirectory $tempdir$ + "\hwaudit"
 comment "$timeout$ = " +  $timeout$
 Switch $timeout$
 	Case "90"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 90
 	EndCase
 	Case "300"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 300
+		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 300
 	EndCase
 	Case "600"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 600
+		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 600
 	EndCase
 	Case "notimeout"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe"
+		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$
 	EndCase
 	DefaultCase
 		comment "default 90"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
+		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 90
 	EndCase
 EndSwitch
 
 set $exitcode$ = getLastExitCode
-killtask "hwaudit.exe"
+killtask $hwaudit$
 
 if not (FileExists("%SCRIPTPATH%"))
 	DosInAnIcon_TryToReconnect
@@ -93,12 +93,12 @@ if not (($exitcode$ = "0") or ($exitcode$ = "259"))
 endif
 
 [Files_copy_hwaudit]
-copy $copy_option$ "%SCRIPTPATH%\$OCD_DIST_DIR$\*.*" "$tempdir$\hwaudit"
-copy $copy_option$ "%SCRIPTPATH%\common\*.*" "$tempdir$\hwaudit"
+copy $copy_option$ "%SCRIPTPATH%\files\$hwaudit$" "$tempdir$\hwaudit\"
+copy $copy_option$ "%SCRIPTPATH%\common\*.*" "$tempdir$\hwaudit\"
 del "$logfile$"
 
 [winbatch_hwaudit]
-"$tempdir$\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
+"$tempdir$\hwaudit\$hwaudit$" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
 
 [DosInAnIcon_TryToReconnect]
 net use
