@@ -4,7 +4,9 @@ import argparse
 import os
 import re
 import sys
-import wmi
+
+if os.name == "nt":
+	import wmi
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Util import objectToBeautifiedText
@@ -858,27 +860,31 @@ def main(argv):
 		logger.notice(u"Fetching opsi hw audit configuration")
 		config = backend.auditHardware_getConfig()
 
-		logger.notice(u"Fetching hardware information from WMI")
-		values = getHardwareInformationFromWMI(config)
+		if os.name == "nt":
+			logger.notice(u"Fetching hardware information from WMI")
+			values = getHardwareInformationFromWMI(config)
 
-		logger.notice(u"Fetching hardware information from Registry")
-		values = getHardwareInformationFromRegistry(config, values)
+			logger.notice(u"Fetching hardware information from Registry")
+			values = getHardwareInformationFromRegistry(config, values)
 
-		logger.notice(u"Fetching hardware information from Executing Command")
-		values = getHardwareInformationFromExecuteCommand(config, values)
+			logger.notice(u"Fetching hardware information from Executing Command")
+			values = getHardwareInformationFromExecuteCommand(config, values)
 
-		logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
-		auditHardwareOnHosts = []
-		for hardwareClass, devices in values.items():
-			if hardwareClass == 'SCANPROPERTIES':
-				continue
+			logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
+			auditHardwareOnHosts = []
+			for hardwareClass, devices in values.items():
+				if hardwareClass == 'SCANPROPERTIES':
+					continue
 
-			for device in devices:
-				data = {str(attribute): value for attribute, value in device.items()}
-				data['hardwareClass'] = hardwareClass
-				data['hostId'] = host_id
+				for device in devices:
+					data = {str(attribute): value for attribute, value in device.items()}
+					data['hardwareClass'] = hardwareClass
+					data['hostId'] = host_id
 
-				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
+					auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
+		else:
+			logger.notice(u"Running hardware inventory")
+			auditHardwareOnHosts = auditHardware(config = config, hostId = username)
 
 		logger.info(u"Obsoleting old hardware audit data")
 		backend.auditHardwareOnHost_setObsolete(host_id)
