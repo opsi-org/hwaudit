@@ -288,6 +288,61 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 
 	return opsiValues
 
+def numstring2Dec(numstring, base=36):
+	if numstring is None:
+		return None
+	result = 0
+	multiplier = 1
+	for char in reversed(numstring):
+		if char > '@':
+			result += (ord(char)-55)*multiplier
+		else:
+			result += (ord(char)-48)*multiplier
+		multiplier *= base
+	return result
+
+def getWMIProperty(key, table, condition=None):
+	wmiObj = wmi.WMI()
+	wmiQuery = f"Select {key} from {table}"
+	logger.info(f"performing query: {wmiQuery}")
+	if not condition is None:
+		wmiQuery = wmiQuery.join(" where ").join(condition)
+	reply = wmiObj.query(wmiQuery)
+	if len(reply) == 0:
+		return None
+	for prop in reply[0].Properties_:
+		#print(prop.Name, prop.Value)
+		if prop.Name == key:
+			return prop.Value
+	return None
+
+def getDellExpressCode(conf, opsiValues={}):
+	tasks = [('Manufacturer', 'Win32_ComputerSystem')]
+	tasks.append(('SerialNumber', 'Win32_SystemEnclosure'))
+	reply = []
+	for task in tasks:
+		reply.append(getWMIProperty(task[0], task[1]))
+
+	#reply[0] = "asdfDEllasdf"
+	#reply[1] = "2y4955j"
+	value = ""
+	if re.search("dell", reply[0].lower()) is None:
+		logger.notice("Manufacturer is not DELL, no dellexpresscode stored.")
+		return opsiValues
+	value = numstring2Dec(reply[1])
+
+	for oneClass in conf:
+		if oneClass.get('Class') is None or oneClass['Class'].get('Opsi') is None:
+			continue
+		opsiName = oneClass['Class']['Opsi']
+		if opsiName not in opsiValues:
+			continue
+		for item in oneClass['Values']:
+			if item['Opsi'] == "dellexpresscode":
+				for i in range(len(opsiValues[opsiName])):
+					opsiValues[opsiName][i][item['Opsi']] = value
+					logger.notice(f"stored dellexpresscode {value}")
+	return opsiValues
 
 def makehwaudit():
 	if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
@@ -365,8 +420,12 @@ def makehwaudit():
 			logger.notice(u"Fetching hardware information from Registry")
 			values = getHardwareInformationFromRegistry(config, values)
 
-			logger.notice(u"Fetching hardware information from Executing Command")
-			values = getHardwareInformationFromExecuteCommand(config, values)
+			#logger.notice("Fetching hardware information from Executing Command")
+			#values = getHardwareInformationFromExecuteCommand(config, values)
+
+			logger.notice("Extracting dellexpresscode (if any)")
+			values = getDellExpressCode(config, values)
+
 
 			logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
 			auditHardwareOnHosts = []
