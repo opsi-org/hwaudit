@@ -16,6 +16,7 @@ pywin32 = "^227"
 wmi = "^1.5.1"
 opsi-dev-tools = "^1.0.6"
 python-opsi = "^4.2.0"
+mysqlclient = {path = "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"}
 
 [tool.poetry.scripts]
 hwaudit = "hwaudit.__main__:main"
