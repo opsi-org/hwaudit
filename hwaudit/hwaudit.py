@@ -7,6 +7,7 @@ import sys
 
 if os.name == "nt":
 	import wmi
+	import pywintypes
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Util import objectToBeautifiedText
@@ -23,12 +24,24 @@ logger = Logger()
 
 
 def getHardwareInformationFromWMI(conf):
+	"""
+	Extracts hardware information from WMI.
+
+	This method performs a number of WMI queries regarding
+	hardware and stores the replies in a dictionary.
+
+	:param conf: Config extracted from the backend.
+	:param opsiValues: Dictionary containing the results of the audit.
+
+	:returns: Dictionary containing the results of the audit.
+	"""
+
 	wmiObj = wmi.WMI()
 
 	opsiValues = {}
 
 	for oneClass in conf:
-		if not oneClass.get('Class') or not oneClass['Class'].get('Opsi') or not oneClass['Class'].get('WMI'):
+		if oneClass.get('Class') is None or oneClass['Class'].get('Opsi') is None or oneClass['Class'].get('WMI') is None:
 			continue
 
 		opsiName = oneClass['Class']['Opsi']
@@ -40,12 +53,12 @@ def getHardwareInformationFromWMI(conf):
 		if len(temp) == 2:
 			wmiQuery, mapClass = temp
 
-		logger.info(u"Querying: %s" % wmiQuery)
+		logger.info(u"Querying: %s", wmiQuery)
 		objects = []
 		try:
 			objects = wmiObj.query(wmiQuery)
-		except Exception as error:
-			logger.error(u"Query failed: %s" % error)
+		except pywintypes.com_error as error:
+			logger.error(u"Query failed: %s", error)
 			continue
 
 		# first element? make new array for multiple devices
@@ -55,46 +68,42 @@ def getHardwareInformationFromWMI(conf):
 		for obj in objects:
 			wmiClass = obj.ole_object.GetObjectText_().split()[2]
 
-			obj2 = None
+			associator = None
 			if mapClass:
 				assoc = obj.associators(mapClass)
 				if len(assoc) > 0:
-					obj2 = assoc[0]
+					associator = assoc[0]
 
 			opsiValues[opsiName].append({})
 			for item in oneClass['Values']:
 				v = None
 				if item.get('WMI'):
-					for a in item['WMI'].split('||'):
-						a = a.strip()
-						c = wmiClass
+					for attribute in item['WMI'].split('||'):
+						attribute = attribute.strip()
+						attrclass = wmiClass
 
-						if '::' in a:
-							(c, a) = a.split('::', 1)
+						if '::' in attribute:
+							(attrclass, attribute) = attribute.split('::', 1)
 
 						meth = None
-						if '.' in a:
-							(a, meth) = a.split('.', 1)
+						if '.' in attribute:
+							(attribute, meth) = attribute.split('.', 1)
 
 						op = None
-						match = re.search('^(\w+)([\*\/\+\-\%]\d.*)$', a)
+						match = re.search(r'^(\w+)([\*\/\+\-\%]\d.*)$', attribute)
 						if match:
-							a = match.group(1)
+							attribute = match.group(1)
 							op = match.group(2)
 
-						if c == wmiClass and hasattr(obj, a):
-							v = getattr(obj, a)
-						elif obj2 and hasattr(obj2, a):
-							v = getattr(obj2, a)
+						if attrclass == wmiClass and hasattr(obj, attribute):
+							v = getattr(obj, attribute)
+						elif associator and hasattr(associator, attribute):
+							v = getattr(associator, attribute)
 						else:
-							try:
-								if obj2:
-									logger.warning(u"%s.%s: failed to get attribute '%s' from objects %s" % (opsiName, item['Opsi'], a, [obj.__repr__(), obj2.__repr__()]))
-								else:
-									logger.warning(u"%s.%s: failed to get attribute '%s' from object '%s'" % (opsiName, item['Opsi'], a, obj.__repr__()))
-							except Exception as error:
-								logger.error(error)
-
+							if associator is None:
+								logger.warning(u"%s.%s: failed to get attribute '%s' from object '%s'", opsiName, item['Opsi'], attribute, obj.__repr__())
+							else:
+								logger.warning(u"%s.%s: failed to get attribute '%s' from objects %s", opsiName, item['Opsi'], attribute, [obj.__repr__(), associator.__repr__()])
 							continue
 
 						if isinstance(v, tuple) and len(v) == 1:
@@ -103,27 +112,27 @@ def getHardwareInformationFromWMI(conf):
 						if meth and v is not None:
 							try:
 								v = eval('v.%s' % meth)
-							except Exception as evalError:
+							except IndexError as evalError:
 								logger.debug("Method {0!r} on function value {1!r} failed: {2!r}", meth, v, evalError)
-								logger.warning(u"Method '{0}' failed on value '{1}'", meth, v)
+								logger.warning(u"Method '%s' failed on value '%s'", meth, v)
 
 						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
-							except Exception as evalError:
+							except IndexError as evalError:
 								logger.debug("Operation {0!r} on function value {1!r} failed: {2!r}", op, v, evalError)
-								logger.warning(u"Operation '{0}' failed on value '{1}'", op, v)
+								logger.warning(u"Operation '%s' failed on value '%s'", op, v)
 
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
 								v = forceHardwareVendorId(v)
-							except Exception as hwVendError:
+							except ValueError as hwVendError:
 								logger.debug("Forcing hardware vendor id on {!r} failed: {}", v, hwVendError)
 								v = None
 						elif item['Opsi'] in ('deviceId', 'subsystemDeviceId'):
 							try:
 								v = forceHardwareDeviceId(v)
-							except Exception as hwDevError:
+							except ValueError as hwDevError:
 								logger.debug("Forcing hardware device id on {!r} failed: {}", v, hwDevError)
 								v = None
 
@@ -135,7 +144,7 @@ def getHardwareInformationFromWMI(conf):
 						#if isinstance(v, bytes):
 						#	v = v.strip()
 
-						valueMappingKey = "%s.%s" % (c, a)
+						valueMappingKey = "%s.%s" % (attrclass, attribute)
 						logger.debug(u"Searching mapping for {!r}", valueMappingKey)
 						if valueMappingKey in VALUE_MAPPING:
 							v = forceList(v)
@@ -173,9 +182,20 @@ def getHardwareInformationFromWMI(conf):
 
 
 def getHardwareInformationFromRegistry(conf, opsiValues={}):
+	"""
+	Extracts hardware information from the registry.
+
+	This method queries the windows registry for hardware specification.
+	Results are integrated into a dictionary.
+
+	:param conf: Config extracted from the backend.
+	:param opsiValues: Dictionary containing the results of the audit.
+
+	:returns: Dictionary containing the results of the audit.
+	"""
 	from OPSI.System.Windows import HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER, getRegistryValue
 
-	regex = re.compile('^\[\s*([^\]]+)\s*\]\s*(\S+.*)\s*$')
+	regex = re.compile(r'^\[\s*([^\]]+)\s*\]\s*(\S+.*)\s*$')
 	for oneClass in conf:
 		if not oneClass.get('Class') or not oneClass['Class'].get('Opsi'):
 			continue
@@ -189,13 +209,13 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 			logger.info(u"Querying: %s" % registryQuery)
 			match = re.search(regex, registryQuery)
 			if not match:
-				logger.error(u"Bad registry query '%s'" % registryQuery)
+				logger.error(u"Bad registry query '%s'", registryQuery)
 				continue
 
 			logger.info(match)
 			key = match.group(1)
 			if not key.find('\\'):
-				logger.error(u"Bad registry query '%s'" % registryQuery)
+				logger.error(u"Bad registry query '%s'", registryQuery)
 				continue
 
 			(key, subKey) = key.split('\\', 1)
@@ -206,13 +226,13 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 			elif key in ('HKEY_CURRENT_USER', 'HKCU'):
 				key = HKEY_CURRENT_USER
 			else:
-				logger.error(u"Unhandled registry key '%s'" % key)
+				logger.error(u"Unhandled registry key '%s'", key)
 				continue
 
 			try:
 				value = getRegistryValue(key, subKey, valueName)
-			except Exception as error:
-				logger.error(u"Failed to get '%s': %s" % (registryQuery, error))
+			except OSError as error:
+				logger.error(u"Failed to get '%s': %s", registryQuery, error)
 				continue
 
 			if isinstance(value, bytes):
@@ -226,11 +246,12 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 
 	return opsiValues
 
-
+#TODO: deprecated (4.2.0.1 at 05.06.2020) - dellexpresscode.exe from lazarus now integrated in hwaudit.py
 def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
+	logger.warning("use of deprecated function getHardwareInformationFromExecuteCommand")
 	from OPSI.System.Windows import execute
 
-	regex = re.compile("^#(?P<cmd>.*)#(?P<extend>.*)$")
+	regex = re.compile(r"^#(?P<cmd>.*)#(?P<extend>.*)$")
 	for oneClass in conf:
 		if not oneClass.get('Class') or not oneClass['Class'].get('Opsi'):
 			continue
@@ -259,13 +280,13 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 
 			match = re.search(regex, cmdline)
 			if not match:
-				logger.error(u"Bad Cmd entry '%s'" % cmdline)
+				logger.error(u"Bad Cmd entry '%s'", cmdline)
 				continue
 			matchresult = match.groupdict()
 			executeCommand = matchresult.get("cmd")
 			extend = matchresult.get("extend")
 
-			logger.info(u"Executing: %s" % executeCommand)
+			logger.info(u"Executing: %s", executeCommand)
 			value = ''
 			try:
 				result = execute(executeCommand)
@@ -274,7 +295,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 					value = eval("res%s" % extend)
 			except Exception as error:
 				logger.logException(error)
-				logger.error("Failed to execute command: '%s' error: '%s'" % (executeCommand, error))
+				logger.error("Failed to execute command: '%s' error: '%s'", executeCommand, error)
 				continue
 
 			if isinstance(value, bytes):
@@ -288,7 +309,21 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
 
 	return opsiValues
 
-def numstring2Dec(numstring, base=36):
+def numstring2Dec(numstring: str, base: int = 36) -> int:
+	"""
+	Comutes decimal representation.
+
+	This method takes a number string containing digits and letters
+	which is interpreted as a base <something> (default 36) number.
+	A decimal representation is computed and returned.
+
+	:param numstring: Input number in base <something> system. e.g. '123xyz'.
+	:type numstring: str
+	:param base: Base of the number system (default 36).
+	:type base: int
+
+	:returns: Decimal representation of the input.
+	"""
 	if numstring is None:
 		return None
 	result = 0
@@ -301,12 +336,27 @@ def numstring2Dec(numstring, base=36):
 		multiplier *= base
 	return result
 
-def getWMIProperty(key, table, condition=None):
+def getWMIProperty(key: str, table: str, condition: str = None) -> str:
+	"""
+	Retrieves WMI properties.
+
+	This method gets a key which it tries to query from an also given
+	table with an optional condition.
+
+	:param key: This key should be retrieved from a table in WMI.
+	:type key: str
+	:param table: The key is queried from this table.
+	:type table: str
+	:param condition: If provided this condition is tested in the query.
+	:type condition: str
+
+	:returns: value containing the reply on the query.
+	"""
 	wmiObj = wmi.WMI()
 	wmiQuery = f"Select {key} from {table}"
-	logger.info(f"performing query: {wmiQuery}")
 	if not condition is None:
 		wmiQuery = wmiQuery.join(" where ").join(condition)
+	logger.info("performing query: %s", wmiQuery)
 	reply = wmiObj.query(wmiQuery)
 	if len(reply) == 0:
 		return None
@@ -317,6 +367,17 @@ def getWMIProperty(key, table, condition=None):
 	return None
 
 def getDellExpressCode(conf, opsiValues={}):
+	"""
+	Extracts the DELL expresscode.
+
+	This method queries WMI for the Manufacturer. If it is DELL,
+	the DELL expresscode is queried, converted to decimal and stored.
+
+	:param conf: Config extracted from the backend.
+	:param opsiValues: Dictionary containing the results of the audit.
+
+	:returns: Dictionary containing the results of the audit.
+	"""
 	tasks = [('Manufacturer', 'Win32_ComputerSystem')]
 	tasks.append(('SerialNumber', 'Win32_SystemEnclosure'))
 	reply = []
@@ -345,6 +406,12 @@ def getDellExpressCode(conf, opsiValues={}):
 	return opsiValues
 
 def makehwaudit():
+	"""
+	Performs a hardware audit.
+
+	This method extracts information about the hardware from the backend config,
+	WMI and the registry. The results are sent to and stored at the backend.
+	"""
 	if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
 		logDir = os.path.join('C:', 'opsi.org', 'log')
 	else:
@@ -382,7 +449,7 @@ def makehwaudit():
 	logger.setLogFile(opts.logFile)
 	logger.setFileLevel(LOG_DEBUG2)
 
-	logger.notice("starting hardware audit (script version {})", __version__)
+	logger.notice("starting hardware audit (script version %s)", __version__)
 
 	address = opts.address
 	if address.startswith(u"https://"):
@@ -398,7 +465,7 @@ def makehwaudit():
 	if not (username and host_id):
 		raise RuntimeError("Host id and username not set")
 
-	logger.notice(u"Connecting to service at '{}' as '{}'", address, username)
+	logger.notice(u"Connecting to service at '%s' as '%s'", address, username)
 
 	backendConfig = dict(
 		username=username,
@@ -427,7 +494,7 @@ def makehwaudit():
 			values = getDellExpressCode(config, values)
 
 
-			logger.info(u"Hardware information from WMI:\n%s" % objectToBeautifiedText(values))
+			logger.info(u"Hardware information from WMI:\n%s", objectToBeautifiedText(values))
 			auditHardwareOnHosts = []
 			for hardwareClass, devices in values.items():
 				if hardwareClass == 'SCANPROPERTIES':

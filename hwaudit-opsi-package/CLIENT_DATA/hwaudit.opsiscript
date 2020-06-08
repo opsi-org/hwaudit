@@ -16,9 +16,9 @@ DefVar $tempdir$
 DefVar $taillines$
 DefVar $force_install$
 DefVar $copy_option$
-DefVar $hwaudit$
 DefVar $INST_NTVersion$
 DefVar $systemtype$
+DefVar $OCD_DIST_DIR$
 
 set $tempdir$ = "%Systemdrive%\opsi.org\tmp"
 set $ProductId$ = "hwaudit"
@@ -33,16 +33,16 @@ set $systemtype$ = GetSystemType
 set $INST_NTVersion$ = GetMsVersionInfo
 
 Switch $systemtype$
-        Case "x86 System"
-                set $hwaudit$ = "hwaudit.exe"
-        Endcase
-        Case "64 Bit System"
-                set $hwaudit$ = "hwaudit-x64.exe"
-        Endcase
-        DefaultCase
-        	comment "Systemtype " + $systemtype$ + " not known. Trying 32Bit for luck"
-        	set $hwaudit$ = "hwaudit.exe"
-        Endcase
+	Case "x86 System"
+		set $OCD_DIST_DIR$ = "dist.32bit"
+	Endcase
+;	Case "64 Bit System"
+;		set $OCD_DIST_DIR$ = "dist.64bit"
+;	Endcase
+	DefaultCase
+		comment "Systemtype " + $systemtype$ + " not known. Trying 32Bit for luck"
+		set $OCD_DIST_DIR$ = "dist.32bit"
+	Endcase
 Endswitch
 
 Message "Running hardware audit..."
@@ -59,25 +59,25 @@ changeDirectory $tempdir$ + "\hwaudit"
 comment "$timeout$ = " +  $timeout$
 Switch $timeout$
 	Case "90"
-		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 90
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
 	EndCase
 	Case "300"
-		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 300
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 300
 	EndCase
 	Case "600"
-		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 600
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 600
 	EndCase
 	Case "notimeout"
-		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe"
 	EndCase
 	DefaultCase
 		comment "default 90"
-		Winbatch_hwaudit /WaitForProcessEnding $hwaudit$ /TimeOutSeconds 90
+		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
 	EndCase
 EndSwitch
 
 set $exitcode$ = getLastExitCode
-killtask $hwaudit$
+killtask "hwaudit.exe"
 
 if not (FileExists("%SCRIPTPATH%"))
 	DosInAnIcon_TryToReconnect
@@ -93,12 +93,12 @@ if not (($exitcode$ = "0") or ($exitcode$ = "259"))
 endif
 
 [Files_copy_hwaudit]
-copy $copy_option$ "%SCRIPTPATH%\files\$hwaudit$" "$tempdir$\hwaudit\"
+copy $copy_option$ "%SCRIPTPATH%\$OCD_DIST_DIR$\*.*" "$tempdir$\hwaudit"
 copy $copy_option$ "%SCRIPTPATH%\common\*.*" "$tempdir$\hwaudit\"
 del "$logfile$"
 
 [winbatch_hwaudit]
-"$tempdir$\hwaudit\$hwaudit$" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
+"$tempdir$\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
 
 [DosInAnIcon_TryToReconnect]
 net use

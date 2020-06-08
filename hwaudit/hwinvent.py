@@ -11,7 +11,7 @@ __version__ = "4.2.0.1"
 
 logger = Logger()
 
-def main(argv):
+def makehwaudit():
 	if os.path.exists("/var/log/opsi"):
 		logDir = os.path.join('/var/log/opsi')
 	else:
@@ -90,15 +90,5 @@ def main(argv):
 		logger.notice(u"Sending hardware information to service")
 		backend.auditHardwareOnHost_createObjects(auditHardwareOnHosts)
 
-
-if __name__ == "__main__":
-	logger.setConsoleLevel(LOG_ERROR)
-	try:
-		main(sys.argv[1:])
-	except Exception as error:
-		logger.logException(error)
-		sys.exit(1)
-
-
-logger.notice(u"Initiating reboot")
-reboot()
+		logger.notice(u"Initiating reboot")
+		reboot()
