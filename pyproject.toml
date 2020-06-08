@@ -12,11 +12,11 @@ url = "http://pypi.uib.gmbh:8080/simple/"
 [tool.poetry.dependencies]
 python = ">=3.6, <3.8"
 argparse = "^1.4.0"
-pywin32 = "^227"
-wmi = "^1.5.1"
 opsi-dev-tools = "^1.0.6"
 python-opsi = "^4.2.0"
-mysqlclient = {path = "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"}
+pywin32 = { version = "^227", platform = "Windows" }
+wmi  = { version = "^1.5.1", platform = "Windows" }
+mysqlclient = {path = "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl", platform = "Windows"}
 
 [tool.poetry.scripts]
 hwaudit = "hwaudit.__main__:main"
