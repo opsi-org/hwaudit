@@ -90,13 +90,13 @@ def main():
 	"""
 	RUNS_ON_WINDOWS = sys.platform in ('nt', 'win32')
 	if RUNS_ON_WINDOWS:
-		from .hwaudit import makehwaudit
+		from .hwaudit_windows import makehwaudit
 		if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
 			log_dir = os.path.join('C:', 'opsi.org', 'log')
 		else:
 			log_dir = os.path.join('C:', 'tmp')
 	else:
-		from .hwinvent import makehwaudit
+		from .hwaudit_posix import makehwaudit
 		if os.path.exists("/var/log/opsi"):
 			log_dir = os.path.join('/var/log/opsi')
 		else:
