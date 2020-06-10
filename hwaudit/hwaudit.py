@@ -3,6 +3,7 @@
 import re
 import wmi
 import pywintypes
+from typing import Dict
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Util import objectToBeautifiedText
