@@ -7,8 +7,9 @@ from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 from . import __version__
 
+logger = Logger()
+
 def initAudit(logFile):
-	logger = Logger()
 	parser = argparse.ArgumentParser(
 		description="Perform hardware audit on a client and sent the result to an opsi server.",
 		add_help=False
@@ -64,7 +65,7 @@ def initAudit(logFile):
 		application='opsi hwaudit %s' % __version__,
 		host_id=host_id						# introduced
 	)
-	return backendConfig, logger
+	return backendConfig
 
 def main():
 	RUNS_ON_WINDOWS = sys.platform in ('nt', 'win32')
@@ -82,8 +83,8 @@ def main():
 			log_dir = os.path.join('/var/log')
 	log_file = os.path.join(log_dir, 'hwaudit.log')
 
-	backendConfig, logger = initAudit(log_file)
-	makehwaudit(backendConfig, logger)
+	backendConfig = initAudit(log_file)
+	makehwaudit(backendConfig)
 	logger.notice(u"Exiting...")
 
 if __name__ == "__main__":

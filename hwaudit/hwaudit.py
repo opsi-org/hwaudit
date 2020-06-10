@@ -14,7 +14,10 @@ from OPSI.Types import (
 from .windows_values import VALUE_MAPPING
 from . import __version__
 
-def getHardwareInformationFromWMI(conf, logger):
+from OPSI.Logger import Logger
+logger = Logger()
+
+def getHardwareInformationFromWMI(conf):
 	"""
 	Extracts hardware information from WMI.
 
@@ -172,7 +175,7 @@ def getHardwareInformationFromWMI(conf, logger):
 	return opsiValues
 
 
-def getHardwareInformationFromRegistry(conf, opsiValues, logger):
+def getHardwareInformationFromRegistry(conf, opsiValues):
 	"""
 	Extracts hardware information from the registry.
 
@@ -238,7 +241,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues, logger):
 	return opsiValues
 
 #TODO: deprecated (4.2.0.1 at 05.06.2020) - dellexpresscode.exe from lazarus now integrated in hwaudit.py
-def getHardwareInformationFromExecuteCommand(conf, opsiValues, logger):
+def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 	logger.warning("use of deprecated function getHardwareInformationFromExecuteCommand")
 	from OPSI.System.Windows import execute
 
@@ -327,7 +330,7 @@ def numstring2Dec(numstring: str, base: int = 36) -> int:
 		multiplier *= base
 	return result
 
-def getWMIProperty(logger, key: str, table: str, condition: str = None) -> str:
+def getWMIProperty(key: str, table: str, condition: str = None) -> str:
 	"""
 	Retrieves WMI properties.
 
@@ -357,7 +360,7 @@ def getWMIProperty(logger, key: str, table: str, condition: str = None) -> str:
 			return prop.Value
 	return None
 
-def getDellExpressCode(conf, opsiValues, logger):
+def getDellExpressCode(conf, opsiValues):
 	"""
 	Extracts the DELL expresscode.
 
@@ -373,7 +376,7 @@ def getDellExpressCode(conf, opsiValues, logger):
 	tasks.append(('SerialNumber', 'Win32_SystemEnclosure'))
 	reply = []
 	for task in tasks:
-		reply.append(getWMIProperty(logger, task[0], task[1]))
+		reply.append(getWMIProperty(task[0], task[1]))
 
 	#reply[0] = "asdfDEllasdf"
 	#reply[1] = "2y4955j"
@@ -396,7 +399,7 @@ def getDellExpressCode(conf, opsiValues, logger):
 					logger.notice(f"stored dellexpresscode {value}")
 	return opsiValues
 
-def makehwaudit(backendConfig, logger):
+def makehwaudit(backendConfig):
 	"""
 	Performs a hardware audit.
 
@@ -410,16 +413,16 @@ def makehwaudit(backendConfig, logger):
 		config = backend.auditHardware_getConfig()
 
 		logger.notice(u"Fetching hardware information from WMI")
-		values = getHardwareInformationFromWMI(config, logger)
+		values = getHardwareInformationFromWMI(config)
 
 		logger.notice(u"Fetching hardware information from Registry")
-		values = getHardwareInformationFromRegistry(config, values, logger)
+		values = getHardwareInformationFromRegistry(config, values)
 
 		#logger.notice("Fetching hardware information from Executing Command")
-		#values = getHardwareInformationFromExecuteCommand(config, values, logger)
+		#values = getHardwareInformationFromExecuteCommand(config, values)
 
 		logger.notice("Extracting dellexpresscode (if any)")
-		values = getDellExpressCode(config, values, logger)
+		values = getDellExpressCode(config, values)
 
 
 		logger.info(u"Hardware information from WMI:\n%s", objectToBeautifiedText(values))
