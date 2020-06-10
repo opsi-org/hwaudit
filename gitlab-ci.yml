@@ -1,0 +1,22 @@
+image: python:3.7-stretch
+
+stages:
+  - build
+  - package
+
+build:linux-pyinstaller:
+  stage: build
+  script:
+    - apt -y install curl
+    - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
+    - source $HOME/.poetry/env
+    - poetry install
+    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - mv hwaudit hwaudit.src
+    - cd dist/hwaudit
+    - tar czvf ../../hwaudit_binaries.tar.gz .
+  artifacts:
+    name: 'hwaudit-linux-pyinstaller'
+    paths:
+      - hwaudit_binaries.tar.gz
+    expire_in: 2 day
