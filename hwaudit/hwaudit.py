@@ -399,12 +399,15 @@ def getDellExpressCode(conf, opsiValues):
 					logger.notice(f"stored dellexpresscode {value}")
 	return opsiValues
 
-def makehwaudit(backendConfig):
+def makehwaudit(backendConfig: Dict[str, str]) -> None:
 	"""
 	Performs a hardware audit.
 
 	This method extracts information about the hardware from the backend config,
 	WMI and the registry. The results are sent to and stored at the backend.
+
+	:param backendConfig: Dictionary containing the configuration of the backend.
+	:type backendConfig: dict
 	"""
 	with JSONRPCBackend(**backendConfig) as backend:
 		logger.notice(u"Connected to opsi server")

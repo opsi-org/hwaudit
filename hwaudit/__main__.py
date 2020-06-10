@@ -1,6 +1,7 @@
 import sys
 import os
 import argparse
+from typing import Dict
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
@@ -9,7 +10,19 @@ from . import __version__
 
 logger = Logger()
 
-def initAudit(logFile):
+def initAudit(logFile: str) -> Dict[str, str]:
+	"""
+	Initialize hardware audit.
+
+	This method parses command line arguments and extracts username, password,
+	host id, address and logfile. Results are wrapped in a dictionary and
+	returned. If --help or --version are specified, it reacts accordingly.
+
+	:param logFile: Default logfile that is used if nothing is specified in args.
+	:type logFile: str
+
+	:returns: Dictionary containing the configuration for the backend access.
+	"""
 	parser = argparse.ArgumentParser(
 		description="Perform hardware audit on a client and sent the result to an opsi server.",
 		add_help=False
@@ -68,6 +81,13 @@ def initAudit(logFile):
 	return backendConfig
 
 def main():
+	"""
+	Main method for hwaudit.
+
+	This method controls the execution flow. Depending on the
+	architecture/platform, different methods are important and called
+	to perform the Hardware Audit.
+	"""
 	RUNS_ON_WINDOWS = sys.platform in ('nt', 'win32')
 	if RUNS_ON_WINDOWS:
 		from .hwaudit import makehwaudit
