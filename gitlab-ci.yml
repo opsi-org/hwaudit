@@ -14,7 +14,7 @@ build:linux-pyinstaller:
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
     - mv hwaudit hwaudit.src
     - cd dist/hwaudit
-    - tar czvf ../../hwaudit_binaries.tar.gz .
+    - tar -czvf ../../hwaudit_binaries.tar.gz .
   artifacts:
     name: 'hwaudit-linux-pyinstaller'
     paths:
