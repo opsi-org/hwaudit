@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import argparse
-import os
 import re
-import sys
-
-if os.name == "nt":
-	import wmi
-	import pywintypes
+import wmi
+import pywintypes
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Util import objectToBeautifiedText
@@ -15,15 +10,11 @@ from OPSI.Object import AuditHardwareOnHost
 from OPSI.Types import (
 	forceHardwareDeviceId, forceHardwareVendorId, forceInt, forceList,
 	forceUnicode, forceUnicodeList)
-from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
 from .windows_values import VALUE_MAPPING
-__version__ = "4.2.0.2"
+from . import __version__
 
-logger = Logger()
-
-
-def getHardwareInformationFromWMI(conf):
+def getHardwareInformationFromWMI(conf, logger):
 	"""
 	Extracts hardware information from WMI.
 
@@ -181,7 +172,7 @@ def getHardwareInformationFromWMI(conf):
 	return opsiValues
 
 
-def getHardwareInformationFromRegistry(conf, opsiValues={}):
+def getHardwareInformationFromRegistry(conf, opsiValues, logger):
 	"""
 	Extracts hardware information from the registry.
 
@@ -247,7 +238,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues={}):
 	return opsiValues
 
 #TODO: deprecated (4.2.0.1 at 05.06.2020) - dellexpresscode.exe from lazarus now integrated in hwaudit.py
-def getHardwareInformationFromExecuteCommand(conf, opsiValues={}):
+def getHardwareInformationFromExecuteCommand(conf, opsiValues, logger):
 	logger.warning("use of deprecated function getHardwareInformationFromExecuteCommand")
 	from OPSI.System.Windows import execute
 
@@ -336,7 +327,7 @@ def numstring2Dec(numstring: str, base: int = 36) -> int:
 		multiplier *= base
 	return result
 
-def getWMIProperty(key: str, table: str, condition: str = None) -> str:
+def getWMIProperty(logger, key: str, table: str, condition: str = None) -> str:
 	"""
 	Retrieves WMI properties.
 
@@ -366,7 +357,7 @@ def getWMIProperty(key: str, table: str, condition: str = None) -> str:
 			return prop.Value
 	return None
 
-def getDellExpressCode(conf, opsiValues={}):
+def getDellExpressCode(conf, opsiValues, logger):
 	"""
 	Extracts the DELL expresscode.
 
@@ -382,7 +373,7 @@ def getDellExpressCode(conf, opsiValues={}):
 	tasks.append(('SerialNumber', 'Win32_SystemEnclosure'))
 	reply = []
 	for task in tasks:
-		reply.append(getWMIProperty(task[0], task[1]))
+		reply.append(getWMIProperty(logger, task[0], task[1]))
 
 	#reply[0] = "asdfDEllasdf"
 	#reply[1] = "2y4955j"
@@ -405,114 +396,45 @@ def getDellExpressCode(conf, opsiValues={}):
 					logger.notice(f"stored dellexpresscode {value}")
 	return opsiValues
 
-def makehwaudit():
+def makehwaudit(backendConfig, logger):
 	"""
 	Performs a hardware audit.
 
 	This method extracts information about the hardware from the backend config,
 	WMI and the registry. The results are sent to and stored at the backend.
 	"""
-	if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
-		logDir = os.path.join('C:', 'opsi.org', 'log')
-	else:
-		logDir = os.path.join('C:', 'tmp')
-
-	logFile = os.path.join(logDir, 'hwaudit.log')
-
-	parser = argparse.ArgumentParser(
-		description="Perform hardware audit on a client and sent the result to an opsi server.",
-		add_help=False
-	)
-	parser.add_argument('--help', action="store_true", help="Display help.")
-	parser.add_argument('--version', action='version', version=__version__)
-	parser.add_argument(
-		'--log-level', '--loglevel', '-l', default=LOG_ERROR,
-		dest="logLevel", type=int, choices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-		help="Set the desired loglevel."
-	)
-	parser.add_argument('--log-file', '-f', dest="logFile", default=logFile, help="Path to file where debug logs will be written.")
-	parser.add_argument('--hostid', '-h', help="Hostid that will be used. If nothing is set the value from --username will be used.")
-	parser.add_argument('--username', '-u', help="Username to connect to the service. If nothing is set the value from --hostid will be used.")
-	parser.add_argument('--password', '-p', required=True, help="Password for authentication")
-	parser.add_argument('--address', '-a', required=True, help="Address to connect to. Example: https://server.domain.local:4447")
-
-	opts = parser.parse_args()
-
-	if opts.help:
-		parser.print_help()
-		sys.exit(0)
-
-	password = opts.password
-
-	logger.addConfidentialString(password)
-	logger.setConsoleLevel(opts.logLevel)
-	logger.setLogFile(opts.logFile)
-	logger.setFileLevel(LOG_DEBUG2)
-
-	logger.notice("starting hardware audit (script version %s)", __version__)
-
-	address = opts.address
-	if address.startswith(u"https://"):
-		address = address + u"/rpc"
-
-	if not address:
-		logger.critical(u"Address not set")
-		raise RuntimeError("Address not set")
-
-	host_id = opts.hostid or opts.username
-	username = opts.username or opts.hostid
-
-	if not (username and host_id):
-		raise RuntimeError("Host id and username not set")
-
-	logger.notice(u"Connecting to service at '%s' as '%s'", address, username)
-
-	backendConfig = dict(
-		username=username,
-		password=password,
-		address=address,
-		application='opsi hwaudit %s' % __version__
-	)
-
 	with JSONRPCBackend(**backendConfig) as backend:
 		logger.notice(u"Connected to opsi server")
 
 		logger.notice(u"Fetching opsi hw audit configuration")
 		config = backend.auditHardware_getConfig()
 
-		if os.name == "nt":
-			logger.notice(u"Fetching hardware information from WMI")
-			values = getHardwareInformationFromWMI(config)
+		logger.notice(u"Fetching hardware information from WMI")
+		values = getHardwareInformationFromWMI(config, logger)
 
-			logger.notice(u"Fetching hardware information from Registry")
-			values = getHardwareInformationFromRegistry(config, values)
+		logger.notice(u"Fetching hardware information from Registry")
+		values = getHardwareInformationFromRegistry(config, values, logger)
 
-			#logger.notice("Fetching hardware information from Executing Command")
-			#values = getHardwareInformationFromExecuteCommand(config, values)
+		#logger.notice("Fetching hardware information from Executing Command")
+		#values = getHardwareInformationFromExecuteCommand(config, values, logger)
 
-			logger.notice("Extracting dellexpresscode (if any)")
-			values = getDellExpressCode(config, values)
+		logger.notice("Extracting dellexpresscode (if any)")
+		values = getDellExpressCode(config, values, logger)
 
 
-			logger.info(u"Hardware information from WMI:\n%s", objectToBeautifiedText(values))
-			auditHardwareOnHosts = []
-			for hardwareClass, devices in values.items():
-				if hardwareClass == 'SCANPROPERTIES':
-					continue
+		logger.info(u"Hardware information from WMI:\n%s", objectToBeautifiedText(values))
+		auditHardwareOnHosts = []
+		for hardwareClass, devices in values.items():
+			if hardwareClass == 'SCANPROPERTIES':
+				continue
 
-				for device in devices:
-					data = {str(attribute): value for attribute, value in device.items()}
-					data['hardwareClass'] = hardwareClass
-					data['hostId'] = host_id
-
-					auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
-		else:
-			logger.notice(u"Running hardware inventory")
-			auditHardwareOnHosts = auditHardware(config = config, hostId = username)
+			for device in devices:
+				data = {str(attribute): value for attribute, value in device.items()}
+				data['hardwareClass'] = hardwareClass
+				data['hostId'] = backendConfig.get('host_id')
+				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
 
 		logger.info(u"Obsoleting old hardware audit data")
-		backend.auditHardwareOnHost_setObsolete(host_id)
+		backend.auditHardwareOnHost_setObsolete(backendConfig.get('host_id'))
 		logger.notice(u"Sending hardware information to service")
 		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
-
-	logger.notice(u"Exiting...")
