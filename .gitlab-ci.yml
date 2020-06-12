@@ -25,10 +25,9 @@ build:windows-pyinstaller:
   stage: build
   script:
     - pip install poetry
-    - Get-Content pyproject.toml | %{ $_ -Replace '"^mysqlclient = .*"', 'mysqlclient = {path = "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"}' } | Out-File -Encoding ASCII "pyproject.tmp"
-    - Move-Item -Path "pyproject.tmp" -Destination "pyproject.toml" -Force
-    - Get-Content pyproject.toml
     - poetry install
+    - poetry remove mysqlclient
+    - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
     - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
     - Move-Item -Path opsiclientd -Destination opsiclientd.src -Force
     - Move-Item -Path dist\opsiclientd -Destination opsiclientd
