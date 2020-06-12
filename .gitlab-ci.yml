@@ -26,11 +26,11 @@ build:windows-pyinstaller:
   tags:
     - win10
   script:
-    - Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.7/python-3.7.7.exe" -OutFile ".\python-3.7.7.exe"
+    #- Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.7/python-3.7.7.exe" -OutFile ".\python-3.7.7.exe"
     #- Set-ExecutionPolicy -Scope CurrentUser -Force Unrestricted 
-    - .\python-3.7.7.exe InstallAllUsers=0 PrependPath=1 DefaultJustForMeTargetDir=.\python
+    #- .\python-3.7.7.exe InstallAllUsers=0 PrependPath=1 DefaultJustForMeTargetDir=.\python
     - pip install poetry
-    - poetry env use .\python\python.exe
+    #- poetry env use .\python\python.exe
     - poetry remove mysqlclient
     - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
     - poetry update
