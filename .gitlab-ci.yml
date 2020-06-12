@@ -23,7 +23,7 @@ build:linux-pyinstaller:
 
 build:windows-pyinstaller:
   stage: build
-    tags:
+  tags:
     - win10
   script:
     -  wget "https://www.python.org/ftp/python/3.7.7/python-3.7.7.exe"
