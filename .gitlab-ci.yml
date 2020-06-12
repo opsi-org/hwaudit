@@ -24,15 +24,19 @@ build:linux-pyinstaller:
 build:windows-pyinstaller:
   stage: build
   script:
+    - Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.7/python-3.7.7.exe" -OutFile ".\python-3.7.7.exe"
+    - Set-ExecutionPolicy -Scope CurrentUser -Force Unrestricted 
+    - .\python-3.7.7.exe InstallAllUsers=0 PrependPath=1 DefaultJustForMeTargetDir=.\python
     - pip install poetry
-    - poetry install
+    - poetry env use .\python\python.exe
     - poetry remove mysqlclient
     - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
+    - poetry update
     - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
-    - Move-Item -Path opsiclientd -Destination opsiclientd.src -Force
-    - Move-Item -Path dist\opsiclientd -Destination opsiclientd
+    - Move-Item -Path hwaudit -Destination hwaudit.src -Force
+    - Move-Item -Path dist\hwaudit -Destination hwaudit
   artifacts:
-    name: 'opsiclientd-windows-pyinstaller'
+    name: 'hwaudit-windows-pyinstaller'
     paths:
-      - opsiclientd
+      - hwaudit
     expire_in: 2 day
