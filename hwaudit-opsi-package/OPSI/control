@@ -8,7 +8,7 @@ id: hwaudit
 name: Client Hardwareinventarisierung
 description: Hardwareinventarisierung auf Basis von WMI / Registry.
 advice: 
-version: 4.2.0.1
+version: 4.2.0.2
 priority: 0
 licenseRequired: False
 productClasses: 

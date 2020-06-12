@@ -1,24 +1,28 @@
-#
-# This script requires opsi >= 4.0
-#
-
+import sys
+import os
 import argparse
+from typing import Dict
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
 
-__version__ = "4.2.0.1"
+from . import __version__
 
 logger = Logger()
 
-def main(argv):
-	if os.path.exists("/var/log/opsi"):
-		logDir = os.path.join('/var/log/opsi')
-	else:
-		logDir = os.path.join('/var/log')
+def initAudit(logFile: str) -> Dict[str, str]:
+	"""
+	Initialize hardware audit.
 
-	logFile = os.path.join(logDir, 'hwaudit.log')
+	This method parses command line arguments and extracts username, password,
+	host id, address and logfile. Results are wrapped in a dictionary and
+	returned. If --help or --version are specified, it reacts accordingly.
 
+	:param logFile: Default logfile that is used if nothing is specified in args.
+	:type logFile: str
+
+	:returns: Dictionary containing the configuration for the backend access.
+	"""
 	parser = argparse.ArgumentParser(
 		description="Perform hardware audit on a client and sent the result to an opsi server.",
 		add_help=False
@@ -71,34 +75,37 @@ def main(argv):
 		username=username,
 		password=password,
 		address=address,
-		application='opsi hwaudit %s' % __version__
+		application='opsi hwaudit %s' % __version__,
+		host_id=host_id						# introduced
 	)
+	return backendConfig
 
-	with JSONRPCBackend(**backendConfig) as backend:
-		logger.notice(u"Connected to opsi server")
+def main():
+	"""
+	Main method for hwaudit.
 
-		# Do hardware inventory
-		logger.notice(u"Fetching opsi hw audit configuration")
-		config = backend.auditHardware_getConfig()
+	This method controls the execution flow. Depending on the
+	architecture/platform, different methods are important and called
+	to perform the Hardware Audit.
+	"""
+	RUNS_ON_WINDOWS = sys.platform in ('nt', 'win32')
+	if RUNS_ON_WINDOWS:
+		from .hwaudit_windows import makehwaudit
+		if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
+			log_dir = os.path.join('C:', 'opsi.org', 'log')
+		else:
+			log_dir = os.path.join('C:', 'tmp')
+	else:
+		from .hwaudit_posix import makehwaudit
+		if os.path.exists("/var/log/opsi"):
+			log_dir = os.path.join('/var/log/opsi')
+		else:
+			log_dir = os.path.join('/var/log')
+	log_file = os.path.join(log_dir, 'hwaudit.log')
 
-		logger.notice(u"Running hardware inventory")
-		auditHardwareOnHosts = auditHardware(config = config, hostId = username)
-
-		logger.notice(u"Marking hardware information as obsolete")
-		backend.auditHardwareOnHost_setObsolete(username)
-
-		logger.notice(u"Sending hardware information to service")
-		backend.auditHardwareOnHost_createObjects(auditHardwareOnHosts)
-
+	backendConfig = initAudit(log_file)
+	makehwaudit(backendConfig)
+	logger.notice(u"Exiting...")
 
 if __name__ == "__main__":
-	logger.setConsoleLevel(LOG_ERROR)
-	try:
-		main(sys.argv[1:])
-	except Exception as error:
-		logger.logException(error)
-		sys.exit(1)
-
-
-logger.notice(u"Initiating reboot")
-reboot()
+	main()

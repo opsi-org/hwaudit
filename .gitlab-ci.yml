@@ -1,0 +1,44 @@
+image: python:3.7-stretch
+
+stages:
+  - build
+  - package
+
+build:linux-pyinstaller:
+  stage: build
+  script:
+    - apt -y install curl
+    - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
+    - source $HOME/.poetry/env
+    - poetry install
+    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - mv hwaudit hwaudit.src
+    - cd dist/hwaudit
+    - tar -czvf ../../hwaudit_binaries.tar.gz .
+  artifacts:
+    name: 'hwaudit-linux-pyinstaller'
+    paths:
+      - hwaudit_binaries.tar.gz
+    expire_in: 2 day
+
+build:windows-pyinstaller:
+  stage: build
+  tags:
+    - win10
+  script:
+    - pip install poetry
+    #- Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.7/python-3.7.7.exe" -OutFile ".\python-3.7.7.exe"
+    #- Set-ExecutionPolicy -Scope CurrentUser -Force Unrestricted 
+    #- .\python-3.7.7.exe InstallAllUsers=0 PrependPath=1 DefaultJustForMeTargetDir=.\python
+    #- poetry env use .\python\python.exe
+    - poetry remove mysqlclient
+    - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
+    - poetry update
+    - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
+    - Move-Item -Path hwaudit -Destination hwaudit.src -Force
+    - Move-Item -Path dist\hwaudit -Destination hwaudit
+  artifacts:
+    name: 'hwaudit-windows-pyinstaller'
+    paths:
+      - hwaudit
+    expire_in: 2 day

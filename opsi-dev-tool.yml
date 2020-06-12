@@ -1,0 +1,28 @@
+pyinstaller-poetry:
+  update_version_in:
+    - hwaudit/__init__.py
+  one_file: no
+  hidden_imports:
+    all: []
+    windows:
+      - win32api
+    linux: []
+    darwin: []
+  scripts:
+    - script: run-hwaudit
+      binaries:
+        - hwaudit
+  before_script:
+    linux: []
+    darwin: []
+    windows: []
+  data_files: []
+  dirname: hwaudit
+  locale_install: []
+  after_script:
+    linux: []
+    darwin: []
+    windows: []
+changelog:
+  4.2.0.2: 
+    - created this file
