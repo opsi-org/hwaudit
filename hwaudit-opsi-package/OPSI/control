@@ -25,7 +25,7 @@ type: unicode
 name: timeout
 multivalue: False
 editable: False
-description: TimeOutSeconds hwaudit.exe
+description: TimeOutSeconds hwaudit
 values: ["300", "600", "90", "notimeout"]
 default: ["90"]
 
@@ -63,6 +63,12 @@ description: Should we always reinstall the hwaudit software
 default: False
 
 [Changelog]
+hwaudit (4.2.0.2-1) experimental; urgency=low
+
+  * new implementation unifying hwaudit and hwinvent
+
+ -- Nils Doerrer <n.doerrer@uib.de> Fri, 12 Jun 2020 17:09:24 +0200
+
 hwaudit (4.2.0.1-1) experimental; urgency=low
 
   * new hwaudit implementation based on python 3.7 and opsi4.2 nightly
