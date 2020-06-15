@@ -13,8 +13,8 @@ build:linux-pyinstaller:
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
     - mv hwaudit hwaudit.src
-    - cd dist/hwaudit
-    - tar -czvf ../../hwaudit_binaries.tar.gz .
+    - cd dist
+    - tar -czvf ../hwaudit_binaries.tar.gz .
   artifacts:
     name: 'hwaudit-linux-pyinstaller'
     paths:
@@ -36,7 +36,7 @@ build:windows-pyinstaller:
     - poetry update
     - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
     - Move-Item -Path hwaudit -Destination hwaudit.src -Force
-    - Move-Item -Path dist\hwaudit -Destination hwaudit
+    - Move-Item -Path dist\ -Destination hwaudit
   artifacts:
     name: 'hwaudit-windows-pyinstaller'
     paths:
