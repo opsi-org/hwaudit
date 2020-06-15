@@ -91,16 +91,16 @@ def main():
 	RUNS_ON_WINDOWS = sys.platform in ('nt', 'win32')
 	if RUNS_ON_WINDOWS:
 		from .hwaudit_windows import makehwaudit
-		if os.path.exists(os.path.join('C:', 'opsi.org', 'log')):
-			log_dir = os.path.join('C:', 'opsi.org', 'log')
+		if os.path.exists('C:\opsi.org\log'):
+			log_dir = 'C:\opsi.org\log'
 		else:
-			log_dir = os.path.join('C:', 'tmp')
+			log_dir = 'C:\opsi.org\tmp'
 	else:
 		from .hwaudit_posix import makehwaudit
 		if os.path.exists("/var/log/opsi"):
-			log_dir = os.path.join('/var/log/opsi')
+			log_dir = '/var/log/opsi'
 		else:
-			log_dir = os.path.join('/var/log')
+			log_dir = '/var/log'
 	log_file = os.path.join(log_dir, 'hwaudit.log')
 
 	backendConfig = initAudit(log_file)
