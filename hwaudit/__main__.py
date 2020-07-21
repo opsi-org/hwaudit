@@ -51,7 +51,7 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	logger.addConfidentialString(password)
 	logger.setConsoleLevel(opts.logLevel)
 	logger.setLogFile(opts.logFile)
-	logger.setFileLevel(LOG_DEBUG2)
+	logger.setFileLevel(opts.logLevel)
 
 	logger.notice("starting hardware audit (script version {})", __version__)
 
