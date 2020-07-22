@@ -53,7 +53,7 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	logger.setLogFile(opts.logFile)
 	logger.setFileLevel(opts.logLevel)
 
-	logger.notice("starting hardware audit (script version {})", __version__)
+	logger.notice("starting hardware audit (script version %s)", __version__)
 
 	address = opts.address
 	if address.startswith(u"https://"):
@@ -69,7 +69,7 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	if not (username and host_id):
 		raise RuntimeError("Host id and username not set")
 
-	logger.notice(u"Connecting to service at '{}' as '{}'", address, username)
+	logger.notice(u"Connecting to service at '%s' as '%s'", address, username)
 
 	backendConfig = dict(
 		username=username,
