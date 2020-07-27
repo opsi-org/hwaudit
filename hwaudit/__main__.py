@@ -4,11 +4,10 @@ import argparse
 from typing import Dict
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
-from OPSI.Logger import Logger, LOG_ERROR, LOG_DEBUG2
+import opsicommon.logging
+from opsicommon.logging import logger
 
 from . import __version__
-
-logger = Logger()
 
 def initAudit(logFile: str) -> Dict[str, str]:
 	"""
@@ -30,7 +29,7 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	parser.add_argument('--help', action="store_true", help="Display help.")
 	parser.add_argument('--version', action='version', version=__version__)
 	parser.add_argument(
-		'--log-level', '--loglevel', '-l', default=LOG_ERROR,
+		'--log-level', '--loglevel', '-l', default=opsicommon.logging.LOG_ERROR,
 		dest="logLevel", type=int, choices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 		help="Set the desired loglevel."
 	)
@@ -49,9 +48,10 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	password = opts.password
 
 	logger.addConfidentialString(password)
-	logger.setConsoleLevel(opts.logLevel)
-	logger.setLogFile(opts.logFile)
-	logger.setFileLevel(opts.logLevel)
+	opsicommon.logging.init_logging(stderr_level=opts.logLevel,
+									file_level=opts.logLevel,
+									log_file=opts.logFile
+	)
 
 	logger.notice("starting hardware audit (script version %s)", __version__)
 
