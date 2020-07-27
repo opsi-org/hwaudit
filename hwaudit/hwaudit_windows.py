@@ -108,27 +108,27 @@ def getHardwareInformationFromWMI(conf):
 							try:
 								v = eval('v.%s' % meth)
 							except IndexError as evalError:
-								logger.debug("Method {0!r} on function value {1!r} failed: {2!r}", meth, v, evalError)
+								logger.debug("Method '%s' on function value '%s' failed: '%s'", meth, v, evalError)
 								logger.warning(u"Method '%s' failed on value '%s'", meth, v)
 
 						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
 							except IndexError as evalError:
-								logger.debug("Operation {0!r} on function value {1!r} failed: {2!r}", op, v, evalError)
+								logger.debug("Operation '%s' on function value '%s' failed: '%s'", op, v, evalError)
 								logger.warning(u"Operation '%s' failed on value '%s'", op, v)
 
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
 								v = forceHardwareVendorId(v)
 							except ValueError as hwVendError:
-								logger.debug("Forcing hardware vendor id on {!r} failed: {}", v, hwVendError)
+								logger.debug("Forcing hardware vendor id on '%s' failed: %s", v, hwVendError)
 								v = None
 						elif item['Opsi'] in ('deviceId', 'subsystemDeviceId'):
 							try:
 								v = forceHardwareDeviceId(v)
 							except ValueError as hwDevError:
-								logger.debug("Forcing hardware device id on {!r} failed: {}", v, hwDevError)
+								logger.debug("Forcing hardware device id on '%s' failed: %s", v, hwDevError)
 								v = None
 
 						if v is None:
@@ -140,7 +140,7 @@ def getHardwareInformationFromWMI(conf):
 						#	v = v.strip()
 
 						valueMappingKey = "%s.%s" % (attrclass, attribute)
-						logger.debug(u"Searching mapping for {!r}", valueMappingKey)
+						logger.debug(u"Searching mapping for '%s'", valueMappingKey)
 						if valueMappingKey in VALUE_MAPPING:
 							v = forceList(v)
 							for i in range(len(v)):
@@ -149,7 +149,7 @@ def getHardwareInformationFromWMI(conf):
 							if len(v) == 1:
 								v = v[0]
 
-							logger.debug("Mapping applied. Value: {!r}", v)
+							logger.debug("Mapping applied. Value:'%s'", v)
 
 						if isinstance(v, (list, tuple)):
 							v = u', '.join(forceUnicodeList(v))
@@ -159,16 +159,16 @@ def getHardwareInformationFromWMI(conf):
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
 
 							if len(v) > maxLen:
-								logger.warning(u"Truncating value {!r}: string is too long (maximum length: {})", v, maxLen)
+								logger.warning(u"Truncating value '%s': string is too long (maximum length: %d)", v, maxLen)
 								v = v[:maxLen]
-								logger.debug(u"New value: {!r}", v)
+								logger.debug(u"New value: '%s'", v)
 
 						if v is not None:
 							break
 
 				opsiValues[opsiName][-1][item['Opsi']] = v
 
-			logger.debug(u"Hardware object is now: {!r}", opsiValues[opsiName][-1])
+			logger.debug(u"Hardware object is now: '%s'", opsiValues[opsiName][-1])
 			if not opsiValues[opsiName][-1]:
 				logger.info(u"Skipping empty object")
 				opsiValues[opsiName].pop()
