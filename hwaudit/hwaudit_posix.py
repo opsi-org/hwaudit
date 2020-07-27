@@ -2,11 +2,9 @@ from typing import Dict
 
 from OPSI.System import auditHardware
 from OPSI.Backend.JSONRPC import JSONRPCBackend
-from OPSI.Logger import Logger
+from opsicommon.logging import logger
 
 from . import __version__
-
-logger = Logger()
 
 def makehwaudit(backendConfig: Dict[str, str]) -> None:
 	"""

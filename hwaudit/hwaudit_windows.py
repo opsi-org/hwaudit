@@ -15,8 +15,7 @@ from OPSI.Types import (
 from .windows_values import VALUE_MAPPING
 from . import __version__
 
-from OPSI.Logger import Logger
-logger = Logger()
+from opsicommon.logging import logger
 
 def getHardwareInformationFromWMI(conf):
 	"""
@@ -107,14 +106,14 @@ def getHardwareInformationFromWMI(conf):
 						if meth and v is not None:
 							try:
 								v = eval('v.%s' % meth)
-							except IndexError as evalError:
+							except Exception as evalError:
 								logger.debug("Method '%s' on function value '%s' failed: '%s'", meth, v, evalError)
 								logger.warning(u"Method '%s' failed on value '%s'", meth, v)
 
 						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
-							except IndexError as evalError:
+							except Exception as evalError:
 								logger.debug("Operation '%s' on function value '%s' failed: '%s'", op, v, evalError)
 								logger.warning(u"Operation '%s' failed on value '%s'", op, v)
 
