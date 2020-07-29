@@ -11,7 +11,7 @@ pyinstaller-poetry:
   scripts:
     - script: run-hwaudit
       binaries:
-        - hwaudit
+        - opsi-hwaudit
   before_script:
     linux: []
     darwin: []
