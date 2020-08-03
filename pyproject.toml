@@ -14,7 +14,7 @@ python = ">=3.7, <3.8"
 argparse = "^1.4.0"
 opsi-dev-tools = "^1.0.6"
 #python-opsi = "^4.2.0"
-python-opsi = {path = "../python-opsi/"
+python-opsi = {path = "../python-opsi/"}
 pywin32 = { version = "^227", platform = "win32" }
 wmi  = { version = "^1.5.1", platform = "win32" }
 mysqlclient = "^1.4.6"
