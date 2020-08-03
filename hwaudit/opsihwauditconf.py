@@ -589,9 +589,8 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "capacity",
          "WMI":    "Capacity",
          "Linux":  "Size",
-         "OSX":    "Size",
          "Unit":   "Byte"
-      },
+      },	#TODO size for osx
       {
          "Type":   "varchar(100)",
          "Scope":  "i",
@@ -619,8 +618,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "memoryType",
          "WMI":    "MemoryType",
          "Linux":  "Type",
-         "OSX":    "Type"
-      },
+      },	#TODO: type for osx
       {
          "Type":   "int",
          "Scope":  "g",
@@ -777,7 +775,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "macAddress",
          "Linux":  "serial",
          "WMI":    "MACAddress",
-         "OSX":    "MAC Address"
+         "OSX":    "Ethernet/MAC Address"
       },
       {
          "Type":   "varchar(20)",
@@ -806,7 +804,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "ipAddress",
          "WMI":    "IPAddress",
          "Linux":  "configuration/ip",
-         "OSX":    "Addresses"
+         "OSX":    "IPv4/Addresses||IPv6/Addresses"
       }
    ]
 },
@@ -970,7 +968,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "adapterRAM",
          "WMI":    "AdapterRAM",
          "Linux":  "size",
-         "OSX":    "VRAM (Dynamic, Max)",
+         "OSX":    "VRAM (Total)",
          "Unit":   "Byte"
       }
    ]
@@ -1044,7 +1042,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "name",
          "Linux":  "product",
          "WMI":    "Model",
-         "OSX":    "Device Name"
+         "OSX":    "Physical Drive/Device Name"
       },
       {
          "Type":   "int",
@@ -1175,9 +1173,8 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "vendor",
          "WMI":    "Manufacturer",
-         "Linux":  "device/idVendor.split(' ', 1)[1]",
-         "OSX":    "Manufacturer"
-      },
+         "Linux":  "device/idVendor.split(' ', 1)[1]"
+      },	#TODO: OSX
       {
          "Type":   "varchar(100)",
          "Scope":  "g",

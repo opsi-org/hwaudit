@@ -48,7 +48,8 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	password = opts.password
 
 	logger.addConfidentialString(password)
-	opsicommon.logging.init_logging(stderr_level=opts.logLevel,
+	opsicommon.logging.init_logging(stderr_format=opsicommon.logging.DEFAULT_COLORED_FORMAT,
+									stderr_level=opts.logLevel,
 									file_level=opts.logLevel,
 									log_file=opts.logFile
 	)
