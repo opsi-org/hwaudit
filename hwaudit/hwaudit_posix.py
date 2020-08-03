@@ -22,7 +22,8 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 
 			# Do hardware inventory
 			logger.notice(u"Fetching opsi hw audit configuration")
-			config = backend.auditHardware_getConfig()
+			#config = backend.auditHardware_getConfig()
+			from .opsihwauditconf import OPSI_HARDWARE_CLASSES as config
 
 			logger.notice(u"Running hardware inventory")
 			auditHardwareOnHosts = auditHardware(config = config, hostId = backendConfig.get('host_id'))
