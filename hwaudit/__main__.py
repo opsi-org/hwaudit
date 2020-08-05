@@ -48,10 +48,11 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	password = opts.password
 
 	logger.addConfidentialString(password)
+	logger.devel("Initialize logging to logfile: %s", opts.logFile)
 	opsicommon.logging.init_logging(stderr_format=opsicommon.logging.DEFAULT_COLORED_FORMAT,
 									stderr_level=opts.logLevel,
 									file_level=opts.logLevel,
-									log_file=opts.logFile
+									log_file=os.path.expanduser(opts.logFile)
 	)
 
 	logger.notice("starting hardware audit (script version %s)", __version__)
