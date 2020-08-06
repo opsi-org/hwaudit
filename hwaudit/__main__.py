@@ -1,6 +1,7 @@
 import sys
 import os
 import argparse
+import re
 from typing import Dict
 
 from OPSI.Backend.JSONRPC import JSONRPCBackend
@@ -48,16 +49,18 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	password = opts.password
 
 	logger.addConfidentialString(password)
-	logger.devel("Initialize logging to logfile: %s", opts.logFile)
+	logFile = os.path.expanduser(re.sub("""['"]""", "", opts.logFile))
+
 	opsicommon.logging.init_logging(stderr_format=opsicommon.logging.DEFAULT_COLORED_FORMAT,
 									stderr_level=opts.logLevel,
 									file_level=opts.logLevel,
-									log_file=os.path.expanduser(opts.logFile)
+									log_file=logFile
 	)
 
 	logger.notice("starting hardware audit (script version %s)", __version__)
 
-	address = opts.address
+	address = re.sub("""['"]""", "", opts.address)
+	
 	if address.startswith(u"https://"):
 		address = address + u"/rpc"
 
@@ -70,6 +73,10 @@ def initAudit(logFile: str) -> Dict[str, str]:
 
 	if not (username and host_id):
 		raise RuntimeError("Host id and username not set")
+
+	username = re.sub("""['"]""", "", username)
+	password = re.sub("""['"]""", "", password)
+	host_id = re.sub("""['"]""", "", host_id)
 
 	logger.notice(u"Connecting to service at '%s' as '%s'", address, username)
 

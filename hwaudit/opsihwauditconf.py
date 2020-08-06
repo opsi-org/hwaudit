@@ -276,7 +276,8 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "name",
          "WMI":    "Product",
-         "Linux":  "description"
+         "Linux":  "description",
+		 "OSX":    "Apple ROM Info"
       },
       {
          "Type":   "varchar(50)",
@@ -589,8 +590,9 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "capacity",
          "WMI":    "Capacity",
          "Linux":  "Size",
+		 "OSX":    "Memory Slots/*/Size",
          "Unit":   "Byte"
-      },	#TODO size for osx
+      },	#TODO: aggregation features
       {
          "Type":   "varchar(100)",
          "Scope":  "i",
@@ -610,6 +612,7 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "speed",
          "WMI":    "Speed*1000*1000",
+         "OSX":    "Memory Slots/*/Speed",
          "Unit":   "Hz"
       },
       {
@@ -618,7 +621,8 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "memoryType",
          "WMI":    "MemoryType",
          "Linux":  "Type",
-      },	#TODO: type for osx
+ 		 "OSX":    "Memory Slots/*/Type"
+      },	#TODO: aggregation features
       {
          "Type":   "int",
          "Scope":  "g",
