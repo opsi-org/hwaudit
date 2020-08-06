@@ -1,4 +1,4 @@
-#
+
 # -*- coding: utf-8 -*-
 #
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -574,7 +574,7 @@ OPSI_HARDWARE_CLASSES = [
       "Opsi":   "MEMORY_MODULE",
       "WMI":    "select * from Win32_PhysicalMemory",
       "Linux":  "[dmidecode]Memory Device:Size.find('No Module') == -1",
-      "OSX":    "[profiler]Memory"
+      "OSX":    "[profiler]Memory//Memory Slots"
    },
    "Values": [
       {
@@ -590,9 +590,9 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "capacity",
          "WMI":    "Capacity",
          "Linux":  "Size",
-		 "OSX":    "Memory Slots/*/Size",
+		 "OSX":    "Size",
          "Unit":   "Byte"
-      },	#TODO: aggregation features
+      },
       {
          "Type":   "varchar(100)",
          "Scope":  "i",
@@ -612,7 +612,7 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "speed",
          "WMI":    "Speed*1000*1000",
-         "OSX":    "Memory Slots/*/Speed",
+         "OSX":    "Speed",
          "Unit":   "Hz"
       },
       {
@@ -621,8 +621,8 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "memoryType",
          "WMI":    "MemoryType",
          "Linux":  "Type",
- 		 "OSX":    "Memory Slots/*/Type"
-      },	#TODO: aggregation features
+ 		 "OSX":    "Type"
+      },
       {
          "Type":   "int",
          "Scope":  "g",
@@ -779,7 +779,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "macAddress",
          "Linux":  "serial",
          "WMI":    "MACAddress",
-         "OSX":    "Ethernet/MAC Address"
+         "OSX":    "Ethernet//MAC Address"
       },
       {
          "Type":   "varchar(20)",
@@ -808,7 +808,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "ipAddress",
          "WMI":    "IPAddress",
          "Linux":  "configuration/ip",
-         "OSX":    "IPv4/Addresses||IPv6/Addresses"
+         "OSX":    "IPv4//Addresses||IPv6//Addresses"
       }
    ]
 },
@@ -822,7 +822,8 @@ OPSI_HARDWARE_CLASSES = [
       "Super":  [ "CONTROLLER" ],
       "Opsi":   "AUDIO_CONTROLLER",
       "WMI":    "select * from Win32_SoundDevice where NOT DeviceID like 'HDAUDIO\%'",
-      "Linux":  "[lshw]multimedia"
+      "Linux":  "[lshw]multimedia",
+      "OSX":    "[profiler]Audio"
    },
    "Values": [
    ]
@@ -1046,7 +1047,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "name",
          "Linux":  "product",
          "WMI":    "Model",
-         "OSX":    "Physical Drive/Device Name"
+         "OSX":    "Physical Drive//Device Name"
       },
       {
          "Type":   "int",
@@ -1084,7 +1085,8 @@ OPSI_HARDWARE_CLASSES = [
       "Super":  [ "BASIC_INFO" ],
       "Opsi":   "DISK_PARTITION",
       "WMI":    "select * from Win32_DiskPartition&Win32_LogicalDiskToPartition",
-      "Linux":  "[lshw]volume:^volume"
+      "Linux":  "[lshw]volume:^volume",
+      "OSX":    "[profiler]Storage"
    },
    "Values": [
       {
@@ -1092,7 +1094,8 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "name",
          "WMI":    "Name",
-         "Linux":  "logicalname"
+         "Linux":  "logicalname",
+         "OSX":    "BSD Name"
       },
       {
          "Type":   "bigint",
@@ -1100,6 +1103,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "size",
          "WMI":    "Size", # DiskPartition
          "Linux":  "capacity",
+         "OSX":    "Capacity",
          "Unit":   "Byte"
       },
       {
@@ -1120,13 +1124,15 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "i",
          "Opsi":   "filesystem",
          "Linux":  "description.replace('partition', '')",
-         "WMI":    "LogicalDisk::FileSystem"
+         "WMI":    "LogicalDisk::FileSystem",
+         "OSX":    "File System"
       },
       {
          "Type":   "bigint",
          "Scope":  "i",
          "Opsi":   "freeSpace",
          "WMI":    "LogicalDisk::FreeSpace",
+         "OSX":    "Free",
          "Unit":   "Byte"
       },
       {
@@ -1178,7 +1184,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "vendor",
          "WMI":    "Manufacturer",
          "Linux":  "device/idVendor.split(' ', 1)[1]"
-      },	#TODO: OSX
+      },
       {
          "Type":   "varchar(100)",
          "Scope":  "g",
@@ -1269,6 +1275,7 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "vendor",
          "WMI":    "MonitorManufacturer"
+         "OSX":    "Vendor ID.split('x')[1]"
       },
       {
          "Type":   "int",
