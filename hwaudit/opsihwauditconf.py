@@ -136,7 +136,7 @@ OPSI_HARDWARE_CLASSES = [
       "Opsi":   "COMPUTER_SYSTEM",
       "WMI":    "select * from Win32_ComputerSystem",
       "Linux":  "[lshw]system",
-	  "OSX":    "[profiler]Hardware"
+      "OSX":    "[profiler]Hardware"
    },
    "Values": [
       {
@@ -252,7 +252,7 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "product",
          "WMI":    "Product",
-	     "Linux":  "product",
+         "Linux":  "product",
          "OSX":    "Model Name"
       },
    ]
@@ -277,7 +277,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "name",
          "WMI":    "Product",
          "Linux":  "description",
-		 "OSX":    "Apple ROM Info"
+         "OSX":    "Apple ROM Info"
       },
       {
          "Type":   "varchar(50)",
@@ -408,7 +408,7 @@ OPSI_HARDWARE_CLASSES = [
       "Opsi":   "PROCESSOR",
       "WMI":    "select * from Win32_Processor",
       "Linux":  "[dmidecode]Processor Information",
-      "OSX":    "[profiler]Hardware"
+      "OSX":    "[sysctl]machdep//cpu"
    },
    "Values": [
       {
@@ -417,34 +417,37 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "name",
          "WMI":    "Name",
          "Linux":  "Version",
-         "OSX":    "Processor Name"
+         "OSX":    "brand_string.split('@')[0]"
       },
       {
          "Type":   "varchar(100)",
          "Scope":  "g",
          "Opsi":   "description",
          "WMI":    "Description",
-         "Linux":  "Signature"
+         "Linux":  "Signature",
+         "OSX":    "features"
       },
       {
          "Type":   "varchar(50)",
          "Scope":  "g",
          "Opsi":   "vendor",
          "WMI":    "Manufacturer",
-         "Linux":  "Manufacturer"
+         "Linux":  "Manufacturer",
+         "OSX":    "vendor"
       },
       {
          "Type":   "varchar(50)",
          "Scope":  "i",
          "Opsi":   "serialNumber",
          "WMI":    "ProcessorId",
-         "Linux":  "ID"
+         "Linux":  "ID",
+         "OSX":    "signature"
       },
       {
          "Type":   "varchar(50)",
          "Scope":  "g",
          "Opsi":   "architecture",
-         "WMI":    "Architecture",
+         "WMI":    "Architecture"
       },
       {
          "Type":   "tinyint",
@@ -452,7 +455,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "NumberOfCores",
          "WMI":    "NumberOfCores",
          "Linux":  "Core Count",
-         "OSX":    "Total Number of Cores"
+         "OSX":    "core_count"
       },
       {
          "Type":   "tinyint",
@@ -460,6 +463,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "NumberOfLogicalCores",
          "WMI":    "NumberOfLogicalProcessors",
          "Linux":  "Thread Count",
+         "OSX":    "thread_count"
       },
       {
          "Type":   "varchar(50)",
@@ -467,7 +471,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "family",
          "WMI":    "Family",
          "Linux":  "Family",
-         "OSX":    "Processor Name.split(' ', 2)[2]"
+         "OSX":    "family"
       },
       {
          "Type":   "bigint",
@@ -475,7 +479,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "currentClockSpeed",
          "WMI":    "CurrentClockSpeed*1000*1000",
          "Linux":  "Current Speed",
-         "OSX":    "Processor Speed",
+         "OSX":    "brand_string.split('@')[1]",
          "Unit":   "Hz"
       },
       {
@@ -484,7 +488,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "maxClockSpeed",
          "WMI":    "MaxClockSpeed*1000*1000",
          "Linux":  "Max Speed",
-         "OSX":    "Processor Speed",
+         "OSX":    "brand_string.split('@')[1]",
          "Unit":   "Hz"
       },
       {
@@ -500,6 +504,7 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "addressWidth",
          "WMI":    "AddressWidth",
+         "OSX":    "address_bits//virtual"
          "Unit":   "Bit"
       },
       {
@@ -590,7 +595,7 @@ OPSI_HARDWARE_CLASSES = [
          "Opsi":   "capacity",
          "WMI":    "Capacity",
          "Linux":  "Size",
-		 "OSX":    "Size",
+         "OSX":    "Size",
          "Unit":   "Byte"
       },
       {
@@ -1274,7 +1279,7 @@ OPSI_HARDWARE_CLASSES = [
          "Type":   "varchar(50)",
          "Scope":  "g",
          "Opsi":   "vendor",
-         "WMI":    "MonitorManufacturer"
+         "WMI":    "MonitorManufacturer",
          "OSX":    "Vendor ID.split('x')[1]"
       },
       {
