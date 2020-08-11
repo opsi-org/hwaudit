@@ -4,7 +4,8 @@
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # =     HARDWARE CLASSES                                                =
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-global OPSI_HARDWARE_CLASSES
+#global OPSI_HARDWARE_CLASSES
+
 OPSI_HARDWARE_CLASSES = [
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -504,7 +505,7 @@ OPSI_HARDWARE_CLASSES = [
          "Scope":  "g",
          "Opsi":   "addressWidth",
          "WMI":    "AddressWidth",
-         "OSX":    "address_bits//virtual"
+         "OSX":    "address_bits//virtual",
          "Unit":   "Bit"
       },
       {
