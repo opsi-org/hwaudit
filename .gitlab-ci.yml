@@ -27,10 +27,6 @@ build:windows-pyinstaller:
     - win10
   script:
     - pip install poetry
-    #- Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.7/python-3.7.7.exe" -OutFile ".\python-3.7.7.exe"
-    #- Set-ExecutionPolicy -Scope CurrentUser -Force Unrestricted 
-    #- .\python-3.7.7.exe InstallAllUsers=0 PrependPath=1 DefaultJustForMeTargetDir=.\python
-    #- poetry env use .\python\python.exe
     - poetry remove mysqlclient
     - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
     - poetry update
@@ -42,3 +38,19 @@ build:windows-pyinstaller:
     paths:
       - hwaudit
     expire_in: 2 day
+
+build:osx-pyinstaller:
+  stage: build
+  tags:
+    - macos
+  script:
+    - source $HOME/.poetry/env
+    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - mv hwaudit hwaudit.src
+    - mv dist/hwaudit .
+  artifacts:
+    name: 'hwaudit-macos-pyinstaller'
+    paths:
+      - hwaudit
+    expire_in: 2 day
+
