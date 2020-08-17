@@ -14,6 +14,7 @@ from OPSI.Types import (
 
 from .windows_values import VALUE_MAPPING
 from . import __version__
+from .opsihwauditconf import OPSI_HARDWARE_CLASSES	#TODO: remove
 
 from opsicommon.logging import logger
 
@@ -50,7 +51,14 @@ def getHardwareInformationFromWMI(conf):
 		logger.info(u"Querying: %s", wmiQuery)
 		objects = []
 		try:
-			objects = wmiObj.query(wmiQuery)
+			if wmiQuery.startswith("namespace="):
+				namespace, wmiQuery = wmiQuery.split(":", 1)
+				namespace = namespace.split("=", 1)[1].strip()
+				customWMI = wmi.WMI(namespace=namespace)
+				objects = customWMI.query(wmiQuery)
+			else:
+				objects = wmiObj.query(wmiQuery)
+			logger.devel(objects)
 		except pywintypes.com_error as error:
 			logger.error(u"Query failed: %s", error)
 			continue
@@ -413,7 +421,8 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 		logger.notice(u"Connected to opsi server")
 
 		logger.notice(u"Fetching opsi hw audit configuration")
-		config = backend.auditHardware_getConfig()
+		#config = backend.auditHardware_getConfig()
+		config = OPSI_HARDWARE_CLASSES
 
 		logger.notice(u"Fetching hardware information from WMI")
 		values = getHardwareInformationFromWMI(config)
