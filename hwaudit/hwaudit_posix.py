@@ -5,7 +5,7 @@ from OPSI.Backend.JSONRPC import JSONRPCBackend
 from opsicommon.logging import logger
 
 from . import __version__
-from .opsihwauditconf import OPSI_HARDWARE_CLASSES
+#from .opsihwauditconf import OPSI_HARDWARE_CLASSES
 
 def makehwaudit(backendConfig: Dict[str, str]) -> None:
 	"""
@@ -23,8 +23,8 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 
 			# Do hardware inventory
 			logger.notice(u"Fetching opsi hw audit configuration")
-			#config = backend.auditHardware_getConfig()
-			config = OPSI_HARDWARE_CLASSES
+			config = backend.auditHardware_getConfig()
+			#config = OPSI_HARDWARE_CLASSES
 
 			logger.notice(u"Running hardware inventory")
 			auditHardwareOnHosts = auditHardware(config = config, hostId = backendConfig.get('host_id'))
