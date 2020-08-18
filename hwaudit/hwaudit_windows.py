@@ -14,9 +14,22 @@ from OPSI.Types import (
 
 from .windows_values import VALUE_MAPPING
 from . import __version__
-from .opsihwauditconf import OPSI_HARDWARE_CLASSES	#TODO: remove
+#from .opsihwauditconf import OPSI_HARDWARE_CLASSES
 
 from opsicommon.logging import logger
+
+def make_wmi_objects(conf):
+	namespaces = ["root\cimv2"]
+	for oneClass in conf:
+		if oneClass.get('Class') is None or oneClass['Class'].get('Opsi') is None or oneClass['Class'].get('WMI') is None:
+			continue
+		wmiQuery = oneClass['Class']['WMI']
+		if wmiQuery.startswith("namespace="):
+			namespace = wmiQuery.split(":", 1)[0]
+			namespace = namespace.split("=", 1)[1].strip().lower()
+			if not namespace in namespaces:
+				namespaces.append(namespace)
+	return {n : wmi.WMI(namespace=n) for n in namespaces}
 
 def getHardwareInformationFromWMI(conf):
 	"""
@@ -30,8 +43,7 @@ def getHardwareInformationFromWMI(conf):
 
 	:returns: Dictionary containing the results of the audit.
 	"""
-
-	wmiObj = wmi.WMI()
+	wmis = make_wmi_objects(conf)
 
 	opsiValues = {}
 
@@ -48,17 +60,14 @@ def getHardwareInformationFromWMI(conf):
 		if len(temp) == 2:
 			wmiQuery, mapClass = temp
 
-		logger.info(u"Querying: %s", wmiQuery)
 		objects = []
 		try:
+			namespace = "root\cimv2"
 			if wmiQuery.startswith("namespace="):
 				namespace, wmiQuery = wmiQuery.split(":", 1)
-				namespace = namespace.split("=", 1)[1].strip()
-				customWMI = wmi.WMI(namespace=namespace)
-				objects = customWMI.query(wmiQuery)
-			else:
-				objects = wmiObj.query(wmiQuery)
-			logger.devel(objects)
+				namespace = namespace.split("=", 1)[1].strip().lower()
+			logger.info("Query: %s for namespace %s", wmiQuery, namespace)
+			objects = wmis[namespace].query(wmiQuery)
 		except pywintypes.com_error as error:
 			logger.error(u"Query failed: %s", error)
 			continue
@@ -421,8 +430,8 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 		logger.notice(u"Connected to opsi server")
 
 		logger.notice(u"Fetching opsi hw audit configuration")
-		#config = backend.auditHardware_getConfig()
-		config = OPSI_HARDWARE_CLASSES
+		config = backend.auditHardware_getConfig()
+		#config = OPSI_HARDWARE_CLASSES
 
 		logger.notice(u"Fetching hardware information from WMI")
 		values = getHardwareInformationFromWMI(config)
