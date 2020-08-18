@@ -45,7 +45,7 @@ build:osx-pyinstaller:
     - macos
   script:
     - source $HOME/.poetry/env
-    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
     - mv hwaudit hwaudit.src
     - mv dist/hwaudit .
   artifacts:
