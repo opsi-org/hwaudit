@@ -274,8 +274,8 @@ category = "main"
 description = "opsi development tools"
 name = "opsi-dev-tools"
 optional = false
-python-versions = ">=3.6,<4.0"
-version = "1.0.18"
+python-versions = ">=3.7,<4.0"
+version = "1.0.20"
 
 [package.dependencies]
 colorlog = ">=4.1.0,<5.0.0"
@@ -716,7 +716,7 @@ test = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
-content-hash = "7969ba064bdd9b110c199c3db1fee9e7e00021d1669349367129d567efd2a625"
+content-hash = "0c73276963bc1778504636a07e91a5d1c61b515f6aec10ddbd611ada32f8f8bd"
 lock-version = "1.1"
 python-versions = ">=3.7, <4.0"
 
@@ -873,8 +873,8 @@ mysqlclient = [
     {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 opsi-dev-tools = [
-    {file = "opsi-dev-tools-1.0.18.tar.gz", hash = "md5:12e21e4b43407d706d2e957a7666dfed"},
-    {file = "opsi_dev_tools-1.0.18-py3-none-any.whl", hash = "md5:65c959295bbdb4712c737a2bcae91bd8"},
+    {file = "opsi-dev-tools-1.0.20.tar.gz", hash = "md5:fd6e275aa512da13ed74f214d99d1145"},
+    {file = "opsi_dev_tools-1.0.20-py3-none-any.whl", hash = "md5:b27b212e3c6d9cedfe0fe9dacfae3392"},
 ]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
