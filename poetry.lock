@@ -52,7 +52,7 @@ six = "*"
 visualize = ["graphviz (>0.5.1)", "Twisted (>=16.1.1)"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Screen-scraping library"
 name = "beautifulsoup4"
 optional = false
@@ -65,6 +65,17 @@ soupsieve = [">1.2", "<2.0"]
 [package.extras]
 html5lib = ["html5lib"]
 lxml = ["lxml"]
+
+[[package]]
+category = "dev"
+description = "Dummy package for Beautiful Soup"
+name = "bs4"
+optional = false
+python-versions = "*"
+version = "0.0.1"
+
+[package.dependencies]
+beautifulsoup4 = "*"
 
 [[package]]
 category = "main"
@@ -96,7 +107,6 @@ version = "3.0.4"
 [[package]]
 category = "main"
 description = "Cross-platform colored terminal text."
-marker = "sys_platform == \"win32\" and python_version != \"3.4\" or sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -111,7 +121,7 @@ python-versions = "*"
 version = "4.2.1"
 
 [package.dependencies]
-colorama = "*"
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
 
 [[package]]
 category = "main"
@@ -163,7 +173,6 @@ version = "0.1.3"
 [[package]]
 category = "main"
 description = "Distro - an OS platform information API"
-marker = "sys_platform == \"linux\""
 name = "distro"
 optional = false
 python-versions = "*"
@@ -182,8 +191,8 @@ category = "main"
 description = "A featureful, immutable, and correct URL for Python."
 name = "hyperlink"
 optional = false
-python-versions = "*"
-version = "19.0.0"
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "20.0.1"
 
 [package.dependencies]
 idna = ">=2.5"
@@ -199,7 +208,6 @@ version = "2.10"
 [[package]]
 category = "dev"
 description = "Read metadata from Python packages"
-marker = "python_version < \"3.8\""
 name = "importlib-metadata"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
@@ -229,15 +237,25 @@ description = "A strictly RFC 4510 conforming LDAP V3 pure Python client library
 name = "ldap3"
 optional = false
 python-versions = "*"
-version = "2.7"
+version = "2.8"
 
 [package.dependencies]
-pyasn1 = ">=0.1.8"
+pyasn1 = ">=0.4.6"
+
+[[package]]
+category = "dev"
+description = "Mach-O header analysis and editing"
+name = "macholib"
+optional = false
+python-versions = "*"
+version = "1.14"
+
+[package.dependencies]
+altgraph = ">=0.15"
 
 [[package]]
 category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
-marker = "python_version > \"2.7\""
 name = "more-itertools"
 optional = false
 python-versions = ">=3.5"
@@ -256,8 +274,8 @@ category = "main"
 description = "opsi development tools"
 name = "opsi-dev-tools"
 optional = false
-python-versions = ">=3.6,<4.0"
-version = "1.0.14"
+python-versions = ">=3.7,<4.0"
+version = "1.0.20"
 
 [package.dependencies]
 colorlog = ">=4.1.0,<5.0.0"
@@ -305,9 +323,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "0.13.1"
 
 [package.dependencies]
-[package.dependencies.importlib-metadata]
-python = "<3.8"
-version = ">=0.12"
+importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 
 [package.extras]
 dev = ["pre-commit", "tox"]
@@ -385,7 +401,6 @@ version = "3.6"
 [package.dependencies]
 altgraph = "*"
 dis3 = "*"
-setuptools = "*"
 
 [[package]]
 category = "main"
@@ -420,10 +435,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
 version = "0.6.0"
 
 [package.dependencies]
-beautifulsoup4 = ">=4.5,<5.0"
 packaging = ">=16"
-requests = ">=2.5,<3.0"
-six = ">=1.4,<2.0"
 
 [[package]]
 category = "dev"
@@ -441,18 +453,9 @@ pluggy = ">=0.12,<1.0"
 py = ">=1.5.0"
 six = ">=1.10.0"
 wcwidth = "*"
-
-[package.dependencies.colorama]
-python = "<3.4.0 || >=3.5.0"
-version = "*"
-
-[package.dependencies.importlib-metadata]
-python = "<3.8"
-version = ">=0.12"
-
-[package.dependencies.more-itertools]
-python = ">=2.8"
-version = ">=4.0.0"
+colorama = {version = "*", markers = "sys_platform == \"win32\" and python_version != \"3.4\""}
+importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
+more-itertools = {version = ">=4.0.0", markers = "python_version > \"2.7\""}
 
 [package.extras]
 testing = ["argcomplete", "hypothesis (>=3.56)", "nose", "requests", "mock"]
@@ -479,25 +482,23 @@ description = "The opsi python library"
 name = "python-opsi"
 optional = false
 python-versions = ">=3.7,<4.0"
-version = "4.2.0.43"
+version = "4.2.0.48"
 
 [package.dependencies]
 SQLAlchemy = ">=1.3.15,<2.0.0"
-distro = ">=1.5.0,<2.0.0"
+colorlog = ">=4.2.1,<5.0.0"
 ldap3 = ">=2.7,<3.0"
-mysqlclient = ">=1.4.6,<2.0.0"
 psutil = ">=5.7.0,<6.0.0"
 pyOpenSSL = ">=19.1.0,<20.0.0"
 pyasn1 = ">=0.4.8,<0.5.0"
 pycryptodome = ">=3.9.7,<4.0.0"
 python-magic = ">=0.4.15,<0.5.0"
 python-pam = ">=1.8.4,<2.0.0"
-pywin32 = ">=227,<228"
-wmi = ">=1.5.1,<2.0.0"
-
-[package.dependencies.twisted]
-extras = ["tls"]
-version = ">=20.3.0,<21.0.0"
+distro = {version = ">=1.5.0,<2.0.0", markers = "sys_platform == \"linux\""}
+mysqlclient = {version = ">=1.4.6,<2.0.0", markers = "sys_platform == \"linux\""}
+pywin32 = {version = ">=227,<228", markers = "sys_platform == \"win32\""}
+twisted = {version = ">=20.3.0,<21.0.0", extras = ["tls"]}
+wmi = {version = ">=1.5.1,<2.0.0", markers = "sys_platform == \"win32\""}
 
 [package.source]
 reference = "uib"
@@ -515,7 +516,6 @@ version = "1.8.4"
 [[package]]
 category = "main"
 description = "Python for Window Extensions"
-marker = "sys_platform == \"win32\""
 name = "pywin32"
 optional = false
 python-versions = "*"
@@ -524,7 +524,6 @@ version = "227"
 [[package]]
 category = "dev"
 description = ""
-marker = "sys_platform == \"win32\""
 name = "pywin32-ctypes"
 optional = false
 python-versions = "*"
@@ -535,7 +534,7 @@ category = "main"
 description = "YAML parser and emitter for Python"
 name = "pyyaml"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = "*"
 version = "5.3.1"
 
 [[package]]
@@ -585,7 +584,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "1.15.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "A modern CSS selector implementation for Beautiful Soup."
 name = "soupsieve"
 optional = false
@@ -636,18 +635,9 @@ constantly = ">=15.1"
 hyperlink = ">=17.1.1"
 incremental = ">=16.10.1"
 "zope.interface" = ">=4.4.2"
-
-[package.dependencies.idna]
-optional = true
-version = ">=0.6,<2.3 || >2.3"
-
-[package.dependencies.pyopenssl]
-optional = true
-version = ">=16.0.0"
-
-[package.dependencies.service_identity]
-optional = true
-version = ">=18.1.0"
+idna = {version = ">=0.6,<2.3 || >2.3", optional = true, markers = "extra == \"tls\""}
+pyopenssl = {version = ">=16.0.0", optional = true, markers = "extra == \"tls\""}
+service_identity = {version = ">=18.1.0", optional = true, markers = "extra == \"tls\""}
 
 [package.extras]
 all_non_platform = ["pyopenssl (>=16.0.0)", "service_identity (>=18.1.0)", "idna (>=0.6,<2.3 || >2.3)", "pyasn1", "cryptography (>=2.5)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)", "pywin32 (!=226)"]
@@ -685,7 +675,6 @@ version = "0.2.5"
 [[package]]
 category = "main"
 description = "Windows Management Instrumentation"
-marker = "sys_platform == \"win32\""
 name = "wmi"
 optional = false
 python-versions = "*"
@@ -704,7 +693,6 @@ tests = ["pytest"]
 [[package]]
 category = "dev"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version < \"3.8\""
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -722,17 +710,15 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "5.1.0"
 
-[package.dependencies]
-setuptools = "*"
-
 [package.extras]
 docs = ["sphinx", "repoze.sphinx.autointerface"]
 test = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
-content-hash = "ae13fc5971a24b21b0a667149554441a450a43da6a0eb935c8db907996e782ac"
-python-versions = ">=3.7, <3.8"
+content-hash = "0c73276963bc1778504636a07e91a5d1c61b515f6aec10ddbd611ada32f8f8bd"
+lock-version = "1.1"
+python-versions = ">=3.7, <4.0"
 
 [metadata.files]
 altgraph = [
@@ -759,6 +745,9 @@ beautifulsoup4 = [
     {file = "beautifulsoup4-4.9.1-py2-none-any.whl", hash = "sha256:e718f2342e2e099b640a34ab782407b7b676f47ee272d6739e60b8ea23829f2c"},
     {file = "beautifulsoup4-4.9.1-py3-none-any.whl", hash = "sha256:a6237df3c32ccfaee4fd201c8f5f9d9df619b93121d01353a64a73ce8c6ef9a8"},
     {file = "beautifulsoup4-4.9.1.tar.gz", hash = "sha256:73cc4d115b96f79c7d77c1c7f7a0a8d4c57860d1041df407dd1aae7f07a77fd7"},
+]
+bs4 = [
+    {file = "bs4-0.0.1.tar.gz", hash = "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"},
 ]
 certifi = [
     {file = "certifi-2020.6.20-py2.py3-none-any.whl", hash = "sha256:8fc0819f1f30ba15bdb34cceffb9ef04d99f420f68eb75d901e9560b8749fc41"},
@@ -847,8 +836,8 @@ future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
 ]
 hyperlink = [
-    {file = "hyperlink-19.0.0-py2.py3-none-any.whl", hash = "sha256:ab4a308feb039b04f855a020a6eda3b18ca5a68e6d8f8c899cbe9e653721d04f"},
-    {file = "hyperlink-19.0.0.tar.gz", hash = "sha256:4288e34705da077fada1111a24a0aa08bb1e76699c9ce49876af722441845654"},
+    {file = "hyperlink-20.0.1-py2.py3-none-any.whl", hash = "sha256:c528d405766f15a2c536230de7e160b65a08e20264d8891b3eb03307b0df3c63"},
+    {file = "hyperlink-20.0.1.tar.gz", hash = "sha256:47fcc7cd339c6cb2444463ec3277bdcfe142c8b1daf2160bdd52248deec815af"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
@@ -863,12 +852,15 @@ incremental = [
     {file = "incremental-17.5.0.tar.gz", hash = "sha256:7b751696aaf36eebfab537e458929e194460051ccad279c72b755a167eebd4b3"},
 ]
 ldap3 = [
-    {file = "ldap3-2.7-py2.6.egg", hash = "sha256:52ab557b3c4908db4a90bea16731aa714b1b54e039b54fd4c4b83994c6c48c0c"},
-    {file = "ldap3-2.7-py2.7.egg", hash = "sha256:4fd2db72d0412cc16ee86be01332095e86e361329c3579b314231eb2e56c7871"},
-    {file = "ldap3-2.7-py2.py3-none-any.whl", hash = "sha256:81df4ac8b6df10fb1f05b17c18d0cb8c4c344d5a03083c382824960ed959cf5b"},
-    {file = "ldap3-2.7-py3.8.egg", hash = "sha256:298769ab0232b3a3efa1e84881096c24526fe37911c83a11285f222fe4975efd"},
-    {file = "ldap3-2.7.tar.gz", hash = "sha256:17f04298b70bf7ecaa5db8a7d8622b5a962ef7fc2b245b2eea705ac1c24338c0"},
-    {file = "ldap3-2.7.win-amd64.exe", hash = "sha256:53aaae5bf14f3827c69600ddf4d61b88f49c055bb93060e9702c5bafd206c744"},
+    {file = "ldap3-2.8-py2.6.egg", hash = "sha256:7abbb3e5f4522114e0230ec175b60ae968b938d1f8a7d8bce7789f78d871fb9f"},
+    {file = "ldap3-2.8-py2.7.egg", hash = "sha256:b399c39e80b6459e349b33fbe9787c1bcbf86de05994d41806a05c06f3e7574d"},
+    {file = "ldap3-2.8-py2.py3-none-any.whl", hash = "sha256:df27407f4991f25bd669b5bb1bc8cb9ddf44a3e713ff6b3afeb3b3c26502f88f"},
+    {file = "ldap3-2.8-py3.8.egg", hash = "sha256:bdaf568cd30fc0006c8bb4f5e6014554afeb0c4bbea1677de9706e278a4057e7"},
+    {file = "ldap3-2.8.tar.gz", hash = "sha256:59d1adcd5ead263387039e2a37d7cd772a2006b1cdb3ecfcbaab5192a601c515"},
+]
+macholib = [
+    {file = "macholib-1.14-py2.py3-none-any.whl", hash = "sha256:c500f02867515e6c60a27875b408920d18332ddf96b4035ef03beddd782d4281"},
+    {file = "macholib-1.14.tar.gz", hash = "sha256:0c436bc847e7b1d9bda0560351bf76d7caf930fb585a828d13608839ef42c432"},
 ]
 more-itertools = [
     {file = "more-itertools-8.4.0.tar.gz", hash = "sha256:68c70cc7167bdf5c7c9d8f6954a7837089c6a36bf565383919bb595efb8a17e5"},
@@ -881,8 +873,8 @@ mysqlclient = [
     {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 opsi-dev-tools = [
-    {file = "opsi-dev-tools-1.0.14.tar.gz", hash = "md5:1c4bc9c7cc4308050cfa6edc51d09318"},
-    {file = "opsi_dev_tools-1.0.14-py3-none-any.whl", hash = "md5:b5057517d89867a1a3d4dcb8dd9f2b96"},
+    {file = "opsi-dev-tools-1.0.20.tar.gz", hash = "md5:fd6e275aa512da13ed74f214d99d1145"},
+    {file = "opsi_dev_tools-1.0.20-py3-none-any.whl", hash = "md5:b27b212e3c6d9cedfe0fe9dacfae3392"},
 ]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
@@ -1009,8 +1001,8 @@ python-magic = [
     {file = "python_magic-0.4.18-py2.py3-none-any.whl", hash = "sha256:356efa93c8899047d1eb7d3eb91e871ba2f5b1376edbaf4cc305e3c872207355"},
 ]
 python-opsi = [
-    {file = "python-opsi-4.2.0.43.tar.gz", hash = "md5:861d67b508007477fc3d5faab0ed3451"},
-    {file = "python_opsi-4.2.0.43-py3-none-any.whl", hash = "md5:bf929fef1d121259e3b7ff197fe9e94b"},
+    {file = "python-opsi-4.2.0.48.tar.gz", hash = "md5:c9968f19b468aeb08d9ff5dedf98915c"},
+    {file = "python_opsi-4.2.0.48-py3-none-any.whl", hash = "md5:e643d31737eb1fc2c3e849561d507a8b"},
 ]
 python-pam = [
     {file = "python-pam-1.8.4.tar.gz", hash = "sha256:c856d9c89fedb33951dd8a95727ae57c6887b02d065bbdffd2fd9dbc0183909b"},
