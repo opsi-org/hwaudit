@@ -1,7 +1,9 @@
 [tool.poetry]
 name = "hwaudit"
 version = "4.2.0.2"
-description = ""
+description = "opsi hardware audit"
+homepage = "https://www.opsi.org"
+license = "AGPL-3.0"
 authors = ["uib GmbH <info@uib.de>"]
 maintainers = ["uib GmbH <info@uib.de>"]
 
