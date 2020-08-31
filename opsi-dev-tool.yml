@@ -1,6 +1,4 @@
 pyinstaller-poetry:
-  update_version_in:
-    - hwaudit/__init__.py
   one_file: yes
   hidden_imports:
     all: []
