@@ -32,7 +32,7 @@ pywin32-ctypes = { version = "^0.2.0", platform = "win32" }
 pefile = "^2019.4.18"
 bs4 = "^0.0.1"
 macholib = { version = "^1.14", platform="darwin" }
-opsi-dev-tools = "^1.0.20"
+opsi-dev-tools = "^1.0.24"
 
 [build-system]
 requires = ["poetry>=0.12"]
