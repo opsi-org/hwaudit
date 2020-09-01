@@ -12,6 +12,7 @@ build:linux-pyinstaller:
     - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit
     - mv hwaudit hwaudit.src
     - cd dist
     - tar -czvf ../hwaudit_binaries.tar.gz .
@@ -30,7 +31,8 @@ build:windows-pyinstaller:
     - poetry remove mysqlclient
     - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
     - poetry update
-    - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe
     - Move-Item -Path hwaudit -Destination hwaudit.src -Force
     - Move-Item -Path dist\ -Destination hwaudit
   artifacts:
@@ -46,7 +48,8 @@ build:osx-pyinstaller:
   script:
     - source $HOME/.poetry/env
     - poetry install
-    - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit
     - mv hwaudit hwaudit.src
     - mv dist/opsi-hwaudit .
   artifacts:
@@ -60,6 +63,9 @@ build:osx-pyinstaller:
   apt -y install wget zsync librsync-dev cpio
   wget "http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_18.04/amd64/opsi-utils_4.2.0.24-1_amd64.deb"
   apt -y install ./opsi-utils_4.2.0.24-1_amd64.deb
+  useradd opsiconfd
+  groupadd pcpatch
+  adduser opsiconfd pcpatch
 
 package:makeopsipackage:
   stage: package
@@ -77,6 +83,6 @@ package:makeopsipackage:
     - *install_opsi_utils
     - opsi-makepackage
   artifacts:
-    name: "hwaudit_$VERSION-1.opsi"
+    name: opsi-package
     paths:
-      - "hwaudit-opsi-package/hwaudit_$VERSION-1.opsi"
+      - "hwaudit-opsi-package/hwaudit_*-1.opsi"
