@@ -57,7 +57,7 @@ build:osx-pyinstaller:
 
 .install_opsi_utils: &install_opsi_utils |
   apt update
-  apt -y install wget, zsync, librsync-dev
+  apt -y install wget zsync librsync-dev
   wget "http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_18.04/amd64/opsi-utils_4.2.0.24-1_amd64.deb"
   apt -y install ./opsi-utils_4.2.0.24-1_amd64.deb
 
