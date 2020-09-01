@@ -65,7 +65,9 @@ build:osx-pyinstaller:
   apt -y install ./opsi-utils_4.2.0.24-1_amd64.deb
   useradd opsiconfd
   groupadd pcpatch
+  groupadd opsiadmin
   adduser opsiconfd pcpatch
+  adduser opsiconfd opsiadmin
 
 package:makeopsipackage:
   stage: package
@@ -83,6 +85,6 @@ package:makeopsipackage:
     - *install_opsi_utils
     - opsi-makepackage
   artifacts:
-    name: opsi-package
+    name: hwaudit-opsi-package
     paths:
       - "hwaudit-opsi-package/hwaudit_*-1.opsi"
