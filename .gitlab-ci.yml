@@ -36,7 +36,7 @@ build:windows-pyinstaller:
   artifacts:
     name: 'hwaudit-windows-pyinstaller'
     paths:
-      - hwaudit
+      - opsi-hwaudit
     expire_in: 2 day
 
 build:osx-pyinstaller:
@@ -48,10 +48,16 @@ build:osx-pyinstaller:
     - poetry install
     - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
     - mv hwaudit hwaudit.src
-    - mv dist/hwaudit .
+    - mv dist/opsi-hwaudit .
   artifacts:
     name: 'hwaudit-macos-pyinstaller'
     paths:
-      - hwaudit
+      - opsi-hwaudit
     expire_in: 2 day
 
+package:makeopsipackage:
+  stage: package
+  script: |
+    poetry run opsi-dev-tool -l debug --binary-pull
+    export VERSION=`cat pyproject.toml | grep -e "^version = " | cut -d \" -f 2`
+    sed -i "s/^version: .*$/version: $VERSION/" hwaudit-opsi-package/OPSI/control
