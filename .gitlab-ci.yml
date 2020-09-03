@@ -12,8 +12,7 @@ build:linux-pyinstaller:
     - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - if test "$CI_COMMIT_TAG"; then
-    - poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit
+    - if test "$CI_COMMIT_TAG"; then poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit
     - if ! test "$CI_COMMIT_TAG"; then poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"; fi
     - mv hwaudit hwaudit.src
     - cd dist
@@ -34,7 +33,8 @@ build:windows-pyinstaller:
     - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
     - poetry update
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - if($CI_COMMIT_TAG){poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe "$CI_JOB_ID"} else {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe}
+    - if ($CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe "$CI_JOB_ID"}
+    - if(! $CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe}
     - Move-Item -Path hwaudit -Destination hwaudit.src -Force
     - Move-Item -Path dist\ -Destination hwaudit
   artifacts:
