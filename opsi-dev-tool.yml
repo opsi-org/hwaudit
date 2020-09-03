@@ -30,7 +30,7 @@ pull-binaries:
     post-script: []
     architecture: linux
     version: latest
-    branch: dev
+    branch: development
     server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
     server-type: binaryindex
@@ -39,7 +39,7 @@ pull-binaries:
     post-script: []
     architecture: windows
     version: latest
-    branch: dev
+    branch: development
     server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
     server-type: binaryindex
@@ -48,7 +48,7 @@ pull-binaries:
     post-script: []
     architecture: darwin
     version: latest
-    branch: dev
+    branch: development
     server-url: http://binaryindex.uib.gmbh
 
 changelog:
