@@ -40,7 +40,7 @@ build:windows-pyinstaller:
   artifacts:
     name: 'hwaudit-windows-pyinstaller'
     paths:
-      - opsi-hwaudit
+      - opsi-hwaudit.exe
     expire_in: 2 day
 
 build:osx-pyinstaller:
