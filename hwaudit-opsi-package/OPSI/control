@@ -5,8 +5,8 @@ depends:
 [Product]
 type: localboot
 id: hwaudit
-name: Client Hardwareinventarisierung
-description: Hardwareinventarisierung auf Basis von WMI / Registry.
+name: Client Hardwareinventory Windows / Linux / OSX
+description: Hardwareinventarisierung
 advice: 
 version: 4.2.0.2
 priority: 0
@@ -25,7 +25,7 @@ type: unicode
 name: timeout
 multivalue: False
 editable: False
-description: TimeOutSeconds hwaudit
+description: TimeOutSeconds hwaudit process
 values: ["300", "600", "90", "notimeout"]
 default: ["90"]
 
@@ -36,14 +36,14 @@ multivalue: False
 editable: False
 description: LogLevel from hwaudit
 values: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-default: ["3"]
+default: ["5"]
 
 [ProductProperty]
 type: unicode
-name: log-file
+name: logfile
 multivalue: False
 editable: False
-description: LogFile from hwaudit default C:\opsi.org\tmp
+description: LogFile from hwaudit default ("" or "auto") C:\opsi.org\tmp
 values: [""]
 default: [""]
 
@@ -61,240 +61,3 @@ type: bool
 name: force_install
 description: Should we always reinstall the hwaudit software
 default: False
-
-[Changelog]
-hwaudit (4.2.0.2-1) experimental; urgency=low
-
-  * new implementation unifying hwaudit and hwinvent
-
- -- Nils Doerrer <n.doerrer@uib.de> Fri, 12 Jun 2020 17:09:24 +0200
-
-hwaudit (4.2.0.1-1) experimental; urgency=low
-
-  * new hwaudit implementation based on python 3.7 and opsi4.2 nightly
-
- -- Erol Ueluekmen <e.ueluekmen@uib.de> Tue, 18 Jun 2019 00:50:24 +0200
-
-hwaudit (4.1.0.8-1) stable; urgency=low
-
-  * Improve handling of --help.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Wed, 20 Sep 2018 15:22:24 +0200
-
-hwaudit (4.1.0.7-2) stable; urgency=low
-
-  * Re-packaged.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Wed, 20 Sep 2018 14:57:53 +0200
-
-hwaudit (4.1.0.7-1) stable; urgency=low
-
-  * Fix bug in commandline parsing.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Wed, 19 Sep 2018 10:06:12 +0200
-
-hwaudit (4.1.0.6-2) stable; urgency=low
-
-  * Refactored installation script.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Tue, 18 Sep 2018 12:14:52 +0200
-
-hwaudit (4.1.0.6-1) stable; urgency=low
-
-  * Refactored handling of commandline arguments.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Tue, 18 Sep 2018 12:14:52 +0200
-
-hwaudit (4.1.0.5-1) stable; urgency=low
-
-  * Logging improvements.
-  * Fixed typo in log.
-  * Binary will tell it's version before each run.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Fri, 14 Sep 2018 14:52:47 +0200
-
-hwaudit (4.1.0.4-2) stable; urgency=low
-
-  * corrected error in build process
-
- -- Mathias Radtke <m.radtke@uib.de> Tue, 24 Jul 2018 10:13:00 +0200
-
-hwaudit (4.1.0.4-1) stable; urgency=low
-
-  * extended Chassis types
-
- -- Mathias Radtke <m.radtke@uib.de> Mon, 23 Jul 2018 12:33:00 +0200
-
-hwaudit (4.1.0.3-1) stable; urgency=low
-
-  * Drop support for Windows 2000.
-  * Internal refactorings.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Fri, 06 Apr 2018 13:24:00 +0100
-
-hwaudit (4.1.0.2-1) stable; urgency=low
-
-  * Log to C:\opsi.org\log if the directory exists.
-    Fallback is to log to C:\tmp\ - as before.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Fri, 06 Apr 2018 13:24:00 +0100
-
-hwaudit (4.1.0.1-1) stable; urgency=low
-
-  * Internal refactoring.
-  * Debug log contains more information about failed methods / operations.
-
- -- Niko Wenselowski <n.wenselowski@uib.de> Fri, 06 Apr 2018 13:18:00 +0100
-
-hwaudit (4.1.0.0-1) stable; urgency=low
-
-  * fixed bug in condition matching
-
- -- Mathias Radtke <m.radtke@uib.de> Tue, 20 Mar 2018 14:10:00 +0200
-
-hwaudit (4.0.6.1-6) stable; urgency=low
-
-  * downgrade to openssl 1.0.fg in lib subdirectory (ssleay32.dll, libeay32.dll)
-  * new property: force_install (Default=false)
-  * property: tail-lines: default now 30
-  * requiredWinstVersion >= "4.11.4.7"
-  * AutoActivityDisplay = true
-  * ScriptErrorMessages=off
-
--- Detlef Oertel <d.oertel@uib.de>  Mon,  01 Feb 2016:15:00:00 +0200
-
-hwaudit (4.0.6.1-5) stable; urgency=low
-
-  * update to openssl 1.0.2g in lib subdirectory (ssleay32.dll, libeay32.dll)
-
--- Detlef Oertel <d.oertel@uib.de>  Mon,  01 Feb 2016:15:00:00 +0200
-
-hwaudit (4.0.6.1-4) stable; urgency=low
-
-  * update to openssl 1.0.2f in lib subdirectory (ssleay32.dll, libeay32.dll)
-
--- Detlef Oertel <d.oertel@uib.de>  Mon,  01 Feb 2016:15:00:00 +0200
-
-hwaudit (4.0.6.1-3) stable; urgency=low
-
-  * fixes #1886 update to openssl 1.0.2e in lib subdirectory (ssleay32.dll, libeay32.dll)
-
--- Bardo Wolf <b.wolf@uib.de>  08 Dec 2015
-
-hwaudit (4.0.6.1-2) stable; urgency=low
-
-  * rename hwaudit.ins to hwaudit.opsiscript
-
--- Bardo Wolf <b.wolf@uib.de>  25 Sep 2015
-
-hwaudit (4.0.6.1-1) stable; urgency=low
-
-  * update to openssl 1.0.2d in lib subdirectory
-  * default include 200 Log Lines
-
--- Detlef Oertel <d.oertel@uib.de>  Wed,  02 Sep 2015:15:00:00 +0200
-
-hwaudit (4.0.5-3) stable; urgency=low
-
-  * update to openssl 1.0.2a in lib subdirectory
-
--- Detlef Oertel <d.oertel@uib.de>  Mon,  13 Apr 2015:15:00:00 +0200
-
-hwaudit (4.0.5-2) stable; urgency=low
-
-  * hwaudit.exe 4.0.5.1: fixed long authorizationheader problem
-
- -- Erol Ueluekmen <e.ueluekmen@uib.de>  Wed, Mar 2015 13:45:00 +0100
-
-hwaudit (4.0.5-1) stable; urgency=low
-
-  * added dell-expresscode to computer_system
-  * added productProperty loglevel log-file
-  * changeDirectory added (package requires now winst: 4.11.2.6)
-  * new temp-Directory C:\opsi.org\tmp instead of old C:\tmp
-
- -- Erol Ueluekmen <e.ueluekmen@uib.de>  31 Jul 2012
-
-hwaudit (4.0.4-3) stable; urgency=low
-
-  * get timeout from property
-  * Ticketid 2012021510000025
-
- -- Bardo Wolf <b.wolf@uib.de>  23 Feb 2012
-
-hwaudit (4.0.4-3) stable; urgency=low
-
-  * get timeout from property
-  * Ticketid 2012021510000025
-
- -- Bardo Wolf <b.wolf@uib.de>  23 Feb 2012
-
-hwaudit (4.0.4-2) stable; urgency=low
-
-  * get timeout from property
-  * Ticketid 2012021510000025
-
- -- Bardo Wolf <b.wolf@uib.de>  23 Feb 2012
-
-hwaudit (4.0.4-1) stable; urgency=low
-
-  * Fixes detection of HDAUDIO_DEVICE
-  * requires python-opsi >= (4.0.1.33-1) (new opsihwaudit.conf)
-
- -- Jan Schneider <j.schneider@uib.de>  Tue, 27 Sep 2011 19:18:00 +0100
-
-hwaudit (4.0.3-1) stable; urgency=low
-
-  * Fix operator handling
-
- -- Jan Schneider <j.schneider@uib.de>  Mon, 11 Apr 2011 14:18:00 +0100
-
-hwaudit (4.0-1) unstable; urgency=low
-
-  * opsi 4.0
-
- -- Jan Schneider <j.schneider@uib.de>  Fri, 14 May 2010 16:00:00 +0100
-
-hwaudit (1.3-5) unstable; urgency=low
-
-  * copy files to c:\tmp\hwaudit and start from there
-  * only for NT removed
-  * integrates hwaudit.log and hwaudit.exe.log in logfile
-  * Starting from winbatch
-  * added at winbatch call: /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
-  * added killtask "hwaudit.exe"
-  * added reconnect
-  * exitcode 259 (killed by timeout) not as fatal
-
- -- Detlef Oertel <d.oertel@uib.de>  Fri,  11 Dec 2009 14:24:43 +0200
-
-hwaudit (1.3-4) unstable; urgency=low
-
-  * Added log file
-
- -- Jan Schneider <j.schneider@uib.de>  Fri,  4 Sep 2009 17:24:43 +0200
-
-hwaudit (1.3-3) unstable; urgency=low
-
-  * Compiled using py2exe
-
- -- Jan Schneider <j.schneider@uib.de>  Tue,  4 Aug 2009 12:03:13 +0200
-
-hwaudit (1.3-2) experimentel; urgency=low
-
-  * exe version with activated Debug-Mode
-
- -- Erol Ueluekmen <e.ueluekmen@uib.de>  Thu,  9 Apr 2009 11:55:14 +0200
-
-hwaudit (1.3-1) stable; urgency=low
-
-  * exe version
-
- -- Erol Ueluekmen <e.ueluekmen@uib.de>  Thu,  9 Apr 2009 11:55:14 +0200
-
-hwaudit (1.2.1-1) stable; urgency=low
-
-  * Added mapping for system enclosure types
-
- -- Jan Schneider <j.schneider@uib.de>  Fri, 21 Nov 2008 16:33:00 +0100
-

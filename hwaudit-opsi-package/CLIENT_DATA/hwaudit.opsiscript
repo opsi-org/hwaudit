@@ -3,7 +3,7 @@
 ; and published under the Terms of the General Public License.
 
 [Actions]
-requiredWinstVersion >= "4.11.4.7"
+requiredWinstVersion >= "4.12.0"
 AutoActivityDisplay = true
 ScriptErrorMessages=off
 
@@ -16,100 +16,100 @@ DefVar $tempdir$
 DefVar $taillines$
 DefVar $force_install$
 DefVar $copy_option$
-DefVar $INST_NTVersion$
-DefVar $systemtype$
-DefVar $OCD_DIST_DIR$
+DefVar $hw_dir$
+DefVar $hw_bin$
+DefVar $hw_bin_path$
+DefVar $OS$
+DefVar $pathdelim$
+Defvar $command$
 
-set $tempdir$ = "%Systemdrive%\opsi.org\tmp"
+set $tempdir$ = "%opsiTmpDir%"
 set $ProductId$ = "hwaudit"
-set $loglevel$ = getProductProperty("loglevel", "3")
-set $logfile$ = getProductProperty("logfile", $tempdir$ + "\hwaudit.log")
+set $loglevel$ = getProductProperty("loglevel", "5")
 Set $timeout$ = GetProductProperty("timeout","")
-Set $taillines$ = GetProductProperty("tail-lines", "0")
+Set $taillines$ = GetProductProperty("tail-lines", "10")
 Set $force_install$ = GetProductProperty("force_install", "false")
+set $OS$ = GetOs
 
-set $systemtype$ = GetSystemType
-
-set $INST_NTVersion$ = GetMsVersionInfo
-
-Switch $systemtype$
-	Case "x86 System"
-		set $OCD_DIST_DIR$ = "dist.32bit"
-	Endcase
-;	Case "64 Bit System"
-;		set $OCD_DIST_DIR$ = "dist.64bit"
-;	Endcase
-	DefaultCase
-		comment "Systemtype " + $systemtype$ + " not known. Trying 32Bit for luck"
-		set $OCD_DIST_DIR$ = "dist.32bit"
-	Endcase
-Endswitch
 
 Message "Running hardware audit..."
 ShowBitmap "%SCRIPTPATH%\hwaudit.png" "Hardware Inventarisierung"
 
-set $copy_option$ = "-su"
+Switch $OS$
+	Case "Windows_NT"
+		set $hw_dir$ = "win"
+		set $hw_bin$ = "opsi-hwaudit.exe"
+		set $hw_bin_path$ = "%programfiles64dir%\opsi.org\hwaudit\"
+		set $pathdelim$ = "\"
+		set $command$ = ""
+		set $copy_option$ = "-u"
+	Endcase
+	Case "Linux"
+		set $hw_dir$ = "lin"
+		set $hw_bin$ = "opsi-hwaudit"
+		set $hw_bin_path$ = "/usr/local/bin/"
+		set $pathdelim$ = "/"
+		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
+		set $copy_option$ = ""
+	Endcase
+	Case "macos"
+		set $hw_dir$ = "macos"
+		set $hw_bin$ = "opsi-hwaudit"
+		set $hw_bin_path$ = "/usr/local/bin/"
+		set $pathdelim$ = "/"
+		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
+		set $copy_option$ = ""
+	Endcase
+	DefaultCase
+		LogError "Unknown OS: "+ $OS$
+		isFatalError
+	Endcase
+Endswitch
+set $logfile$ = $tempdir$+$pathdelim$+"hwaudit.log"
+set $logfile$ = getProductProperty("logfile", $logfile$)
+if ($logfile$ = "") or ($logfile$ = "auto")
+	set $logfile$ = $tempdir$+$pathdelim$+"hwaudit.log"
+endif
+
 if $force_install$ = "true"
-	set $copy_option$ = "-s"
+	set $copy_option$ = ""
 endif
 
 Files_copy_hwaudit
 
-changeDirectory $tempdir$ + "\hwaudit"
-comment "$timeout$ = " +  $timeout$
-Switch $timeout$
-	Case "90"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
-	EndCase
-	Case "300"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 300
-	EndCase
-	Case "600"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 600
-	EndCase
-	Case "notimeout"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe"
-	EndCase
-	DefaultCase
-		comment "default 90"
-		Winbatch_hwaudit /WaitForProcessEnding "hwaudit.exe" /TimeOutSeconds 90
-	EndCase
-EndSwitch
-
+if not($timeout$  = "notimeout")
+	Winbatch_hwaudit /TimeOutSeconds $timeout$
+else
+	Winbatch_hwaudit
+endif
 set $exitcode$ = getLastExitCode
-killtask "hwaudit.exe"
+killtask $hw_bin$
 
-if not (FileExists("%SCRIPTPATH%"))
-	DosInAnIcon_TryToReconnect
-endif 
+if not (($exitcode$ = "0") or ($exitcode$ = "259")) 
+	comment "retry ..."
+	shellInAnIcon_hwaudit
+	set $exitcode$ = getLastExitCode
+	killtask $hw_bin$
+endif
 
 if fileExists ($logfile$)
 	comment "Try to include hwaudit.log file in instlog"
 	includelog $logfile$ $taillines$
 endif
+
+
 if not (($exitcode$ = "0") or ($exitcode$ = "259")) 
 	logError "Fatal: hwaudit exit code = "+$exitcode$
 	isFatalError
 endif
 
 [Files_copy_hwaudit]
-copy $copy_option$ "%SCRIPTPATH%\$OCD_DIST_DIR$\*.*" "$tempdir$\hwaudit"
-copy $copy_option$ "%SCRIPTPATH%\common\*.*" "$tempdir$\hwaudit\"
+copy $copy_option$ "%SCRIPTPATH%$pathdelim$files$pathdelim$$hw_dir$$pathdelim$$hw_bin$" "$hw_bin_path$"
+$command$
 del "$logfile$"
 
 [winbatch_hwaudit]
-"$tempdir$\hwaudit\hwaudit.exe" -u "%hostId%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
+"$hw_bin_path$$hw_bin$" -u "%opsiserviceUser%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
 
-[DosInAnIcon_TryToReconnect]
-net use
-set TIMEOUT=
-:TRY
-if exist "%SCRIPTPATH%\hwaudit.exe" goto READY
-%ScriptDrive%
-set TIMEOUT=%TIMEOUT%1
-if %TIMEOUT% == 1111111111111111 goto READY
-"c:\tmp\hwaudit\sleep.exe" 10
-net use
-goto TRY
-:READY
-
+[shellInAnIcon_hwaudit]
+"$hw_bin_path$$hw_bin$" -u "%opsiserviceUser%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"

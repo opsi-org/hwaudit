@@ -12,6 +12,8 @@ build:linux-pyinstaller:
     - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - if test "$CI_COMMIT_TAG"; then poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit; fi
+    - if ! test "$CI_COMMIT_TAG"; then poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"; fi
     - mv hwaudit hwaudit.src
     - cd dist
     - tar -czvf ../hwaudit_binaries.tar.gz .
@@ -30,13 +32,15 @@ build:windows-pyinstaller:
     - poetry remove mysqlclient
     - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
     - poetry update
-    - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - if (! $CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe "$CI_JOB_ID"}
+    - if ($CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe}
     - Move-Item -Path hwaudit -Destination hwaudit.src -Force
     - Move-Item -Path dist\ -Destination hwaudit
   artifacts:
     name: 'hwaudit-windows-pyinstaller'
     paths:
-      - hwaudit
+      - opsi-hwaudit.exe
     expire_in: 2 day
 
 build:osx-pyinstaller:
@@ -46,12 +50,44 @@ build:osx-pyinstaller:
   script:
     - source $HOME/.poetry/env
     - poetry install
-    - poetry run opsi-dev-tool -l debug --pyinstaller-poetry-build
+    - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
+    - if test "$CI_COMMIT_TAG"; then poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit; fi
+    - if ! test "$CI_COMMIT_TAG"; then poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"; fi
     - mv hwaudit hwaudit.src
-    - mv dist/hwaudit .
+    - mv dist/opsi-hwaudit .
   artifacts:
     name: 'hwaudit-macos-pyinstaller'
     paths:
-      - hwaudit
+      - opsi-hwaudit
     expire_in: 2 day
 
+.install_opsi_utils: &install_opsi_utils |
+  apt update
+  apt -y install wget zsync librsync-dev cpio
+  wget "http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/experimental/Debian_10/amd64/opsi-utils_4.2.0.25-1_amd64.deb"
+  apt -y install ./opsi-utils_4.2.0.25-1_amd64.deb
+  useradd opsiconfd
+  groupadd pcpatch
+  groupadd opsiadmin
+  adduser opsiconfd pcpatch
+  adduser opsiconfd opsiadmin
+
+package:makeopsipackage:
+  stage: package
+  script:
+    - apt -y install curl
+    - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
+    - source $HOME/.poetry/env
+    - poetry install
+    - poetry run opsi-dev-tool -l debug --binary-pull
+    - export VERSION=`cat pyproject.toml | grep -e "^version = " | cut -d \" -f 2`
+    - cd hwaudit-opsi-package
+    - cat OPSI/control | awk -v new_version="$VERSION" '/^\[/ { section=$1} {line=$0; if ($1 == "version:" && section == "[Product]"){ line = $1 " " new_version} print line}' > tmp
+    - cat tmp > OPSI/control
+    - rm tmp
+    - *install_opsi_utils
+    - opsi-makepackage
+  artifacts:
+    name: hwaudit-opsi-package
+    paths:
+      - "hwaudit-opsi-package/hwaudit_*-1.opsi"
