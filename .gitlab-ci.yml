@@ -88,7 +88,8 @@ package:makeopsipackage:
     - cat OPSI/control | awk -v new_version="$VERSION" '/^\[/ { section=$1} {line=$0; if ($1 == "version:" && section == "[Product]"){ line = $1 " " new_version} print line}' > tmp
     - cat tmp > OPSI/control
     - rm tmp
-    - opsi-utils/opsi-makepackage --no-set-rights -l 6
+    - cd ..
+    - opsi-utils/opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
   artifacts:
     name: hwaudit-opsi-package
     paths:
