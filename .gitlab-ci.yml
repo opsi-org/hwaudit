@@ -63,9 +63,8 @@ build:osx-pyinstaller:
 
 .install_opsi_utils: &install_opsi_utils |
   apt update
-  apt -y install wget zsync librsync-dev cpio
-  wget "http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.1:/stable/xUbuntu_18.04/all/opsi-utils_4.1.1.35-1_all.deb"
-  apt -y install ./opsi-utils_4.1.1.35-1_all.deb
+  apt -y install zsync librsync-dev cpio
+  poetry run opsi-dev-tool --binary-pull development opsi-utils linux latest ./
   useradd opsiconfd
   groupadd pcpatch
   groupadd opsiadmin
@@ -86,7 +85,7 @@ package:makeopsipackage:
     - cat tmp > OPSI/control
     - rm tmp
     - *install_opsi_utils
-    - opsi-makepackage
+    - opsi-utils/opsi-makepackage
   artifacts:
     name: hwaudit-opsi-package
     paths:
