@@ -70,7 +70,7 @@ build:osx-pyinstaller:
 .install_opsi_utils: &install_opsi_utils |
   apt update
   apt -y install zsync librsync-dev cpio
-  poetry run opsi-dev-tool --binary-pull development opsi-utils linux latest ./
+  ./opsi-dev-tool --binary-pull development opsi-utils linux latest ./
   useradd opsiconfd
   groupadd pcpatch
   groupadd opsiadmin
@@ -82,7 +82,7 @@ package:makeopsipackage:
   script:
     - *install_opsi_dev_tools
     - *install_opsi_utils
-    - poetry run opsi-dev-tool -l debug --binary-pull
+    - ./opsi-dev-tool -l debug --binary-pull
     - export VERSION=`cat pyproject.toml | grep -e "^version = " | cut -d \" -f 2`
     - cd hwaudit-opsi-package
     - cat OPSI/control | awk -v new_version="$VERSION" '/^\[/ { section=$1} {line=$0; if ($1 == "version:" && section == "[Product]"){ line = $1 " " new_version} print line}' > tmp
