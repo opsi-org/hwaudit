@@ -52,7 +52,7 @@ Switch $OS$
 		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
-		shellInAnIcon_install_linux_programms
+		linuxPackageInstall("lshw")
 	Endcase
 	Case "macos"
 		set $hw_dir$ = "macos"
@@ -104,10 +104,6 @@ if not (($exitcode$ = "0") or ($exitcode$ = "259"))
 	logError "Fatal: hwaudit exit code = "+$exitcode$
 	isFatalError
 endif
-
-[shellInAnIcon_install_linux_programms]
-apt-get update
-apt-get --yes --force-yes install lshw usbutils
 
 [Files_copy_hwaudit]
 copy $copy_option$ "%SCRIPTPATH%$pathdelim$files$pathdelim$$hw_dir$$pathdelim$$hw_bin$" "$hw_bin_path$"
