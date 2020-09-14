@@ -12,8 +12,8 @@ build:linux-pyinstaller:
     - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
+    - '[ "$CI_COMMIT_TAG" = "" ] && poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
     - mv hwaudit hwaudit.src
     - cd dist
     - tar -czvf ../hwaudit_binaries.tar.gz .
@@ -51,8 +51,8 @@ build:osx-pyinstaller:
     - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
+    - '[ "$CI_COMMIT_TAG" = "" ] && poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
     - mv hwaudit hwaudit.src
     - mv dist/opsi-hwaudit .
   artifacts:
