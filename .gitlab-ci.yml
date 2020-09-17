@@ -64,13 +64,13 @@ build:osx-pyinstaller:
 .install_opsi_dev_tools: &install_opsi_dev_tools |
   apt update
   apt -y install wget cpio unar
-  wget "$OPSIDEVTOOLS_URL_LINUX" -O opsi-dev-tools.tar.gz
+  wget "$OPSIDEVTOOLS_URL_LINUX_X64" -O opsi-dev-tools.tar.gz
   tar -xvf opsi-dev-tools.tar.gz
 
 .install_opsi_utils: &install_opsi_utils |
   apt update
   apt -y install zsync librsync-dev cpio
-  ./opsi-dev-tool --binary-pull development opsi-utils linux latest ./
+  ./opsi-dev-tool --binary-pull development opsi-utils linux x64 latest ./
   useradd opsiconfd
   groupadd pcpatch
   groupadd opsiadmin
