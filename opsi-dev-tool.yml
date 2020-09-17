@@ -28,7 +28,8 @@ pull-binaries:
     destination: hwaudit-opsi-package/CLIENT_DATA/files/lin/
     extract: true
     post-script: []
-    architecture: linux
+    os: linux
+    architecture: x64
     version: latest
     branch: development
     server-url: http://binaryindex.uib.gmbh
@@ -37,7 +38,8 @@ pull-binaries:
     destination: hwaudit-opsi-package/CLIENT_DATA/files/win/
     extract: true
     post-script: []
-    architecture: windows
+    os: windows
+    architecture: x86
     version: latest
     branch: development
     server-url: http://binaryindex.uib.gmbh
@@ -46,7 +48,8 @@ pull-binaries:
     destination: hwaudit-opsi-package/CLIENT_DATA/files/macos/
     extract: true
     post-script: []
-    architecture: darwin
+    os: darwin
+    architecture: x64
     version: latest
     branch: development
     server-url: http://binaryindex.uib.gmbh
