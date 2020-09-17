@@ -171,7 +171,7 @@ python-versions = "*"
 version = "1.5.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Clean single-source support for Python 3 and 2"
 name = "future"
 optional = false
@@ -270,16 +270,19 @@ description = "opsi development tools"
 name = "opsi-dev-tools"
 optional = false
 python-versions = ">=3.7,<4.0"
-version = "1.0.24"
+version = "1.0.30"
 
 [package.dependencies]
 colorlog = ">=4.1.0,<5.0.0"
 configargparse = ">=1.2.3,<2.0.0"
+pefile = ">=2019.4.18,<2020.0.0"
 pypi-simple = ">=0.6.0,<0.7.0"
 python-gettext = ">=4.0,<5.0"
 pyyaml = ">=5.3.1,<6.0.0"
+rarfile = ">=4.0,<5.0"
 requests = ">=2.23.0,<3.0.0"
 toml = ">=0.10.0,<0.11.0"
+virustotal3 = ">=1.0.8,<2.0.0"
 
 [package.source]
 reference = "uib"
@@ -299,7 +302,7 @@ pyparsing = ">=2.0.2"
 six = "*"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python PE parsing module"
 name = "pefile"
 optional = false
@@ -569,6 +572,14 @@ version = "5.3.1"
 
 [[package]]
 category = "main"
+description = "RAR archive reader for Python"
+name = "rarfile"
+optional = false
+python-versions = "*"
+version = "4.0"
+
+[[package]]
+category = "main"
 description = "Python HTTP for Humans."
 name = "requests"
 optional = false
@@ -702,6 +713,17 @@ version = "1.25.10"
 brotli = ["brotlipy (>=0.6.0)"]
 secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)", "ipaddress"]
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
+
+[[package]]
+category = "main"
+description = "Python 3 implementation of the VirusTotal v3 API"
+name = "virustotal3"
+optional = false
+python-versions = "*"
+version = "1.0.8"
+
+[package.dependencies]
+requests = "*"
 
 [[package]]
 category = "dev"
@@ -915,8 +937,8 @@ mysqlclient = [
     {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 opsi-dev-tools = [
-    {file = "opsi-dev-tools-1.0.24.tar.gz", hash = "md5:b57ebd8003cf03346f14f856ec45e9cf"},
-    {file = "opsi_dev_tools-1.0.24-py3-none-any.whl", hash = "md5:081727ad702a24fe97895ffe6bc4d723"},
+    {file = "opsi-dev-tools-1.0.30.tar.gz", hash = "md5:d78feaec683074a8b228d286e12d2264"},
+    {file = "opsi_dev_tools-1.0.30-py3-none-any.whl", hash = "md5:b800bb964e5257b95d25e470f099f0b0"},
 ]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
@@ -1085,6 +1107,10 @@ pyyaml = [
     {file = "PyYAML-5.3.1-cp38-cp38-win_amd64.whl", hash = "sha256:95f71d2af0ff4227885f7a6605c37fd53d3a106fcab511b8860ecca9fcf400ee"},
     {file = "PyYAML-5.3.1.tar.gz", hash = "sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"},
 ]
+rarfile = [
+    {file = "rarfile-4.0-py3-none-any.whl", hash = "sha256:1094869119012f95c31a6f22cc3a9edbdca61861b805241116adbe2d737b68f8"},
+    {file = "rarfile-4.0.tar.gz", hash = "sha256:67548769229c5bda0827c1663dce3f54644f9dbfba4ae86d4da2b2afd3e602a1"},
+]
 requests = [
     {file = "requests-2.24.0-py2.py3-none-any.whl", hash = "sha256:fe75cc94a9443b9246fc7049224f75604b113c36acb93f87b80ed42c44cbb898"},
     {file = "requests-2.24.0.tar.gz", hash = "sha256:b3559a131db72c33ee969480840fff4bb6dd111de7dd27c8ee1f820f4f00231b"},
@@ -1167,6 +1193,9 @@ twisted = [
 urllib3 = [
     {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},
     {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
+]
+virustotal3 = [
+    {file = "virustotal3-1.0.8.tar.gz", hash = "sha256:84354b7ac806dcc15908baf57561a76a1bdf10973538e3ae233363a7ad6c41bb"},
 ]
 wcwidth = [
     {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},
