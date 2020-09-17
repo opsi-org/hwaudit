@@ -52,7 +52,7 @@ Switch $OS$
 		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
-		linuxPackageInstall("lshw")
+		;linuxPackageInstall("lshw")
 	Endcase
 	Case "macos"
 		set $hw_dir$ = "macos"
