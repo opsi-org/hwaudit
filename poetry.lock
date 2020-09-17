@@ -162,14 +162,6 @@ ssh = ["bcrypt (>=3.1.5)"]
 test = ["pytest (>=3.6.0,<3.9.0 || >3.9.0,<3.9.1 || >3.9.1,<3.9.2 || >3.9.2)", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,<3.79.2 || >3.79.2)"]
 
 [[package]]
-category = "dev"
-description = "Python 2.7 backport of the \"dis\" module from Python 3.5+"
-name = "dis3"
-optional = false
-python-versions = "*"
-version = "0.1.3"
-
-[[package]]
 category = "main"
 description = "Distro - an OS platform information API"
 marker = "sys_platform == \"linux\""
@@ -179,7 +171,7 @@ python-versions = "*"
 version = "1.5.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Clean single-source support for Python 3 and 2"
 name = "future"
 optional = false
@@ -278,16 +270,19 @@ description = "opsi development tools"
 name = "opsi-dev-tools"
 optional = false
 python-versions = ">=3.7,<4.0"
-version = "1.0.24"
+version = "1.0.30"
 
 [package.dependencies]
 colorlog = ">=4.1.0,<5.0.0"
 configargparse = ">=1.2.3,<2.0.0"
+pefile = ">=2019.4.18,<2020.0.0"
 pypi-simple = ">=0.6.0,<0.7.0"
 python-gettext = ">=4.0,<5.0"
 pyyaml = ">=5.3.1,<6.0.0"
+rarfile = ">=4.0,<5.0"
 requests = ">=2.23.0,<3.0.0"
 toml = ">=0.10.0,<0.11.0"
+virustotal3 = ">=1.0.8,<2.0.0"
 
 [package.source]
 reference = "uib"
@@ -307,7 +302,7 @@ pyparsing = ">=2.0.2"
 six = "*"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python PE parsing module"
 name = "pefile"
 optional = false
@@ -400,13 +395,28 @@ category = "dev"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
 name = "pyinstaller"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "3.6"
+python-versions = "*"
+version = "4.0"
 
 [package.dependencies]
 altgraph = "*"
-dis3 = "*"
+macholib = ">=1.8"
+pefile = ">=2017.8.1"
+pyinstaller-hooks-contrib = ">=2020.6"
+pywin32-ctypes = ">=0.2.0"
 setuptools = "*"
+
+[package.extras]
+encryption = ["tinyaes (>=1.0.0)"]
+hook_testing = ["pytest (>=2.7.3)", "execnet (>=1.5.0)", "psutil"]
+
+[[package]]
+category = "dev"
+description = "Community maintained hooks for PyInstaller"
+name = "pyinstaller-hooks-contrib"
+optional = false
+python-versions = "*"
+version = "2020.7"
 
 [[package]]
 category = "main"
@@ -562,6 +572,14 @@ version = "5.3.1"
 
 [[package]]
 category = "main"
+description = "RAR archive reader for Python"
+name = "rarfile"
+optional = false
+python-versions = "*"
+version = "4.0"
+
+[[package]]
+category = "main"
 description = "Python HTTP for Humans."
 name = "requests"
 optional = false
@@ -697,6 +715,17 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [[package]]
+category = "main"
+description = "Python 3 implementation of the VirusTotal v3 API"
+name = "virustotal3"
+optional = false
+python-versions = "*"
+version = "1.0.8"
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 category = "dev"
 description = "Measures the displayed width of unicode strings in a terminal"
 name = "wcwidth"
@@ -753,7 +782,7 @@ test = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
-content-hash = "d8991170f6fbc3850b44623f372d0d151621e3a1d7496eb99ea02868ec715667"
+content-hash = "8ca15edc1efb64232cd0062ef1cbe984ebf0f797ec6dc7e0fa521c7828d17197"
 python-versions = ">=3.7, <4.0"
 
 [metadata.files]
@@ -862,11 +891,6 @@ cryptography = [
     {file = "cryptography-3.1-cp38-cp38-win_amd64.whl", hash = "sha256:548b0818e88792318dc137d8b1ec82a0ab0af96c7f0603a00bb94f896fbf5e10"},
     {file = "cryptography-3.1.tar.gz", hash = "sha256:26409a473cc6278e4c90f782cd5968ebad04d3911ed1c402fc86908c17633e08"},
 ]
-dis3 = [
-    {file = "dis3-0.1.3-py2-none-any.whl", hash = "sha256:61f7720dd0d8749d23fda3d7227ce74d73da11c2fade993a67ab2f9852451b14"},
-    {file = "dis3-0.1.3-py3-none-any.whl", hash = "sha256:30b6412d33d738663e8ded781b138f4b01116437f0872aa56aa3adba6aeff218"},
-    {file = "dis3-0.1.3.tar.gz", hash = "sha256:9259b881fc1df02ed12ac25f82d4a85b44241854330b1a651e40e0c675cb2d1e"},
-]
 distro = [
     {file = "distro-1.5.0-py2.py3-none-any.whl", hash = "sha256:df74eed763e18d10d0da624258524ae80486432cd17392d9c3d96f5e83cd2799"},
     {file = "distro-1.5.0.tar.gz", hash = "sha256:0e58756ae38fbd8fc3020d54badb8eae17c5b9dcbed388b17bb55b8a5928df92"},
@@ -913,8 +937,8 @@ mysqlclient = [
     {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 opsi-dev-tools = [
-    {file = "opsi-dev-tools-1.0.24.tar.gz", hash = "md5:b57ebd8003cf03346f14f856ec45e9cf"},
-    {file = "opsi_dev_tools-1.0.24-py3-none-any.whl", hash = "md5:081727ad702a24fe97895ffe6bc4d723"},
+    {file = "opsi-dev-tools-1.0.30.tar.gz", hash = "md5:d78feaec683074a8b228d286e12d2264"},
+    {file = "opsi_dev_tools-1.0.30-py3-none-any.whl", hash = "md5:b800bb964e5257b95d25e470f099f0b0"},
 ]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
@@ -1015,7 +1039,11 @@ pyhamcrest = [
     {file = "PyHamcrest-2.0.2.tar.gz", hash = "sha256:412e00137858f04bde0729913874a48485665f2d36fe9ee449f26be864af9316"},
 ]
 pyinstaller = [
-    {file = "PyInstaller-3.6.tar.gz", hash = "sha256:3730fa80d088f8bb7084d32480eb87cbb4ddb64123363763cf8f2a1378c1c4b7"},
+    {file = "pyinstaller-4.0.tar.gz", hash = "sha256:970beb07115761d5e4ec317c1351b712fd90ae7f23994db914c633281f99bab0"},
+]
+pyinstaller-hooks-contrib = [
+    {file = "pyinstaller-hooks-contrib-2020.7.tar.gz", hash = "sha256:74936d044f319cd7a9dca322b46a818fcb6e2af1c67af62e8a6a3121eb2863d2"},
+    {file = "pyinstaller_hooks_contrib-2020.7-py2.py3-none-any.whl", hash = "sha256:5b6e06ba6072499189f5b8e1623d5f0414962941aac370ee4f842de25455be5b"},
 ]
 pyopenssl = [
     {file = "pyOpenSSL-19.1.0-py2.py3-none-any.whl", hash = "sha256:621880965a720b8ece2f1b2f54ea2071966ab00e2970ad2ce11d596102063504"},
@@ -1078,6 +1106,10 @@ pyyaml = [
     {file = "PyYAML-5.3.1-cp38-cp38-win32.whl", hash = "sha256:06a0d7ba600ce0b2d2fe2e78453a470b5a6e000a985dd4a4e54e436cc36b0e97"},
     {file = "PyYAML-5.3.1-cp38-cp38-win_amd64.whl", hash = "sha256:95f71d2af0ff4227885f7a6605c37fd53d3a106fcab511b8860ecca9fcf400ee"},
     {file = "PyYAML-5.3.1.tar.gz", hash = "sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"},
+]
+rarfile = [
+    {file = "rarfile-4.0-py3-none-any.whl", hash = "sha256:1094869119012f95c31a6f22cc3a9edbdca61861b805241116adbe2d737b68f8"},
+    {file = "rarfile-4.0.tar.gz", hash = "sha256:67548769229c5bda0827c1663dce3f54644f9dbfba4ae86d4da2b2afd3e602a1"},
 ]
 requests = [
     {file = "requests-2.24.0-py2.py3-none-any.whl", hash = "sha256:fe75cc94a9443b9246fc7049224f75604b113c36acb93f87b80ed42c44cbb898"},
@@ -1161,6 +1193,9 @@ twisted = [
 urllib3 = [
     {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},
     {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
+]
+virustotal3 = [
+    {file = "virustotal3-1.0.8.tar.gz", hash = "sha256:84354b7ac806dcc15908baf57561a76a1bdf10973538e3ae233363a7ad6c41bb"},
 ]
 wcwidth = [
     {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},

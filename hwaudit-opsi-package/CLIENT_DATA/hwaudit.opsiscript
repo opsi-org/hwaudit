@@ -31,6 +31,7 @@ Set $taillines$ = GetProductProperty("tail-lines", "10")
 Set $force_install$ = GetProductProperty("force_install", "false")
 set $OS$ = GetOs
 
+setloglevel = $loglevel$
 
 Message "Running hardware audit..."
 ShowBitmap "%SCRIPTPATH%\hwaudit.png" "Hardware Inventarisierung"
@@ -51,6 +52,7 @@ Switch $OS$
 		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
+		;linuxPackageInstall("lshw")
 	Endcase
 	Case "macos"
 		set $hw_dir$ = "macos"
