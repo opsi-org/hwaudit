@@ -31,7 +31,7 @@ build:windows-pyinstaller:
     - poetry update mysqlclient
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
     - poetry run opsi-dev-tool --binary-pull development opsi-dev-tools windows x86 1.0.32~21260 ./
-    - .\opsi-dev-tool.exe -l debug --codesign-sign dist/opsi-hwaudit.exe
+    - runas /user:administrator cmd.exe .\opsi-dev-tool.exe -l debug --codesign-sign dist/opsi-hwaudit.exe
     - if (! $CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe "$CI_JOB_ID"}
     - if ($CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe}
   artifacts:
