@@ -30,7 +30,8 @@ build:windows-pyinstaller:
     - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
     - poetry update mysqlclient
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - poetry run opsi-dev-tool --binary-pull opsi-dev-tools development linux x64 1.0.32~test ./
+    - poetry run opsi-dev-tool --binary-pull opsi-dev-tools development linux x64 1.0.32~0 ./
+    - dir dist
     - ./opsi-dev-tool -l debug --codesign-sign dist/opsi-hwaudit.exe
     - if (! $CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe "$CI_JOB_ID"}
     - if ($CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit.exe}
