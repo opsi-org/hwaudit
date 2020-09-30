@@ -66,7 +66,7 @@ html5lib = ["html5lib"]
 lxml = ["lxml"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Dummy package for Beautiful Soup"
 name = "bs4"
 optional = false
@@ -270,9 +270,10 @@ description = "opsi development tools"
 name = "opsi-dev-tools"
 optional = false
 python-versions = ">=3.7,<4.0"
-version = "1.0.30"
+version = "1.0.37"
 
 [package.dependencies]
+bs4 = ">=0.0.1,<0.0.2"
 colorlog = ">=4.1.0,<5.0.0"
 configargparse = ">=1.2.3,<2.0.0"
 pefile = ">=2019.4.18,<2020.0.0"
@@ -782,7 +783,7 @@ test = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
-content-hash = "8ca15edc1efb64232cd0062ef1cbe984ebf0f797ec6dc7e0fa521c7828d17197"
+content-hash = "e140cdeab283d4b0313dc59df00777df0e04bc99cdd55deb20bd924171340077"
 python-versions = ">=3.7, <4.0"
 
 [metadata.files]
@@ -937,8 +938,8 @@ mysqlclient = [
     {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 opsi-dev-tools = [
-    {file = "opsi-dev-tools-1.0.30.tar.gz", hash = "md5:d78feaec683074a8b228d286e12d2264"},
-    {file = "opsi_dev_tools-1.0.30-py3-none-any.whl", hash = "md5:b800bb964e5257b95d25e470f099f0b0"},
+    {file = "opsi-dev-tools-1.0.37.tar.gz", hash = "md5:6a32110faf05e9533d36d9e0cc592743"},
+    {file = "opsi_dev_tools-1.0.37-py3-none-any.whl", hash = "md5:da6c19f6fb20a24e86e56813e4bde222"},
 ]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
