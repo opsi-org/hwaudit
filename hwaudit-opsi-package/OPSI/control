@@ -1,5 +1,5 @@
 [Package]
-version: 1
+version: 2
 depends: 
 
 [Product]
@@ -8,7 +8,7 @@ id: hwaudit
 name: Client Hardwareinventory Windows / Linux / OSX
 description: Hardwareinventarisierung
 advice: 
-version: 4.2.0.2
+version: 4.1.1.1
 priority: 0
 licenseRequired: False
 productClasses: 
