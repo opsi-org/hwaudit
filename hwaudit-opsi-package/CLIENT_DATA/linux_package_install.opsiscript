@@ -1,0 +1,81 @@
+deffunc linuxInstallAny($packagelist$ : stringlist) : string
+	;@author          nils doerrer
+	;@date            16.11.2020
+	;@Description     try to install any package given by $packagelist$
+	;@Returns         Returns string "true" if one package was successfully installed
+	;@OnError         Returns string "false"
+	;@ParamDesc_$packagelist$     stringlist with packages to install 
+
+	defVar $instcommand$
+
+	set $result$ = "False"
+	set $instcommand$ = getLinuxCommand("install")
+	for %s% in $packagelist$ do
+		if $result$ = "False"
+			$result$ = shellCall($instcommand$ + " " + %s%)
+		endif
+endfunc
+
+
+deffunc isAnyInstalled($packagelist$ : stringlist) : string
+	;@author          nils doerrer
+	;@date            16.11.2020
+	;@Description     check for installation status and return if any of $packagelist$ exists
+	;@Returns         Returns string "true" if one specified package is installed
+	;@OnError         Returns string "false"
+	;@ParamDesc_$packagelist$     stringlist with packages to check 
+
+	defVar $checkcommand$
+
+	set $result$ = "False"
+	set $checkcommand$ = getLinuxCommand("check")
+	for %s% in $packagelist$ do
+		if $result$ = "False"
+			$result$ = shellCall($checkcommand$ + " " + %s%)
+		endif
+endfunc
+
+
+deffunc getLinuxCommand($type$ : string) : string
+	;@author          nils doerrer
+	;@date            16.11.2020
+	;@Description     Determine package manager and return command.
+	;@Returns         Package manager command according to type
+	;@OnError         Returns string "false"
+	;@References      linuxInstallAny
+	;@ParamDesc_$type$     type of desired command "install" or "check" 
+
+	set $result$ = ""
+	if shellCall('apt-get --version') = 0
+		Switch($type$)
+			Case "install"
+				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
+			EndCase
+			Case "check"
+				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt-get show'
+			EndCase
+		EndSwitch
+	endif
+
+	if shellCall('yum --version') = 0
+		Switch($type$)
+			Case "install"
+				set $result$ = 'yum install -y'
+			EndCase
+			Case "check"
+				set $result$ = 'yum list installed'
+			EndCase
+		EndSwitch
+	endif
+
+	if shellCall("zypper --version") = 0
+		Switch($type$)
+			Case "install"
+				set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
+			EndCase
+			Case "check"
+				set $result$ = 'zypper search -s'
+			EndCase
+		EndSwitch
+	endif
+endfunc
