@@ -3,8 +3,7 @@
 ; and published under the Terms of the General Public License.
 
 [Actions]
-importlib "linuxInstallAny"
-importlib "isAnyInstalled"
+importlib "linuxPackageInstall"
 
 requiredWinstVersion >= "4.12.0"
 AutoActivityDisplay = true
@@ -24,7 +23,8 @@ DefVar $hw_bin$
 DefVar $hw_bin_path$
 DefVar $OS$
 DefVar $pathdelim$
-Defvar $command$
+DefVar $command$
+DefVar $dummy$
 
 set $tempdir$ = "%opsiTmpDir%"
 set $ProductId$ = "hwaudit"
@@ -59,19 +59,19 @@ Switch $OS$
 		message "Checking for missing Unix-Programs"
 		if isAnyInstalled(createStringList("lshw")) = "False"
 			message "installing lshw"
-			linuxInstallAny(createStringList("lshw"))
+			set $dummy$ = linuxInstallAny(createStringList("lshw"))
 		endif
 		if isAnyInstalled(createStringList("dmidecode", "dmi-decode")) = "False"
 			message "installing dmidecode / dmi-decode"
-			linuxInstallAny(createStringList("dmidecode", "dmi-decode"))
+			set $dummy$ = linuxInstallAny(createStringList("dmidecode", "dmi-decode"))
 		endif
 		if isAnyInstalled(createStringList("lspci", "pciutils")) = "False"
 			message "installing lspci"
-			linuxInstallAny(createStringList("lspci", "pciutils"))
+			set $dummy$ = linuxInstallAny(createStringList("lspci", "pciutils"))
 		endif
 		if isAnyInstalled(createStringList("lsusb", "usbutils")) = "False"
 			message "installing lsusb / usbutils"
-			linuxInstallAny(createStringList("lsusb", "usbutils"))
+			set $dummy$ = linuxInstallAny(createStringList("lsusb", "usbutils"))
 		endif
 	Endcase
 
