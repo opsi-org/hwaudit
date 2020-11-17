@@ -2,18 +2,27 @@ deffunc linuxInstallAny($packagelist$ : stringlist) : string
 	;@author          nils doerrer
 	;@date            16.11.2020
 	;@Description     try to install any package given by $packagelist$
-	;@Returns         Returns string "true" if one package was successfully installed
-	;@OnError         Returns string "false"
-	;@ParamDesc_$packagelist$     stringlist with packages to install 
+	;@Returns         Returns string "True" if one package was successfully installed
+	;@OnError         Returns string "False"
+	;@ParamDesc_$packagelist$     stringlist with packages to install
 
-	defVar $instcommand$
+	defVar $command$
+	defVar $exitcode$
 
 	set $result$ = "False"
-	set $instcommand$ = getLinuxCommand("install")
-	for %s% in $packagelist$ do
-		if $result$ = "False"
-			$result$ = shellCall($instcommand$ + " " + %s%)
-		endif
+	set $command$ = getLinuxCommand("install")
+	for %s% in $packagelist$ do sub_exec_if_false
+
+	[sub_exec_if_false]
+	if $result$ = "False"
+		set $exitcode$ = shellCall($command$ + ' ' + '%s%')
+		LogWarning "Executed " + $command$ + ' %s%'+ " got result " + $exitcode$
+	endif
+	if $exitcode$ = "0"
+		set $result$ = "True"
+	else
+		set $result$ = "False"
+	endif
 endfunc
 
 
@@ -21,18 +30,28 @@ deffunc isAnyInstalled($packagelist$ : stringlist) : string
 	;@author          nils doerrer
 	;@date            16.11.2020
 	;@Description     check for installation status and return if any of $packagelist$ exists
-	;@Returns         Returns string "true" if one specified package is installed
-	;@OnError         Returns string "false"
-	;@ParamDesc_$packagelist$     stringlist with packages to check 
+	;@Returns         Returns string "True" if one specified package is installed
+	;@OnError         Returns string "False"
+	;@ParamDesc_$packagelist$     stringlist with packages to check
 
-	defVar $checkcommand$
+	defVar $command$
+	defVar $exitcode$
 
 	set $result$ = "False"
-	set $checkcommand$ = getLinuxCommand("check")
-	for %s% in $packagelist$ do
-		if $result$ = "False"
-			$result$ = shellCall($checkcommand$ + " " + %s%)
-		endif
+	set $command$ = getLinuxCommand("check")
+	for %s% in $packagelist$ do sub_exec_if_false
+
+	[sub_exec_if_false]
+	if $result$ = "False"
+		set $exitcode$ = shellCall($command$ + ' ' + '%s%')
+		LogWarning "Executed " + $command$ + ' %s%' + " got result " + $exitcode$
+	endif
+
+	if $exitcode$ = "0"
+		set $result$ = "True"
+	else
+		set $result$ = "False"
+	endif
 endfunc
 
 
@@ -42,23 +61,12 @@ deffunc getLinuxCommand($type$ : string) : string
 	;@Description     Determine package manager and return command.
 	;@Returns         Package manager command according to type
 	;@OnError         Returns string "false"
-	;@References      linuxInstallAny
-	;@ParamDesc_$type$     type of desired command "install" or "check" 
+	;@ParamDesc_$type$     type of desired command "install" or "check"
 
 	set $result$ = ""
-	if shellCall('apt-get --version') = 0
-		Switch($type$)
-			Case "install"
-				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
-			EndCase
-			Case "check"
-				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt-get show'
-			EndCase
-		EndSwitch
-	endif
 
-	if shellCall('yum --version') = 0
-		Switch($type$)
+	if shellCall('yum --version') = "0"
+		Switch $type$
 			Case "install"
 				set $result$ = 'yum install -y'
 			EndCase
@@ -68,13 +76,24 @@ deffunc getLinuxCommand($type$ : string) : string
 		EndSwitch
 	endif
 
-	if shellCall("zypper --version") = 0
-		Switch($type$)
+	if shellCall('zypper --version') = "0"
+		Switch $type$ 
 			Case "install"
 				set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
 			EndCase
 			Case "check"
 				set $result$ = 'zypper search -s'
+			EndCase
+		EndSwitch
+	endif
+
+	if shellCall('apt --version') = "0"
+		Switch $type$
+			Case "install"
+				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
+			EndCase
+			Case "check"
+				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt list --installed | grep '
 			EndCase
 		EndSwitch
 	endif

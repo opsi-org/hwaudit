@@ -4,6 +4,7 @@
 
 [Actions]
 importlib "linux_package_install"
+
 requiredWinstVersion >= "4.12.0"
 AutoActivityDisplay = true
 ScriptErrorMessages=off
@@ -46,6 +47,7 @@ Switch $OS$
 		set $command$ = ""
 		set $copy_option$ = "-u"
 	Endcase
+
 	Case "Linux"
 		set $hw_dir$ = "lin"
 		set $hw_bin$ = "opsi-hwaudit"
@@ -53,20 +55,25 @@ Switch $OS$
 		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
-		if not isAnyInstalled("lshw")
-			linuxInstallAny("lshw")
+		message "Checking for missing Unix-Programs"
+		if isAnyInstalled(createStringList("lshw")) = "False"
+			message "installing lshw"
+			linuxInstallAny(createStringList("lshw"))
 		endif
-		if not isAnyInstalled(createStringList("dmidecode", "dmi-decode"))
+		if isAnyInstalled(createStringList("dmidecode", "dmi-decode")) = "False"
+			message "installing dmidecode / dmi-decode"
 			linuxInstallAny(createStringList("dmidecode", "dmi-decode"))
 		endif
-		if not isAnyInstalled("lspci")
-			linuxInstallAny("lspci")
+		if isAnyInstalled(createStringList("lspci", "pciutils")) = "False"
+			message "installing lspci"
+			linuxInstallAny(createStringList("lspci", "pciutils"))
 		endif
-		if not isAnyInstalled(createStringList("lsusb", "usbutils"))
+		if isAnyInstalled(createStringList("lsusb", "usbutils")) = "False"
+			message "installing lsusb / usbutils"
 			linuxInstallAny(createStringList("lsusb", "usbutils"))
 		endif
-
 	Endcase
+
 	Case "macos"
 		set $hw_dir$ = "macos"
 		set $hw_bin$ = "opsi-hwaudit"

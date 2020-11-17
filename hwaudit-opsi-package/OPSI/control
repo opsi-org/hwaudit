@@ -61,3 +61,4 @@ type: bool
 name: force_install
 description: Should we always reinstall the hwaudit software
 default: False
+
