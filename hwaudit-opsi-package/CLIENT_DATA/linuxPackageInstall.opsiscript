@@ -79,7 +79,7 @@ deffunc getLinuxCommand($type$ : string) : string
 				set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
 			EndCase
 			Case 'check'
-				set $result$ = 'zypper search -s'
+				set $result$ = 'zypper se --installed-only | grep'
 			EndCase
 		EndSwitch
 	endif

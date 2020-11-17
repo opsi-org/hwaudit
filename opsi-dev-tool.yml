@@ -4,7 +4,8 @@ pyinstaller-poetry:
     all: []
     windows:
       - win32api
-    linux: []
+    linux:
+      - xml
     darwin: []
   scripts:
     - script: run-hwaudit
