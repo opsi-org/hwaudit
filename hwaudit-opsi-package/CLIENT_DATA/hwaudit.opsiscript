@@ -3,7 +3,8 @@
 ; and published under the Terms of the General Public License.
 
 [Actions]
-importlib "linux_package_install"
+importlib "linuxInstallAny"
+importlib "isAnyInstalled"
 
 requiredWinstVersion >= "4.12.0"
 AutoActivityDisplay = true

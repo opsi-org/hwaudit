@@ -1,0 +1,26 @@
+deffunc isAnyInstalled($packagelist$ : stringlist) : string
+	;@author          nils doerrer
+	;@date            16.11.2020
+	;@Description     check for installation status and return if any of $packagelist$ exists
+	;@Returns         Returns string 'True' if one specified package is installed
+	;@OnError         Returns string 'False'
+	;@ParamDesc_$packagelist$     stringlist with packages to check
+    importlib "getLinuxCommand"
+
+	defVar $command$
+	defVar $exitcode$
+
+	set $result$ = 'False'
+	set $command$ = getLinuxCommand('check')
+	for %s% in $packagelist$ do sub_exec_if_false
+	[sub_exec_if_false]
+	if $result$ = 'False'
+		set $exitcode$ = shellCall($command$ + ' ' + '%s%')
+		LogWarning 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+	endif
+	if $exitcode$ = '0'
+		set $result$ = 'True'
+	else
+		set $result$ = 'False'
+	endif
+endfunc
