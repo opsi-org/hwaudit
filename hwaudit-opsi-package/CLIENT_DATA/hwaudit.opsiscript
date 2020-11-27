@@ -46,15 +46,10 @@ Switch $OS$
 		set $copy_option$ = "-u"
 	Endcase
 	Case "Linux"
-		set $pathdelim$ = "/"
 		set $hw_dir$ = "lin"
-		if (GetSystemType = "64 Bit System")
-			set $hw_dir$ = $hw_dir$+$pathdelim$+"x64"
-		else
-			set $hw_dir$ = $hw_dir$+$pathdelim$+"x86"
-		endif
 		set $hw_bin$ = "opsi-hwaudit"
 		set $hw_bin_path$ = "/usr/local/bin/"
+		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
 		;linuxPackageInstall("lshw")

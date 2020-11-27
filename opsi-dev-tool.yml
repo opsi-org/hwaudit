@@ -25,7 +25,7 @@ pyinstaller-poetry:
 pull-binaries:
   - name: hwaudit
     server-type: binaryindex
-    destination: hwaudit-opsi-package/CLIENT_DATA/files/lin/x64
+    destination: hwaudit-opsi-package/CLIENT_DATA/files/lin/
     extract: true
     post-script: []
     os: linux
@@ -33,16 +33,16 @@ pull-binaries:
     version: latest
     branch: development
     server-url: http://binaryindex.uib.gmbh
-  - name: hwaudit
-    server-type: binaryindex
-    destination: hwaudit-opsi-package/CLIENT_DATA/files/lin/x86
-    extract: true
-    post-script: []
-    os: linux
-    architecture: x86
-    version: latest
-    branch: development
-    server-url: http://binaryindex.uib.gmbh
+#  - name: hwaudit
+#    server-type: binaryindex
+#    destination: hwaudit-opsi-package/CLIENT_DATA/files/lin/x86
+#    extract: true
+#    post-script: []
+#    os: linux
+#    architecture: x86
+#    version: latest
+#    branch: development
+#    server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
     server-type: binaryindex
     destination: hwaudit-opsi-package/CLIENT_DATA/files/win/
