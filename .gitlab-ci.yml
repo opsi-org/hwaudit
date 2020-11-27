@@ -22,8 +22,7 @@ build:linux-pyinstaller:
 
 build:linux32-pyinstaller:
   stage: build
-  tags:
-    - i386/python:3.7-stretch
+  image: i386/python:3.7-stretch
   script:
     - apt -y install curl
     - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
