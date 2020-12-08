@@ -1,5 +1,5 @@
 [Package]
-version: 2
+version: 1
 depends: 
 
 [Product]
@@ -8,7 +8,7 @@ id: hwaudit
 name: Client Hardwareinventory Windows / Linux / OSX
 description: Hardwareinventarisierung
 advice: 
-version: 4.1.1.1
+version: 4.1.1.2
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -27,7 +27,7 @@ multivalue: False
 editable: False
 description: TimeOutSeconds hwaudit process
 values: ["300", "600", "90", "notimeout"]
-default: ["90"]
+default: ["300"]
 
 [ProductProperty]
 type: unicode
@@ -61,3 +61,4 @@ type: bool
 name: force_install
 description: Should we always reinstall the hwaudit software
 default: False
+

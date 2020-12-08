@@ -6,6 +6,10 @@ pyinstaller-poetry:
       - win32api
     linux: []
     darwin: []
+  extra_args:
+    darwin:
+      - --exclude-module
+      - tkinter
   scripts:
     - script: run-hwaudit
       binaries:
