@@ -56,6 +56,8 @@ Switch $OS$
 		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
+		; this timeout handles time after which failed installation is retried (because of packagemanager lock on bootup)
+		setLinuxInstallTimeout("10")
 		message "Checking for missing Unix-Programs"
 		if isAnyInstalled(createStringList("lshw")) = "False"
 			message "installing lshw"
@@ -65,13 +67,13 @@ Switch $OS$
 			message "installing dmidecode / dmi-decode"
 			set $dummy$ = linuxInstallAny(createStringList("dmidecode", "dmi-decode"))
 		endif
-		if isAnyInstalled(createStringList("lspci", "pciutils")) = "False"
+		if isAnyInstalled(createStringList("pciutils", "lspci")) = "False"
 			message "installing lspci"
-			set $dummy$ = linuxInstallAny(createStringList("lspci", "pciutils"))
+			set $dummy$ = linuxInstallAny(createStringList("pciutils", "lspci"))
 		endif
-		if isAnyInstalled(createStringList("lsusb", "usbutils")) = "False"
+		if isAnyInstalled(createStringList("usbutils", "lsusb")) = "False"
 			message "installing lsusb / usbutils"
-			set $dummy$ = linuxInstallAny(createStringList("lsusb", "usbutils"))
+			set $dummy$ = linuxInstallAny(createStringList("usbutils", "lsusb"))
 		endif
 	Endcase
 
@@ -101,38 +103,29 @@ endif
 Files_copy_hwaudit
 
 if not($timeout$  = "notimeout")
-	Winbatch_hwaudit /TimeOutSeconds $timeout$
+	shellInAnIcon_hwaudit /TimeOutSeconds $timeout$
 else
-	Winbatch_hwaudit
+	shellInAnIcon_hwaudit
 endif
 set $exitcode$ = getLastExitCode
-killtask $hw_bin$
-
-if not (($exitcode$ = "0") or ($exitcode$ = "259")) 
-	comment "retry ..."
-	shellInAnIcon_hwaudit
-	set $exitcode$ = getLastExitCode
-	killtask $hw_bin$
-endif
 
 if fileExists ($logfile$)
 	comment "Try to include hwaudit.log file in instlog"
 	includelog $logfile$ $taillines$
 endif
 
-
-if not (($exitcode$ = "0") or ($exitcode$ = "259")) 
+if not (($exitcode$ = "0") or ($exitcode$ = "259"))
 	logError "Fatal: hwaudit exit code = "+$exitcode$
 	isFatalError
 endif
+
 
 [Files_copy_hwaudit]
 copy $copy_option$ "%SCRIPTPATH%$pathdelim$files$pathdelim$$hw_dir$$pathdelim$$hw_bin$" "$hw_bin_path$"
 $command$
 del "$logfile$"
 
-[winbatch_hwaudit]
-"$hw_bin_path$$hw_bin$" -u "%opsiserviceUser%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
-
 [shellInAnIcon_hwaudit]
+set -x
 "$hw_bin_path$$hw_bin$" -u "%opsiserviceUser%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
+exit $?

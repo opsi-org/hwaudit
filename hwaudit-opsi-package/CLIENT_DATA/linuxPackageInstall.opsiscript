@@ -1,3 +1,21 @@
+defVar $installcommand$
+defVar $checkcommand$
+defVar $retrywaitseconds$
+
+set $installcommand$ = ""
+set $checkcommand$ = ""
+set $retrywaitseconds$ = "-1"
+
+deffunc setLinuxInstallTimeout($seconds$ : string) : void
+	;@author          nils doerrer
+	;@date            07.12.2020
+	;@Description     set the waiting time between two installation attempts
+	;@ParamDesc_$seconds$     number of seconds to wait
+
+	set $retrywaitseconds$ = $seconds$
+endfunc
+
+
 deffunc linuxInstallAny($packagelist$ : stringlist) : string
 	;@author          nils doerrer
 	;@date            16.11.2020
@@ -11,11 +29,21 @@ deffunc linuxInstallAny($packagelist$ : stringlist) : string
 
 	set $result$ = 'False'
 	set $command$ = getLinuxCommand('install')
-	for %s% in $packagelist$ do sub_exec_if_false
-	[sub_exec_if_false]
+	for %s% in $packagelist$ do sub_install_if_false
+
+	if $result$ = 'False'
+		isFatalError
+	endif
+
+	[sub_install_if_false]
 	if $result$ = 'False'
 		set $exitcode$ = shellCall($command$ + ' ' + '%s%')
-		LogWarning 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+		comment 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+		if not($exitcode$ = '0') and not($retrywaitseconds$ = '-1')
+			shellCall("sleep " + $retrywaitseconds$)
+			set $exitcode$ = shellCall($command$ + ' ' + '%s%')
+			comment 'Retried ' + $command$ + ' %s%' + ' after ' + $retrywaitseconds$ + ' seconds; got result ' + $exitcode$
+		endif
 	endif
 	if $exitcode$ = '0'
 		set $result$ = 'True'
@@ -38,11 +66,12 @@ deffunc isAnyInstalled($packagelist$ : stringlist) : string
 
 	set $result$ = 'False'
 	set $command$ = getLinuxCommand('check')
-	for %s% in $packagelist$ do sub_exec_if_false
-	[sub_exec_if_false]
+	for %s% in $packagelist$ do sub_check_if_false
+
+	[sub_check_if_false]
 	if $result$ = 'False'
 		set $exitcode$ = shellCall($command$ + ' ' + '%s%')
-		LogWarning 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+		comment 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
 	endif
 	if $exitcode$ = '0'
 		set $result$ = 'True'
@@ -60,38 +89,61 @@ deffunc getLinuxCommand($type$ : string) : string
 	;@OnError         Returns string 'False'
 	;@ParamDesc_$type$     type of desired command 'install' or 'check'
 
-	set $result$ = ''
+	set $result$ = 'False'
 
-	if shellCall('yum --version') = '0'
-		Switch $type$
-			Case 'install'
-				set $result$ = 'yum install -y'
-			EndCase
-			Case 'check'
-				set $result$ = 'yum list --installed | grep'
-			EndCase
-		EndSwitch
+	if $type$ = 'install' and not($installcommand$ = '')
+		set $result$ = $installcommand$
 	endif
 
-	if shellCall('zypper --version') = '0'
-		Switch $type$ 
-			Case 'install'
-				set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
-			EndCase
-			Case 'check'
-				set $result$ = 'zypper se --installed-only | grep'
-			EndCase
-		EndSwitch
+	if $type$ = 'check' and not($checkcommand$ = '')
+		set $result$ = $checkcommand$
 	endif
 
-	if shellCall('apt --version') = '0'
+	if $result$ = 'False'
+
+		if shellCall('yum --version') = '0'
+			Switch $type$
+				Case 'install'
+					set $result$ = 'yum install -y'
+				EndCase
+				Case 'check'
+					set $result$ = 'yum list --installed | grep'
+				EndCase
+			EndSwitch
+		endif
+
+		if shellCall('zypper --version') = '0'
+			Switch $type$ 
+				Case 'install'
+					set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
+				EndCase
+				Case 'check'
+					set $result$ = 'rpm -q'
+					; the following command is blocked by the System management lock if updates are in progress.
+					;set $result$ = 'zypper se --installed-only | grep'
+				EndCase
+			EndSwitch
+		endif
+
+		if shellCall('apt --version') = '0'
+			Switch $type$
+				Case 'install'
+					set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
+				EndCase
+				Case 'check'
+					set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt list --installed | grep'
+				EndCase
+			EndSwitch
+		endif
+
 		Switch $type$
 			Case 'install'
-				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
+				set $installcommand$ = $result$
 			EndCase
 			Case 'check'
-				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt list --installed | grep'
+				set $checkcommand$ = $result$
 			EndCase
 		EndSwitch
+
 	endif
 endfunc

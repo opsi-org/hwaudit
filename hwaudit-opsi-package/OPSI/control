@@ -27,7 +27,7 @@ multivalue: False
 editable: False
 description: TimeOutSeconds hwaudit process
 values: ["300", "600", "90", "notimeout"]
-default: ["90"]
+default: ["300"]
 
 [ProductProperty]
 type: unicode
