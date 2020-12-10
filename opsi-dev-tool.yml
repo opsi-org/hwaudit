@@ -33,16 +33,6 @@ pull-binaries:
     version: latest
     branch: development
     server-url: http://binaryindex.uib.gmbh
-#  - name: hwaudit
-#    server-type: binaryindex
-#    destination: hwaudit-opsi-package/CLIENT_DATA/files/lin/x86
-#    extract: true
-#    post-script: []
-#    os: linux
-#    architecture: x86
-#    version: latest
-#    branch: development
-#    server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
     server-type: binaryindex
     destination: hwaudit-opsi-package/CLIENT_DATA/files/win/
@@ -55,7 +45,7 @@ pull-binaries:
     server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
     server-type: binaryindex
-    destination: hwaudit-opsi-package/CLIENT_DATA/files/macos/
+    destination: hwaudit-opsi-package/CLIENT_DATA/files/mac/
     extract: true
     post-script: []
     os: darwin
@@ -63,7 +53,3 @@ pull-binaries:
     version: latest
     branch: development
     server-url: http://binaryindex.uib.gmbh
-
-changelog:
-  4.1.1.0: 
-    - created this file

@@ -26,7 +26,7 @@ Defvar $command$
 set $tempdir$ = "%opsiTmpDir%"
 set $ProductId$ = "hwaudit"
 set $loglevel$ = getProductProperty("loglevel", "5")
-Set $timeout$ = GetProductProperty("timeout","")
+Set $timeout$ = GetProductProperty("timeout","300")
 Set $taillines$ = GetProductProperty("tail-lines", "10")
 Set $force_install$ = GetProductProperty("force_install", "false")
 set $OS$ = GetOs
@@ -55,7 +55,7 @@ Switch $OS$
 		;linuxPackageInstall("lshw")
 	Endcase
 	Case "macos"
-		set $hw_dir$ = "macos"
+		set $hw_dir$ = "mac"
 		set $hw_bin$ = "opsi-hwaudit"
 		set $hw_bin_path$ = "/usr/local/bin/"
 		set $pathdelim$ = "/"
