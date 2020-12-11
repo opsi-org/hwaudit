@@ -76,13 +76,17 @@ package:makeopsipackage:
     - *install_opsi_dev_tools
     - *install_opsi_utils
     - ./opsi-dev-tool -l debug --binary-pull
-    - export VERSION=`cat pyproject.toml | grep -e "^version = " | cut -d \" -f 2`
-    - cd hwaudit-opsi-package
-    - cat OPSI/control | awk -v new_version="$VERSION" '/^\[/ { section=$1} {line=$0; if ($1 == "version:" && section == "[Product]"){ line = $1 " " new_version} print line}' > tmp
-    - cat tmp > OPSI/control
+    - VERSION=`cat pyproject.toml | grep -e "^version = " | cut -d \" -f 2`
+    - cat hwaudit-opsi-package/OPSI/control | awk -v new_version="$VERSION" '/^\[/ { section=$1} {line=$0; if ($1 == "version:" && section == "[Product]"){ line = $1 " " new_version} print line}' > tmp
+    - cat tmp > hwaudit-opsi-package/OPSI/control
     - rm tmp
-    - cd ..
     - opsi-utils/opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
+    - mkdir hwaudit-package
+    - cp ./hwaudit*.opsi* hwaudit-package/
+    - PACKAGE=`grep hwaudit-opsi-package/OPSI/control -A 5 -e "\[Package\]" | grep "version:" | tr -d "^a-zA-Z :"`
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit windows x86 "$VERSION-$PACKAGE" "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit windows x86 "$VERSION-$PACKAGE"'
+
   artifacts:
     name: hwaudit-opsi-package
     paths:
