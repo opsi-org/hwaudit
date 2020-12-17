@@ -39,7 +39,6 @@ def getHardwareInformationFromWMI(conf):
 	hardware and stores the replies in a dictionary.
 
 	:param conf: Config extracted from the backend.
-	:param opsiValues: Dictionary containing the results of the audit.
 
 	:returns: Dictionary containing the results of the audit.
 	"""
@@ -175,9 +174,8 @@ def getHardwareInformationFromWMI(conf):
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
 
 							if len(v) > maxLen:
-								logger.warning(u"Truncating value '%s': string is too long (maximum length: %d)", v, maxLen)
-								v = v[:maxLen]
-								logger.debug(u"New value: '%s'", v)
+								logger.warning(u"Skipping value '%s': string is too long (maximum length: %d)", v, maxLen)
+								v = None		#v[:maxLen]
 
 						if v is not None:
 							break
