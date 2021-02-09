@@ -86,8 +86,8 @@ package:makeopsipackage:
     - opsi-utils/opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
     - mkdir hwaudit-package
     - cp ./hwaudit*.opsi* hwaudit-package/
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit windows x86 "$version-$package" "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit windows x86 "$version-$package"'
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit all all "$version-$package" "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit all all "$version-$package"'
 
   artifacts:
     name: hwaudit-opsi-package
