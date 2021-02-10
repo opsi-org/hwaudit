@@ -1,24 +1,24 @@
 [Package]
 version: 1
-depends: 
+depends:
 
 [Product]
 type: localboot
 id: hwaudit
 name: Client Hardwareinventory Windows / Linux / OSX
 description: Hardwareinventarisierung
-advice: 
-version: 4.1.1.4
+advice:
+version: 4.1.1.6
 priority: 0
 licenseRequired: False
-productClasses: 
+productClasses:
 setupScript: hwaudit.opsiscript
-uninstallScript: 
-updateScript: 
+uninstallScript:
+updateScript:
 alwaysScript: hwaudit.opsiscript
-onceScript: 
-customScript: 
-userLoginScript: 
+onceScript:
+customScript:
+userLoginScript:
 
 [ProductProperty]
 type: unicode
