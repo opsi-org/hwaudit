@@ -405,7 +405,7 @@ reference = "uib"
 
 [[package]]
 name = "opsi-dev-tools"
-version = "1.0.48"
+version = "1.0.55"
 description = "opsi development tools"
 category = "main"
 optional = false
@@ -1259,8 +1259,8 @@ mysqlclient = [
     {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 opsi-dev-tools = [
-    {file = "opsi-dev-tools-1.0.48.tar.gz", hash = "md5:55deee7ee32f9f6f1c13e75100ec7a81"},
-    {file = "opsi_dev_tools-1.0.48-py3-none-any.whl", hash = "md5:f62074e5a20fe82a9f0948b78e2b60e4"},
+    {file = "opsi-dev-tools-1.0.55.tar.gz", hash = "md5:9e8bec16a018e215cab2047bb835e260"},
+    {file = "opsi_dev_tools-1.0.55-py3-none-any.whl", hash = "md5:02fab55557af0098d947640597cc1811"},
 ]
 packaging = [
     {file = "packaging-20.7-py2.py3-none-any.whl", hash = "sha256:eb41423378682dadb7166144a4926e443093863024de508ca5c9737d6bc08376"},
