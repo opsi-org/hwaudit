@@ -80,7 +80,7 @@ reference = "uib"
 name = "beautifulsoup4"
 version = "4.9.3"
 description = "Screen-scraping library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -100,7 +100,7 @@ reference = "uib"
 name = "bs4"
 version = "0.0.1"
 description = "Screen-scraping library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -116,7 +116,7 @@ reference = "uib"
 name = "certifi"
 version = "2020.12.5"
 description = "Python package for providing Mozilla's CA Bundle."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -145,7 +145,7 @@ reference = "uib"
 name = "chardet"
 version = "3.0.4"
 description = "Universal encoding detector for Python 2 and 3"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -187,7 +187,7 @@ reference = "uib"
 name = "configargparse"
 version = "1.2.3"
 description = "A drop-in replacement for argparse that allows options to also be set via config files and/or environment variables."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -405,9 +405,9 @@ reference = "uib"
 
 [[package]]
 name = "opsi-dev-tools"
-version = "1.0.55"
+version = "1.0.62"
 description = "opsi development tools"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7,<4.0"
 
@@ -433,7 +433,7 @@ reference = "uib"
 name = "packaging"
 version = "20.7"
 description = "Core utilities for Python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -639,7 +639,7 @@ reference = "uib"
 name = "pyparsing"
 version = "2.4.7"
 description = "Python parsing module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -652,7 +652,7 @@ reference = "uib"
 name = "pypi-simple"
 version = "0.6.0"
 description = "PyPI Simple Repository API client library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
 
@@ -699,7 +699,7 @@ reference = "uib"
 name = "python-gettext"
 version = "4.0"
 description = "Python Gettext po to mo file compiler."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -782,7 +782,7 @@ reference = "uib"
 name = "pyyaml"
 version = "5.3.1"
 description = "YAML parser and emitter for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -795,7 +795,7 @@ reference = "uib"
 name = "rarfile"
 version = "4.0"
 description = "RAR archive reader for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -808,7 +808,7 @@ reference = "uib"
 name = "requests"
 version = "2.25.0"
 description = "Python HTTP for Humans."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -888,7 +888,7 @@ reference = "uib"
 name = "soupsieve"
 version = "2.0.1"
 description = "A modern CSS selector implementation for Beautiful Soup."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5"
 
@@ -926,7 +926,7 @@ reference = "uib"
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -976,7 +976,7 @@ reference = "uib"
 name = "urllib3"
 version = "1.26.2"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
@@ -994,7 +994,7 @@ reference = "uib"
 name = "virustotal3"
 version = "1.0.8"
 description = "Python 3 implementation of the VirusTotal v3 API"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1080,7 +1080,7 @@ reference = "uib"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7, <4.0"
-content-hash = "e140cdeab283d4b0313dc59df00777df0e04bc99cdd55deb20bd924171340077"
+content-hash = "5d28050324a1d05ce7f4647f96253fff9d0c3cf39a59a2672f595c70b85ac058"
 
 [metadata.files]
 altgraph = [
@@ -1259,8 +1259,8 @@ mysqlclient = [
     {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 opsi-dev-tools = [
-    {file = "opsi-dev-tools-1.0.55.tar.gz", hash = "md5:9e8bec16a018e215cab2047bb835e260"},
-    {file = "opsi_dev_tools-1.0.55-py3-none-any.whl", hash = "md5:02fab55557af0098d947640597cc1811"},
+    {file = "opsi-dev-tools-1.0.62.tar.gz", hash = "md5:7dac9674397a5fdb7dfdb2bc0c651d75"},
+    {file = "opsi_dev_tools-1.0.62-py3-none-any.whl", hash = "md5:b5b0016b639dd44d163eca6175315036"},
 ]
 packaging = [
     {file = "packaging-20.7-py2.py3-none-any.whl", hash = "sha256:eb41423378682dadb7166144a4926e443093863024de508ca5c9737d6bc08376"},

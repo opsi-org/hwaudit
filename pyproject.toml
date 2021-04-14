@@ -14,7 +14,6 @@ url = "http://pypi.uib.gmbh:8080/simple/"
 [tool.poetry.dependencies]
 python = ">=3.7, <4.0"
 argparse = "^1.4.0"
-opsi-dev-tools = "^1.0.33"
 python-opsi = "^4.2.0"
 #python-opsi = {path = "../python-opsi/"}
 pywin32 = { version = "^227", platform = "win32" }
@@ -31,7 +30,6 @@ pywin32-ctypes = { version = "^0.2.0", platform = "win32" }
 pefile = "^2019.4.18"
 bs4 = "^0.0.1"
 macholib = { version = "^1.14", platform="darwin" }
-opsi-dev-tools = "^1.0.24"
 pyinstaller = "^4.0"
 setuptools = "^50.3.0"
 
