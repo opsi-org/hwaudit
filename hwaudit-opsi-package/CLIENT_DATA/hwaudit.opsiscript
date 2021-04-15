@@ -125,6 +125,6 @@ $command$
 del "$logfile$"
 
 [shellInAnIcon_hwaudit]
-set -x
+echo "$hw_bin_path$$hw_bin$" -u "%opsiserviceUser%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
 "$hw_bin_path$$hw_bin$" -u "%opsiserviceUser%" -p "%opsiservicePassword%" -a "%opsiserviceURL%" -l $loglevel$ -f "$logfile$"
 exit $?
