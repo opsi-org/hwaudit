@@ -64,10 +64,9 @@ package:makeopsipackage:
     - package=`grep hwaudit-opsi-package/OPSI/control -A 5 -e "\[Package\]" | grep "version:" | tr -d "^a-zA-Z :"`
     - '[ "$CI_COMMIT_TAG" = "" ] && sed -i "s/version: $package/version: $package.$CI_JOB_ID/" hwaudit-opsi-package/OPSI/control'
     - opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
+    - upload-package hwaudit*.opsi'
     - mkdir hwaudit-package
     - cp ./hwaudit*.opsi* hwaudit-package/
-    - '[ "$CI_COMMIT_TAG" = "" ] && opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit all all "$version-$package" "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit all all "$version-$package"'
 
   artifacts:
     name: hwaudit-opsi-package
