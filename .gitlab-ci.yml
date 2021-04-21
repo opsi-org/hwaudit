@@ -1,4 +1,4 @@
-image: python:3.7-stretch
+image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-default
 
 stages:
   - build
@@ -7,13 +7,10 @@ stages:
 build:linux-pyinstaller:
   stage: build
   script:
-    - apt -y install curl
-    - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
-    - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - '[ "$CI_COMMIT_TAG" = "" ] && poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
+    - '[ "$CI_COMMIT_TAG" = "" ] && opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
   artifacts:
     name: 'hwaudit-linux-pyinstaller'
     paths:
@@ -55,39 +52,19 @@ build:osx-pyinstaller:
       - dist/opsi-hwaudit
     expire_in: 2 day
 
-.install_opsi_dev_tools: &install_opsi_dev_tools |
-  apt update
-  apt -y install wget cpio unar
-  wget "$OPSIDEVTOOLS_URL_LINUX_X64" -O opsi-dev-tools.tar.gz
-  tar -xvf opsi-dev-tools.tar.gz
-
-.install_opsi_utils: &install_opsi_utils |
-  apt -y install zsync librsync-dev cpio
-  ./opsi-dev-tool --binary-pull development opsi-utils linux x64 latest ./
-  useradd opsiconfd
-  groupadd pcpatch
-  groupadd opsiadmin
-  adduser opsiconfd pcpatch
-  adduser opsiconfd opsiadmin
-
 package:makeopsipackage:
   stage: package
   script:
-    - *install_opsi_dev_tools
-    - *install_opsi_utils
     - version=`cat pyproject.toml | grep -e "^version = " | cut -d \" -f 2`
     - cat hwaudit-opsi-package/OPSI/control | awk -v new_version="$version" '/^\[/ { section=$1} {line=$0; if ($1 == "version:" && section == "[Product]"){ line = $1 " " new_version} print line}' > tmp
     - cat tmp > hwaudit-opsi-package/OPSI/control
     - rm tmp
-    - ./opsi-dev-tool -l debug --binary-pull
+    - opsi-dev-tool -l debug --binary-pull
     - version=`grep hwaudit-opsi-package/OPSI/control -A 10 -e "\[Product\]" | grep "version:" | tr -d "^a-zA-Z :"`
     - package=`grep hwaudit-opsi-package/OPSI/control -A 5 -e "\[Package\]" | grep "version:" | tr -d "^a-zA-Z :"`
     - '[ "$CI_COMMIT_TAG" = "" ] && sed -i "s/version: $package/version: $package.$CI_JOB_ID/" hwaudit-opsi-package/OPSI/control'
-    - opsi-utils/opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
-    - mkdir hwaudit-package
-    - cp ./hwaudit*.opsi* hwaudit-package/
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit all all "$version-$package" "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --uib-binaryindex-url=http://opsipackages.uib.gmbh --binary-push hwaudit-package hwaudit all all "$version-$package"'
+    - opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
+    - upload-package hwaudit*.opsi
 
   artifacts:
     name: hwaudit-opsi-package
