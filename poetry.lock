@@ -1160,7 +1160,7 @@ reference = "uib"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7, <4.0"
-content-hash = "0dbde2ea46ff91bb1b1eeb5ce19fbc86d49bfd8984fb4d174411e6ea67a6d1ba"
+content-hash = "6d44ccf17612f10366ae78f7ad597e40219dcbd5dd424398f0f4a630a96e4b7d"
 
 [metadata.files]
 altgraph = [
