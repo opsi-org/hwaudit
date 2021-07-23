@@ -50,8 +50,6 @@ Switch GetOs
 		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
-		; this timeout handles time after which failed installation is retried (because of packagemanager lock on bootup)
-		setLinuxInstallTimeout("10")
 		message "Checking for missing Unix-Programs"
 		if isOneInstalled(createStringList("lshw")) = "False"
 			message "installing lshw"
