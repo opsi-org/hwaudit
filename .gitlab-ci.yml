@@ -34,8 +34,6 @@ build:osx-pyinstaller:
     - macos
   script:
     - source $HOME/.poetry/env
-    - poetry remove mysqlclient
-    - poetry add mysqlclient==1.4.6
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
     - '[ "$CI_COMMIT_TAG" = "" ] && poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
