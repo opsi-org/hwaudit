@@ -3,11 +3,8 @@
 ; and published under the Terms of the General Public License.
 
 [Actions]
-requiredWinstVersion >= "4.12.0"
-AutoActivityDisplay = true
-ScriptErrorMessages=off
+requiredWinstVersion >= "4.12.4.17"
 
-DefVar $ProductId$
 DefVar $loglevel$
 DefVar $logfile$
 DefVar $exitcode$
@@ -19,25 +16,21 @@ DefVar $copy_option$
 DefVar $hw_dir$
 DefVar $hw_bin$
 DefVar $hw_bin_path$
-DefVar $OS$
 DefVar $pathdelim$
 DefVar $command$
-DefVar $dummy$
 
 set $tempdir$ = "%opsiTmpDir%"
-set $ProductId$ = "hwaudit"
 set $loglevel$ = getProductProperty("loglevel", "5")
 Set $timeout$ = GetProductProperty("timeout","300")
 Set $taillines$ = GetProductProperty("tail-lines", "10")
 Set $force_install$ = GetProductProperty("force_install", "false")
-set $OS$ = GetOs
 
 setloglevel = $loglevel$
 
 Message "Running hardware audit..."
 ShowBitmap "%SCRIPTPATH%\hwaudit.png" "Hardware Inventarisierung"
 
-Switch $OS$
+Switch GetOs
 	Case "Windows_NT"
 		set $hw_dir$ = "win"
 		set $hw_bin$ = "opsi-hwaudit.exe"
@@ -48,31 +41,31 @@ Switch $OS$
 	Endcase
 
 	Case "Linux"
-		importlib "linuxPackageInstall"
+		importlib "uib_lin_install"
+		DefVar $result$
+
 		set $hw_dir$ = "lin"
 		set $hw_bin$ = "opsi-hwaudit"
 		set $hw_bin_path$ = "/usr/local/bin/"
 		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
 		set $copy_option$ = ""
-		; this timeout handles time after which failed installation is retried (because of packagemanager lock on bootup)
-		setLinuxInstallTimeout("10")
 		message "Checking for missing Unix-Programs"
-		if isAnyInstalled(createStringList("lshw")) = "False"
+		if isOneInstalled(createStringList("lshw")) = "False"
 			message "installing lshw"
-			set $dummy$ = linuxInstallAny(createStringList("lshw"))
+			set $result$ = linuxInstallOneOf(createStringList("lshw"))
 		endif
-		if isAnyInstalled(createStringList("dmidecode", "dmi-decode")) = "False"
+		if isOneInstalled(createStringList("dmidecode", "dmi-decode")) = "False"
 			message "installing dmidecode / dmi-decode"
-			set $dummy$ = linuxInstallAny(createStringList("dmidecode", "dmi-decode"))
+			set $result$ = linuxInstallOneOf(createStringList("dmidecode", "dmi-decode"))
 		endif
-		if isAnyInstalled(createStringList("pciutils", "lspci")) = "False"
-			message "installing lspci"
-			set $dummy$ = linuxInstallAny(createStringList("pciutils", "lspci"))
+		if isOneInstalled(createStringList("pciutils", "lspci")) = "False"
+			message "installing pciutils / lspci"
+			set $result$ = linuxInstallOneOf(createStringList("pciutils", "lspci"))
 		endif
-		if isAnyInstalled(createStringList("usbutils", "lsusb")) = "False"
+		if isOneInstalled(createStringList("usbutils", "lsusb")) = "False"
 			message "installing lsusb / usbutils"
-			set $dummy$ = linuxInstallAny(createStringList("usbutils", "lsusb"))
+			set $result$ = linuxInstallOneOf(createStringList("usbutils", "lsusb"))
 		endif
 	Endcase
 

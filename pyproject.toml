@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hwaudit"
-version = "4.1.1.7"
+version = "4.2.0.0"
 description = "opsi hardware audit"
 homepage = "https://www.opsi.org"
 license = "AGPL-3.0"
@@ -9,7 +9,7 @@ maintainers = ["uib GmbH <info@uib.de>"]
 
 [[tool.poetry.source]]
 name = "uib"
-url = "http://pypi.uib.gmbh:8080/simple/"
+url = "https://pypi.uib.gmbh/simple/"
 
 [tool.poetry.dependencies]
 python = ">=3.7, <4.0"
@@ -18,8 +18,8 @@ python-opsi = "^4.2.0"
 #python-opsi = {path = "../python-opsi/"}
 pywin32 = { version = "^227", platform = "win32" }
 wmi  = { version = "^1.5.1", platform = "win32" }
-mysqlclient = "^1.4.6"
 #mysqlclient = {path = "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl", platform = "win32"}
+mysqlclient = "^2.0.3"
 
 [tool.poetry.scripts]
 hwaudit = "hwaudit.__main__:main"
