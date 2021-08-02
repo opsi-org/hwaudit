@@ -39,7 +39,7 @@ build:windows-pyinstaller:
 build:osx-pyinstaller:
   stage: build
   tags:
-    - macos
+    - macostest
   script:
     - source $HOME/.poetry/env
     - poetry install
