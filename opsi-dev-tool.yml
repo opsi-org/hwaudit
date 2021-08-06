@@ -1,3 +1,6 @@
+variables:
+  version: "%version%"
+
 pyinstaller-poetry:
   one_file: yes
   hidden_imports:
@@ -34,7 +37,7 @@ pull-binaries:
     post-script: []
     os: linux
     architecture: x64
-    version: latest
+    version: "{{version}}"
     branch: development
     server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
@@ -44,7 +47,7 @@ pull-binaries:
     post-script: []
     os: windows
     architecture: x86
-    version: latest
+    version: "{{version}}"
     branch: development
     server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
@@ -54,6 +57,6 @@ pull-binaries:
     post-script: []
     os: darwin
     architecture: x64
-    version: latest
+    version: "{{version}}"
     branch: development
     server-url: http://binaryindex.uib.gmbh
