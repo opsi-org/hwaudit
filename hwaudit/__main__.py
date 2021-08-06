@@ -37,8 +37,9 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	parser.add_argument('--log-file', '-f', dest="logFile", default=logFile, help="Path to file where debug logs will be written.")
 	parser.add_argument('--hostid', '-h', help="Hostid that will be used. If nothing is set the value from --username will be used.")
 	parser.add_argument('--username', '-u', help="Username to connect to the service. If nothing is set the value from --hostid will be used.")
-	parser.add_argument('--password', '-p', required=True, help="Password for authentication")
-	parser.add_argument('--address', '-a', required=True, help="Address to connect to. Example: https://server.domain.local:4447")
+	# Having required=True breaks --help as it exits with exitcode 1
+	parser.add_argument('--password', '-p', help="Password for authentication")
+	parser.add_argument('--address', '-a', help="Address to connect to. Example: https://server.domain.local:4447")
 
 	opts = parser.parse_args()
 
@@ -60,7 +61,7 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	logger.notice("starting hardware audit (script version %s)", __version__)
 
 	address = re.sub("""['"]""", "", opts.address)
-	
+
 	if address.startswith(u"https://"):
 		address = address + u"/rpc"
 
