@@ -30,7 +30,7 @@ pywin32-ctypes = { version = "^0.2.0", platform = "win32" }
 pefile = "^2019.4.18"
 bs4 = "^0.0.1"
 macholib = { version = "^1.14", platform="darwin" }
-pyinstaller = "^4.0"
+pyinstaller = "4.3"	#pinned to work with adhoc signature on macos high sierra
 setuptools = "^50.3.0"
 opsi-dev-tools = "^1.0.62"
 

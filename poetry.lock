@@ -188,7 +188,7 @@ reference = "uib"
 
 [[package]]
 name = "configargparse"
-version = "1.5.1"
+version = "1.5.2"
 description = "A drop-in replacement for argparse that allows options to also be set via config files and/or environment variables."
 category = "dev"
 optional = false
@@ -616,7 +616,7 @@ reference = "uib"
 
 [[package]]
 name = "pyinstaller"
-version = "4.5"
+version = "4.3"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
 category = "dev"
 optional = false
@@ -748,7 +748,7 @@ reference = "uib"
 
 [[package]]
 name = "python-opsi"
-version = "4.2.0.220"
+version = "4.2.0.222"
 description = "The opsi python library"
 category = "main"
 optional = false
@@ -767,6 +767,7 @@ ruyaml = ">=0.20.0,<0.21.0"
 psutil = ">=5.8.0,<6.0.0"
 wmi = {version = ">=1.5.1,<2.0.0", markers = "sys_platform == \"win32\""}
 sqlalchemy = ">=1.4,<2.0"
+attrs = ">=21.2.0,<22.0.0"
 pywin32 = {version = ">=227,<228", markers = "sys_platform == \"win32\""}
 pycryptodome = ">=3.10.1,<4.0.0"
 pyasn1 = ">=0.4.8,<0.5.0"
@@ -1162,7 +1163,7 @@ reference = "uib"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7, <4.0"
-content-hash = "30c0c8604e545dcb0caef254468b4c51fed9b32691e42994ca9093fcca10ec72"
+content-hash = "3dec5f7b630587cb8ca0ebfe171a5ceb961f4ccc2c1aa1a6290f4c4592560f56"
 
 [metadata.files]
 altgraph = [
@@ -1257,8 +1258,8 @@ colorlog = [
     {file = "colorlog-4.8.0.tar.gz", hash = "sha256:59b53160c60902c405cdec28d38356e09d40686659048893e026ecbd589516b1"},
 ]
 configargparse = [
-    {file = "ConfigArgParse-1.5.1-py3-none-any.whl", hash = "sha256:ebef7b5379600fa34c276debf36e72ac8b37e7e42e6f0cfaed49c61e206eb604"},
-    {file = "ConfigArgParse-1.5.1.tar.gz", hash = "sha256:371f46577e76ec71a183b88378f36dd09f4b946f60fe60712f411b020f26b812"},
+    {file = "ConfigArgParse-1.5.2-py3-none-any.whl", hash = "sha256:f75b235a13dba6692ee9e019470e7bce41861d09606c39c41facb347c24ca3cf"},
+    {file = "ConfigArgParse-1.5.2.tar.gz", hash = "sha256:c39540eb4843883d526beeed912dc80c92481b0c13c9787c91e614a624de3666"},
 ]
 constantly = [
     {file = "constantly-15.1.0-py2.py3-none-any.whl", hash = "sha256:dd2fa9d6b1a51a83f0d7dd76293d734046aa176e384bf6e33b7e44880eb37c5d"},
@@ -1533,12 +1534,7 @@ pyelftools = [
     {file = "pyelftools-0.27.tar.gz", hash = "sha256:cde854e662774c5457d688ca41615f6594187ba7067af101232df889a6b7a66b"},
 ]
 pyinstaller = [
-    {file = "pyinstaller-4.5-py3-none-macosx_10_13_universal2.whl", hash = "sha256:0129e5ea77c5eb6b2e0de8b1f7ec006238991ac712e3c0e877b995a289e4d8ea"},
-    {file = "pyinstaller-4.5-py3-none-manylinux2014_i686.whl", hash = "sha256:3228e1c7d823c5e786ee41194171e19fc985c4d6074610e4876479697a97b60f"},
-    {file = "pyinstaller-4.5-py3-none-manylinux2014_x86_64.whl", hash = "sha256:8b22656d2eaf5141c20afa3b98422cce17bf05ff9ef4fa8b232b47853b18e4b9"},
-    {file = "pyinstaller-4.5-py3-none-win32.whl", hash = "sha256:9d78452652a27a20a7126fdb93fe7abe731b82dc2a6c163a67fd98bd2a9c44f5"},
-    {file = "pyinstaller-4.5-py3-none-win_amd64.whl", hash = "sha256:df294f6579443924774e7c987deccca47a5f6386137972c8f3f31983db37a43e"},
-    {file = "pyinstaller-4.5.tar.gz", hash = "sha256:86f694faec78a08c3893aacef84b1a49cb53d4e2880559c6124beefd196a3a74"},
+    {file = "pyinstaller-4.3.tar.gz", hash = "sha256:5ecf8bbc230d7298a796e52bb745b95eee12878d141f1645612c99246ecd23f2"},
 ]
 pyinstaller-hooks-contrib = [
     {file = "pyinstaller-hooks-contrib-2021.2.tar.gz", hash = "sha256:7f5d0689b30da3092149fc536a835a94045ac8c9f0e6dfb23ac171890f5ea8f2"},
@@ -1564,8 +1560,8 @@ python-gettext = [
     {file = "python-gettext-4.0.tar.gz", hash = "sha256:626b501a51ac892fc3460cf550e60dca121f544eaa46eb69c90ce4682fc7ec02"},
 ]
 python-opsi = [
-    {file = "python-opsi-4.2.0.220.tar.gz", hash = "md5:395f8329b605212bae10160f29d61464"},
-    {file = "python_opsi-4.2.0.220-py3-none-any.whl", hash = "md5:6cc27ec692639ecad38274eab09113e9"},
+    {file = "python-opsi-4.2.0.222.tar.gz", hash = "md5:2ad707dceef8770dfedc3f8488ce4743"},
+    {file = "python_opsi-4.2.0.222-py3-none-any.whl", hash = "md5:8c50ab94e578aa657b587d3116e142e3"},
 ]
 python-pam = [
     {file = "python-pam-1.8.4.tar.gz", hash = "sha256:c856d9c89fedb33951dd8a95727ae57c6887b02d065bbdffd2fd9dbc0183909b"},
