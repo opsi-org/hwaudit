@@ -9,9 +9,9 @@ build:linux-pyinstaller:
   script:
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - dist/hwaudit/opsi-hwaudit --help
-    - '[ "$CI_COMMIT_TAG" = "" ] && opsi-dev-tool -l info --binary-push dist/hwaudit "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || opsi-dev-tool -l info --binary-push dist/hwaudit'
+    - dist/opsi-hwaudit --help
+    - '[ "$CI_COMMIT_TAG" = "" ] && opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
 
 
 build:windows-pyinstaller:
@@ -25,9 +25,9 @@ build:windows-pyinstaller:
     - poetry update mysqlclient
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
     - poetry run opsi-dev-tool -l info --signserver-sign dist\opsi-hwaudit.exe
-    - dist\hwaudit\opsi-hwaudit.exe --help
-    - if (! $CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist\hwaudit "$CI_JOB_ID"}
-    - if ($CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist\hwaudit}
+    - dist\opsi-hwaudit.exe --help
+    - if (! $CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist\opsi-hwaudit.exe "$CI_JOB_ID"}
+    - if ($CI_COMMIT_TAG) {poetry run opsi-dev-tool -l info --binary-push dist\opsi-hwaudit.exe}
 
 
 build:osx-pyinstaller:
@@ -38,9 +38,9 @@ build:osx-pyinstaller:
     - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
-    - dist/hwaudit/opsi-hwaudit --help
-    - '[ "$CI_COMMIT_TAG" = "" ] && poetry run opsi-dev-tool -l info --binary-push dist/hwaudit "$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || poetry run opsi-dev-tool -l info --binary-push dist/hwaudit'
+    - dist/opsi-hwaudit --help
+    - '[ "$CI_COMMIT_TAG" = "" ] && poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || poetry run opsi-dev-tool -l info --binary-push dist/opsi-hwaudit'
 
 
 package:makeopsipackage:
