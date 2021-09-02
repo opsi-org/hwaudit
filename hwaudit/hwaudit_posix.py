@@ -4,8 +4,8 @@ from OPSI.System import auditHardware
 from OPSI.Backend.JSONRPC import JSONRPCBackend
 from opsicommon.logging import logger
 
-from . import __version__
-#from .opsihwauditconf import OPSI_HARDWARE_CLASSES
+from hwaudit import __version__
+#from hwaudit.opsihwauditconf import OPSI_HARDWARE_CLASSES
 
 def makehwaudit(backendConfig: Dict[str, str]) -> None:
 	"""
@@ -19,20 +19,20 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 	"""
 	try:
 		with JSONRPCBackend(**backendConfig) as backend:
-			logger.notice(u"Connected to opsi server")
+			logger.notice("Connected to opsi server")
 
 			# Do hardware inventory
-			logger.notice(u"Fetching opsi hw audit configuration")
+			logger.notice("Fetching opsi hw audit configuration")
 			config = backend.auditHardware_getConfig()
 			#config = OPSI_HARDWARE_CLASSES
 
-			logger.notice(u"Running hardware inventory")
+			logger.notice("Running hardware inventory")
 			auditHardwareOnHosts = auditHardware(config = config, hostId = backendConfig.get('host_id'))
 
-			logger.notice(u"Marking hardware information as obsolete")
+			logger.notice("Marking hardware information as obsolete")
 			backend.auditHardwareOnHost_setObsolete(backendConfig.get('host_id'))
 
-			logger.notice(u"Sending hardware information to service")
+			logger.notice("Sending hardware information to service")
 			backend.auditHardwareOnHost_createObjects(auditHardwareOnHosts)
 	except ValueError as error:
-		logger.error(u"ValueError occured in makehwaudit %s:", error)
+		logger.error("ValueError occured in makehwaudit %s:", error)

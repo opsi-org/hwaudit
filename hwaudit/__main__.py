@@ -4,11 +4,10 @@ import argparse
 import re
 from typing import Dict
 
-from OPSI.Backend.JSONRPC import JSONRPCBackend
 import opsicommon.logging
 from opsicommon.logging import logger
 
-from . import __version__
+from hwaudit import __version__
 
 def initAudit(logFile: str) -> Dict[str, str]:
 	"""
@@ -62,11 +61,11 @@ def initAudit(logFile: str) -> Dict[str, str]:
 
 	address = re.sub("""['"]""", "", opts.address)
 
-	if address.startswith(u"https://"):
-		address = address + u"/rpc"
+	if address.startswith("https://"):
+		address = address + "/rpc"
 
 	if not address:
-		logger.critical(u"Address not set")
+		logger.critical("Address not set")
 		raise RuntimeError("Address not set")
 
 	host_id = opts.hostid or opts.username
@@ -79,7 +78,7 @@ def initAudit(logFile: str) -> Dict[str, str]:
 	password = re.sub("""['"]""", "", password)
 	host_id = re.sub("""['"]""", "", host_id)
 
-	logger.notice(u"Connecting to service at '%s' as '%s'", address, username)
+	logger.notice("Connecting to service at '%s' as '%s'", address, username)
 
 	backendConfig = dict(
 		username=username,
@@ -101,10 +100,10 @@ def main():
 	RUNS_ON_WINDOWS = sys.platform in ('nt', 'win32')
 	if RUNS_ON_WINDOWS:
 		from .hwaudit_windows import makehwaudit
-		if os.path.exists('C:\opsi.org\log'):
-			log_dir = 'C:\opsi.org\log'
+		if os.path.exists(r'C:\opsi.org\log'):
+			log_dir = r'C:\opsi.org\log'
 		else:
-			log_dir = 'C:\opsi.org\tmp'
+			log_dir = r'C:\opsi.org\tmp'
 	else:
 		from .hwaudit_posix import makehwaudit
 		if os.path.exists("/var/log/opsi"):
@@ -115,7 +114,7 @@ def main():
 
 	backendConfig = initAudit(log_file)
 	makehwaudit(backendConfig)
-	logger.notice(u"Exiting...")
+	logger.notice("Exiting...")
 
 if __name__ == "__main__":
 	main()
