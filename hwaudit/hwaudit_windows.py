@@ -12,9 +12,9 @@ from OPSI.Types import (
 	forceHardwareDeviceId, forceHardwareVendorId, forceInt, forceList,
 	forceUnicode, forceUnicodeList)
 
-from .windows_values import VALUE_MAPPING
-from . import __version__
-#from .opsihwauditconf import OPSI_HARDWARE_CLASSES
+from hwaudit.windows_values import VALUE_MAPPING
+from hwaudit import __version__
+#from hwaudit.opsihwauditconf import OPSI_HARDWARE_CLASSES
 
 from opsicommon.logging import logger
 
@@ -68,7 +68,7 @@ def getHardwareInformationFromWMI(conf):
 			logger.info("Query: %s for namespace %s", wmiQuery, namespace)
 			objects = wmis[namespace].query(wmiQuery)
 		except pywintypes.com_error as error:
-			logger.error(u"Query failed: %s", error)
+			logger.error("Query failed: %s", error)
 			continue
 
 		# first element? make new array for multiple devices
@@ -111,9 +111,9 @@ def getHardwareInformationFromWMI(conf):
 							v = getattr(associator, attribute)
 						else:
 							if associator is None:
-								logger.warning(u"%s.%s: failed to get attribute '%s' from object '%s'", opsiName, item['Opsi'], attribute, obj.__repr__())
+								logger.warning("%s.%s: failed to get attribute '%s' from object '%s'", opsiName, item['Opsi'], attribute, obj.__repr__())
 							else:
-								logger.warning(u"%s.%s: failed to get attribute '%s' from objects %s", opsiName, item['Opsi'], attribute, [obj.__repr__(), associator.__repr__()])
+								logger.warning("%s.%s: failed to get attribute '%s' from objects %s", opsiName, item['Opsi'], attribute, [obj.__repr__(), associator.__repr__()])
 							continue
 
 						if isinstance(v, tuple) and len(v) == 1:
@@ -124,14 +124,14 @@ def getHardwareInformationFromWMI(conf):
 								v = eval('v.%s' % meth)
 							except Exception as evalError:
 								logger.debug("Method '%s' on function value '%s' failed: '%s'", meth, v, evalError)
-								logger.warning(u"Method '%s' failed on value '%s'", meth, v)
+								logger.warning("Method '%s' failed on value '%s'", meth, v)
 
 						if op and v is not None:
 							try:
 								v = eval('v%s' % op)
 							except Exception as evalError:
 								logger.debug("Operation '%s' on function value '%s' failed: '%s'", op, v, evalError)
-								logger.warning(u"Operation '%s' failed on value '%s'", op, v)
+								logger.warning("Operation '%s' failed on value '%s'", op, v)
 
 						if item['Opsi'] in ('vendorId', 'subsystemVendorId'):
 							try:
@@ -155,7 +155,7 @@ def getHardwareInformationFromWMI(conf):
 						#	v = v.strip()
 
 						valueMappingKey = "%s.%s" % (attrclass, attribute)
-						logger.debug(u"Searching mapping for '%s'", valueMappingKey)
+						logger.debug("Searching mapping for '%s'", valueMappingKey)
 						if valueMappingKey in VALUE_MAPPING:
 							v = forceList(v)
 							for i in range(len(v)):
@@ -174,7 +174,7 @@ def getHardwareInformationFromWMI(conf):
 							maxLen = forceInt(item['Type'].split('(')[1].split(')')[0].strip())
 
 							if len(v) > maxLen:
-								logger.warning(u"Skipping value '%s': string is too long (maximum length: %d)", v, maxLen)
+								logger.warning("Skipping value '%s': string is too long (maximum length: %d)", v, maxLen)
 								v = None		#v[:maxLen]
 
 						if v is not None:
@@ -182,9 +182,9 @@ def getHardwareInformationFromWMI(conf):
 
 				opsiValues[opsiName][-1][item['Opsi']] = v
 
-			logger.debug(u"Hardware object is now: '%s'", opsiValues[opsiName][-1])
+			logger.debug("Hardware object is now: '%s'", opsiValues[opsiName][-1])
 			if not opsiValues[opsiName][-1]:
-				logger.info(u"Skipping empty object")
+				logger.info("Skipping empty object")
 				opsiValues[opsiName].pop()
 
 	return opsiValues
@@ -215,16 +215,16 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 			if not registryQuery:
 				continue
 
-			logger.info(u"Querying: %s" % registryQuery)
+			logger.info("Querying: %s" % registryQuery)
 			match = re.search(regex, registryQuery)
 			if not match:
-				logger.error(u"Bad registry query '%s'", registryQuery)
+				logger.error("Bad registry query '%s'", registryQuery)
 				continue
 
 			logger.info(match)
 			key = match.group(1)
 			if not key.find('\\'):
-				logger.error(u"Bad registry query '%s'", registryQuery)
+				logger.error("Bad registry query '%s'", registryQuery)
 				continue
 
 			(key, subKey) = key.split('\\', 1)
@@ -235,13 +235,13 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 			elif key in ('HKEY_CURRENT_USER', 'HKCU'):
 				key = HKEY_CURRENT_USER
 			else:
-				logger.error(u"Unhandled registry key '%s'", key)
+				logger.error("Unhandled registry key '%s'", key)
 				continue
 
 			try:
 				value = getRegistryValue(key, subKey, valueName)
 			except OSError as error:
-				logger.error(u"Failed to get '%s': %s", registryQuery, error)
+				logger.error("Failed to get '%s': %s", registryQuery, error)
 				continue
 
 			if isinstance(value, bytes):
@@ -289,13 +289,13 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 
 			match = re.search(regex, cmdline)
 			if not match:
-				logger.error(u"Bad Cmd entry '%s'", cmdline)
+				logger.error("Bad Cmd entry '%s'", cmdline)
 				continue
 			matchresult = match.groupdict()
 			executeCommand = matchresult.get("cmd")
 			extend = matchresult.get("extend")
 
-			logger.info(u"Executing: %s", executeCommand)
+			logger.info("Executing: %s", executeCommand)
 			value = ''
 			try:
 				result = execute(executeCommand)
@@ -425,16 +425,16 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 	:type backendConfig: dict
 	"""
 	with JSONRPCBackend(**backendConfig) as backend:
-		logger.notice(u"Connected to opsi server")
+		logger.notice("Connected to opsi server")
 
-		logger.notice(u"Fetching opsi hw audit configuration")
+		logger.notice("Fetching opsi hw audit configuration")
 		config = backend.auditHardware_getConfig()
 		#config = OPSI_HARDWARE_CLASSES
 
-		logger.notice(u"Fetching hardware information from WMI")
+		logger.notice("Fetching hardware information from WMI")
 		values = getHardwareInformationFromWMI(config)
 
-		logger.notice(u"Fetching hardware information from Registry")
+		logger.notice("Fetching hardware information from Registry")
 		values = getHardwareInformationFromRegistry(config, values)
 
 		#logger.notice("Fetching hardware information from Executing Command")
@@ -444,7 +444,7 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 		values = getDellExpressCode(config, values)
 
 
-		logger.info(u"Hardware information from WMI:\n%s", objectToBeautifiedText(values))
+		logger.info("Hardware information from WMI:\n%s", objectToBeautifiedText(values))
 		auditHardwareOnHosts = []
 		for hardwareClass, devices in values.items():
 			if hardwareClass == 'SCANPROPERTIES':
@@ -456,7 +456,7 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 				data['hostId'] = backendConfig.get('host_id')
 				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
 
-		logger.info(u"Obsoleting old hardware audit data")
+		logger.info("Obsoleting old hardware audit data")
 		backend.auditHardwareOnHost_setObsolete(backendConfig.get('host_id'))
-		logger.notice(u"Sending hardware information to service")
+		logger.notice("Sending hardware information to service")
 		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)

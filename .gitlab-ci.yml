@@ -1,4 +1,4 @@
-image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-default
+image: docker.uib.gmbh/opsi/dev/pybuilder:latest
 
 stages:
   - build
@@ -19,10 +19,7 @@ build:windows-pyinstaller:
   tags:
     - win10
   script:
-    - pip install poetry
-    - poetry remove mysqlclient
-    - poetry add "deps/mysqlclient-1.4.6-cp37-cp37m-win32.whl"
-    - poetry update mysqlclient
+    - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
     - poetry run opsi-dev-tool -l info --signserver-sign dist\opsi-hwaudit.exe
     - dist\opsi-hwaudit.exe --help
@@ -35,7 +32,6 @@ build:osx-pyinstaller:
   tags:
     - macos
   script:
-    - source $HOME/.poetry/env
     - poetry install
     - poetry run opsi-dev-tool -l info --pyinstaller-poetry-build
     - dist/opsi-hwaudit --help
