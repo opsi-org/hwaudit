@@ -35,9 +35,6 @@ osx-pyinstaller:
   tags:
     - macos_catalina
   script:
-    - curl -o opsi-dev-tools.tar.gz "$OPSIDEVTOOLS_URL_DARWIN_X64"
-    - tar -xvf opsi-dev-tools.tar.gz
-    - ./opsi-dev-tool --self-install
     - poetry install
     - poetry run opsi-dev-cli -l info pyinstaller build
     - dist/opsi-hwaudit --help
