@@ -5,7 +5,7 @@ import re
 from typing import Dict
 
 import opsicommon.logging
-from opsicommon.logging import logger
+from opsicommon.logging import logger, secret_filter
 
 from hwaudit import __version__
 
@@ -48,7 +48,7 @@ def initAudit(logFile: str) -> Dict[str, str]:
 
 	password = opts.password
 
-	logger.addConfidentialString(password)
+	secret_filter.add_secrets(password)
 	logFile = os.path.expanduser(re.sub("""['"]""", "", opts.logFile))
 
 	opsicommon.logging.init_logging(stderr_format=opsicommon.logging.DEFAULT_COLORED_FORMAT,
