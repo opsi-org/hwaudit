@@ -246,7 +246,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
                             if v is not None:
                                 break
-                    if v:
+                    if v and not opsiValues.get(opsiName)[-1].get(item["Opsi"]):
                         opsiValues[opsiName][-1][item["Opsi"]] = v
 
                 logger.debug("Hardware object is now: '%s'", opsiValues[opsiName][-1])
