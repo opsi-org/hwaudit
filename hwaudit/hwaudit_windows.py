@@ -54,6 +54,9 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
     :returns: Dictionary containing the results of the audit.
     """
     logger.devel("getHardwareInformationFromWMI")
+    logger.notice("getHardwareInformationFromWMI")
+    logger.info("getHardwareInformationFromWMI")
+    logger.debug("getHardwareInformationFromWMI")
     wmis = make_wmi_objects(conf)
 
     opsiValues = {}
