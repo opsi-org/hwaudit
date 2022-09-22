@@ -108,7 +108,8 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
                     if len(assoc) > 0:
                         associator = assoc[0]
 
-                opsiValues[opsiName].append({})
+                if len(wmiQueries) == 1 or not opsiValues[opsiName]:
+                    opsiValues[opsiName].append({})
                 for item in oneClass["Values"]:
                     v = None
                     if item.get("WMI"):
