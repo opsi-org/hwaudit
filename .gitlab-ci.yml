@@ -2,7 +2,7 @@ image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-default
 
 stages:
   - build
-  # - package
+  - package
 
 linux-pyinstaller:
   stage: build
