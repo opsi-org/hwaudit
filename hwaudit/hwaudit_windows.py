@@ -53,10 +53,6 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
     :returns: Dictionary containing the results of the audit.
     """
-    logger.devel("getHardwareInformationFromWMI")
-    logger.notice("getHardwareInformationFromWMI")
-    logger.info("getHardwareInformationFromWMI")
-    logger.debug("getHardwareInformationFromWMI")
     wmis = make_wmi_objects(conf)
 
     opsiValues = {}
@@ -71,9 +67,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
         opsiName = oneClass["Class"]["Opsi"]
         wmiQueries = oneClass["Class"]["WMI"].split(";")
-        logger.devel("wmiQueries")
         for wmiQuery in wmiQueries:
-            logger.devel("wmiQuery to execute: %s", wmiQuery)
 
             mapClass = ""
 
@@ -88,7 +82,6 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
                 if wmiQuery.startswith("namespace="):
                     namespace, wmiQuery = wmiQuery.split(":", 1)
                     namespace = namespace.split("=", 1)[1].strip().lower()
-                logger.devel("Query: %s for namespace %s", wmiQuery, namespace)
                 logger.info("Query: %s for namespace %s", wmiQuery, namespace)
                 objects = wmis[namespace].query(wmiQuery)
             except pywintypes.com_error as error:
@@ -250,11 +243,10 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
                         opsiValues[opsiName][-1][item["Opsi"]] = v
 
                 logger.debug("Hardware object is now: '%s'", opsiValues[opsiName][-1])
-                logger.devel("Hardware object is now: '%s'", opsiValues[opsiName][-1])
                 if not opsiValues[opsiName][-1]:
                     logger.info("Skipping empty object")
                     opsiValues[opsiName].pop()
-    logger.devel(opsiValues)
+    logger.debug(opsiValues)
     return opsiValues
 
 
@@ -505,7 +497,6 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
     :param backendConfig: Dictionary containing the configuration of the backend.
     :type backendConfig: dict
     """
-    logger.devel("makehwaudit")
     with JSONRPCBackend(**backendConfig) as backend:
         logger.notice("Connected to opsi server")
 
