@@ -95,164 +95,164 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
                 logger.error("Query failed: %s", error)
                 continue
 
-        # first element? make new array for multiple devices
-        if opsiName not in opsiValues:
-            opsiValues[opsiName] = []
+            # first element? make new array for multiple devices
+            if opsiName not in opsiValues:
+                opsiValues[opsiName] = []
 
-        for obj in objects:
-            wmiClass = obj.ole_object.GetObjectText_().split()[2]
+            for obj in objects:
+                wmiClass = obj.ole_object.GetObjectText_().split()[2]
 
-            associator = None
-            if mapClass:
-                assoc = obj.associators(mapClass)
-                if len(assoc) > 0:
-                    associator = assoc[0]
+                associator = None
+                if mapClass:
+                    assoc = obj.associators(mapClass)
+                    if len(assoc) > 0:
+                        associator = assoc[0]
 
-            opsiValues[opsiName].append({})
-            for item in oneClass["Values"]:
-                v = None
-                if item.get("WMI"):
-                    for attribute in item["WMI"].split("||"):
-                        attribute = attribute.strip()
-                        attrclass = wmiClass
+                opsiValues[opsiName].append({})
+                for item in oneClass["Values"]:
+                    v = None
+                    if item.get("WMI"):
+                        for attribute in item["WMI"].split("||"):
+                            attribute = attribute.strip()
+                            attrclass = wmiClass
 
-                        if "::" in attribute:
-                            (attrclass, attribute) = attribute.split("::", 1)
+                            if "::" in attribute:
+                                (attrclass, attribute) = attribute.split("::", 1)
 
-                        meth = None
-                        if "." in attribute:
-                            (attribute, meth) = attribute.split(".", 1)
+                            meth = None
+                            if "." in attribute:
+                                (attribute, meth) = attribute.split(".", 1)
 
-                        op = None
-                        match = re.search(r"^(\w+)([\*\/\+\-\%]\d.*)$", attribute)
-                        if match:
-                            attribute = match.group(1)
-                            op = match.group(2)
+                            op = None
+                            match = re.search(r"^(\w+)([\*\/\+\-\%]\d.*)$", attribute)
+                            if match:
+                                attribute = match.group(1)
+                                op = match.group(2)
 
-                        if attrclass == wmiClass and hasattr(obj, attribute):
-                            v = getattr(obj, attribute)
-                        elif associator and hasattr(associator, attribute):
-                            v = getattr(associator, attribute)
-                        else:
-                            if associator is None:
-                                logger.warning(
-                                    "%s.%s: failed to get attribute '%s' from object '%s'",
-                                    opsiName,
-                                    item["Opsi"],
-                                    attribute,
-                                    obj.__repr__(),
-                                )
+                            if attrclass == wmiClass and hasattr(obj, attribute):
+                                v = getattr(obj, attribute)
+                            elif associator and hasattr(associator, attribute):
+                                v = getattr(associator, attribute)
                             else:
-                                logger.warning(
-                                    "%s.%s: failed to get attribute '%s' from objects %s",
-                                    opsiName,
-                                    item["Opsi"],
-                                    attribute,
-                                    [obj.__repr__(), associator.__repr__()],
-                                )
-                            continue
+                                if associator is None:
+                                    logger.warning(
+                                        "%s.%s: failed to get attribute '%s' from object '%s'",
+                                        opsiName,
+                                        item["Opsi"],
+                                        attribute,
+                                        obj.__repr__(),
+                                    )
+                                else:
+                                    logger.warning(
+                                        "%s.%s: failed to get attribute '%s' from objects %s",
+                                        opsiName,
+                                        item["Opsi"],
+                                        attribute,
+                                        [obj.__repr__(), associator.__repr__()],
+                                    )
+                                continue
 
-                        if isinstance(v, tuple) and len(v) == 1:
-                            v = v[0]
-
-                        if meth and v is not None:
-                            try:
-                                v = eval("v.%s" % meth)
-                            except Exception as evalError:
-                                logger.debug(
-                                    "Method '%s' on function value '%s' failed: '%s'",
-                                    meth,
-                                    v,
-                                    evalError,
-                                )
-                                logger.warning(
-                                    "Method '%s' failed on value '%s'", meth, v
-                                )
-
-                        if op and v is not None:
-                            try:
-                                v = eval("v%s" % op)
-                            except Exception as evalError:
-                                logger.debug(
-                                    "Operation '%s' on function value '%s' failed: '%s'",
-                                    op,
-                                    v,
-                                    evalError,
-                                )
-                                logger.warning(
-                                    "Operation '%s' failed on value '%s'", op, v
-                                )
-
-                        if item["Opsi"] in ("vendorId", "subsystemVendorId"):
-                            try:
-                                v = forceHardwareVendorId(v)
-                            except ValueError as hwVendError:
-                                logger.debug(
-                                    "Forcing hardware vendor id on '%s' failed: %s",
-                                    v,
-                                    hwVendError,
-                                )
-                                v = None
-                        elif item["Opsi"] in ("deviceId", "subsystemDeviceId"):
-                            try:
-                                v = forceHardwareDeviceId(v)
-                            except ValueError as hwDevError:
-                                logger.debug(
-                                    "Forcing hardware device id on '%s' failed: %s",
-                                    v,
-                                    hwDevError,
-                                )
-                                v = None
-
-                        if v is None:
-                            continue
-
-                        if isinstance(v, str):
-                            v = forceUnicode(v.strip())
-                        # if isinstance(v, bytes):
-                        # 	v = v.strip()
-
-                        valueMappingKey = "%s.%s" % (attrclass, attribute)
-                        logger.debug("Searching mapping for '%s'", valueMappingKey)
-                        if valueMappingKey in VALUE_MAPPING:
-                            v = forceList(v)
-                            for i in range(len(v)):
-                                v[i] = VALUE_MAPPING[valueMappingKey].get(
-                                    str(v[i]), v[i]
-                                )
-
-                            if len(v) == 1:
+                            if isinstance(v, tuple) and len(v) == 1:
                                 v = v[0]
 
-                            logger.debug("Mapping applied. Value:'%s'", v)
+                            if meth and v is not None:
+                                try:
+                                    v = eval("v.%s" % meth)
+                                except Exception as evalError:
+                                    logger.debug(
+                                        "Method '%s' on function value '%s' failed: '%s'",
+                                        meth,
+                                        v,
+                                        evalError,
+                                    )
+                                    logger.warning(
+                                        "Method '%s' failed on value '%s'", meth, v
+                                    )
 
-                        if isinstance(v, (list, tuple)):
-                            v = ", ".join(forceUnicodeList(v))
+                            if op and v is not None:
+                                try:
+                                    v = eval("v%s" % op)
+                                except Exception as evalError:
+                                    logger.debug(
+                                        "Operation '%s' on function value '%s' failed: '%s'",
+                                        op,
+                                        v,
+                                        evalError,
+                                    )
+                                    logger.warning(
+                                        "Operation '%s' failed on value '%s'", op, v
+                                    )
 
-                        if item["Type"].startswith("varchar"):
-                            v = forceUnicode(v)
-                            maxLen = forceInt(
-                                item["Type"].split("(")[1].split(")")[0].strip()
-                            )
+                            if item["Opsi"] in ("vendorId", "subsystemVendorId"):
+                                try:
+                                    v = forceHardwareVendorId(v)
+                                except ValueError as hwVendError:
+                                    logger.debug(
+                                        "Forcing hardware vendor id on '%s' failed: %s",
+                                        v,
+                                        hwVendError,
+                                    )
+                                    v = None
+                            elif item["Opsi"] in ("deviceId", "subsystemDeviceId"):
+                                try:
+                                    v = forceHardwareDeviceId(v)
+                                except ValueError as hwDevError:
+                                    logger.debug(
+                                        "Forcing hardware device id on '%s' failed: %s",
+                                        v,
+                                        hwDevError,
+                                    )
+                                    v = None
 
-                            if len(v) > maxLen:
-                                logger.warning(
-                                    "Skipping value '%s': string is too long (maximum length: %d)",
-                                    v,
-                                    maxLen,
+                            if v is None:
+                                continue
+
+                            if isinstance(v, str):
+                                v = forceUnicode(v.strip())
+                            # if isinstance(v, bytes):
+                            # 	v = v.strip()
+
+                            valueMappingKey = "%s.%s" % (attrclass, attribute)
+                            logger.debug("Searching mapping for '%s'", valueMappingKey)
+                            if valueMappingKey in VALUE_MAPPING:
+                                v = forceList(v)
+                                for i in range(len(v)):
+                                    v[i] = VALUE_MAPPING[valueMappingKey].get(
+                                        str(v[i]), v[i]
+                                    )
+
+                                if len(v) == 1:
+                                    v = v[0]
+
+                                logger.debug("Mapping applied. Value:'%s'", v)
+
+                            if isinstance(v, (list, tuple)):
+                                v = ", ".join(forceUnicodeList(v))
+
+                            if item["Type"].startswith("varchar"):
+                                v = forceUnicode(v)
+                                maxLen = forceInt(
+                                    item["Type"].split("(")[1].split(")")[0].strip()
                                 )
-                                v = None  # v[:maxLen]
 
-                        if v is not None:
-                            break
+                                if len(v) > maxLen:
+                                    logger.warning(
+                                        "Skipping value '%s': string is too long (maximum length: %d)",
+                                        v,
+                                        maxLen,
+                                    )
+                                    v = None  # v[:maxLen]
 
-                opsiValues[opsiName][-1][item["Opsi"]] = v
+                            if v is not None:
+                                break
 
-            logger.debug("Hardware object is now: '%s'", opsiValues[opsiName][-1])
-            logger.devel("Hardware object is now: '%s'", opsiValues[opsiName][-1])
-            if not opsiValues[opsiName][-1]:
-                logger.info("Skipping empty object")
-                opsiValues[opsiName].pop()
+                    opsiValues[opsiName][-1][item["Opsi"]] = v
+
+                logger.debug("Hardware object is now: '%s'", opsiValues[opsiName][-1])
+                logger.devel("Hardware object is now: '%s'", opsiValues[opsiName][-1])
+                if not opsiValues[opsiName][-1]:
+                    logger.info("Skipping empty object")
+                    opsiValues[opsiName].pop()
     logger.devel(opsiValues)
     return opsiValues
 
