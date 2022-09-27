@@ -7,6 +7,7 @@ stages:
 linux-pyinstaller:
   stage: build
   script:
+    - poetry lock --no-update
     - poetry install
     - poetry run opsi-dev-cli -l info pyinstaller build
     - dist/opsi-hwaudit --help
@@ -22,6 +23,7 @@ windows-pyinstaller:
     - Invoke-WebRequest -UseBasicParsing -Uri "$OPSIDEVTOOLS_URL_WINDOWS_X86" -OutFile opsi-dev-tools.zip
     - Expand-Archive opsi-dev-tools.zip -DestinationPath .
     - .\opsi-dev-tool.exe --self-install -l info
+    - poetry lock --no-update
     - poetry install
     - poetry run .\opsi-dev-cli.exe -l info pyinstaller build
     - poetry run .\opsi-dev-tool.exe -l info --signserver-sign dist\opsi-hwaudit.exe
@@ -35,6 +37,7 @@ osx-pyinstaller:
   tags:
     - macos_catalina
   script:
+    - poetry lock --no-update
     - poetry install
     - poetry run opsi-dev-cli -l info pyinstaller build
     - dist/opsi-hwaudit --help
