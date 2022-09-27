@@ -7,6 +7,7 @@ stages:
 linux-pyinstaller:
   stage: build
   script:
+    - poetry lock --no-update
     - poetry install
     - poetry run opsi-dev-cli -l info pyinstaller build
     - dist/opsi-hwaudit --help
