@@ -533,4 +533,5 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 		logger.info("Obsoleting old hardware audit data")
 		backend.auditHardwareOnHost_setObsolete(backendConfig.get("host_id"))
 		logger.notice("Sending hardware information to service")
+		logger.trace(auditHardwareOnHosts)
 		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
