@@ -33,6 +33,7 @@ def makehwaudit(backendConfig: Dict[str, str]) -> None:
 			backend.auditHardwareOnHost_setObsolete(backendConfig.get('host_id'))
 
 			logger.notice("Sending hardware information to service")
+			logger.trace(auditHardwareOnHosts)
 			backend.auditHardwareOnHost_createObjects(auditHardwareOnHosts)
 	except ValueError as error:
 		logger.error("ValueError occured in makehwaudit %s:", error)
