@@ -12,7 +12,7 @@ name = "uib"
 url = "https://pypi.uib.gmbh/simple/"
 
 [tool.poetry.dependencies]
-python = ">=3.10, <3.11"
+python = ">=3.10, <3.12"
 argparse = "^1.4.0"
 python-opsi = ">=4.2.0.312"
 #python-opsi = {path = "../python-opsi/"}
