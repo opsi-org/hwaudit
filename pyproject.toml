@@ -14,7 +14,7 @@ url = "https://pypi.uib.gmbh/simple/"
 [tool.poetry.dependencies]
 python = ">=3.10, <3.12"
 argparse = "^1.4.0"
-python-opsi = ">=4.2.0.312"
+python-opsi = ">=4.3.0.0"
 #python-opsi = {path = "../python-opsi/"}
 pywin32 = { version = "^303", platform = "win32" }
 wmi  = { version = "^1.5.1", platform = "win32" }
