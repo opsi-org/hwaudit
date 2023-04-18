@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import re
-from typing import Dict
 
 import pywintypes
 import wmi
-from OPSI.Backend.JSONRPC import JSONRPCBackend
-from OPSI.Object import AuditHardwareOnHost
-from OPSI.Types import (
+
+from opsicommon.logging import logger
+from opsicommon.objects import AuditHardwareOnHost
+from opsicommon.types import (
 	forceHardwareDeviceId,
 	forceHardwareVendorId,
 	forceInt,
@@ -15,8 +15,9 @@ from OPSI.Types import (
 	forceUnicode,
 	forceUnicodeList,
 )
+from opsicommon.client.opsiservice import ServiceClient
+
 from OPSI.Util import objectToBeautifiedText
-from opsicommon.logging import logger
 
 from hwaudit import __version__
 from hwaudit.windows_values import VALUE_MAPPING
@@ -49,7 +50,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 	This method performs a number of WMI queries regarding
 	hardware and stores the replies in a dictionary.
 
-	:param conf: Config extracted from the backend.
+	:param conf: Config extracted from the service_client.
 
 	:returns: Dictionary containing the results of the audit.
 	"""
@@ -257,7 +258,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 	This method queries the windows registry for hardware specification.
 	Results are integrated into a dictionary.
 
-	:param conf: Config extracted from the backend.
+	:param conf: Config extracted from the service_client.
 	:param opsiValues: Dictionary containing the results of the audit.
 
 	:returns: Dictionary containing the results of the audit.
@@ -454,7 +455,7 @@ def getDellExpressCode(conf, opsiValues):
 	This method queries WMI for the Manufacturer. If it is DELL,
 	the DELL expresscode is queried, converted to decimal and stored.
 
-	:param conf: Config extracted from the backend.
+	:param conf: Config extracted from the service_client.
 	:param opsiValues: Dictionary containing the results of the audit.
 
 	:returns: Dictionary containing the results of the audit.
@@ -486,52 +487,28 @@ def getDellExpressCode(conf, opsiValues):
 					logger.notice(f"stored dellexpresscode {value}")
 	return opsiValues
 
+def get_hwaudit(config: dict, host_id: str) -> list[AuditHardwareOnHost]:
+	logger.notice("Fetching hardware information from WMI")
+	values = getHardwareInformationFromWMI(config)
 
-def makehwaudit(backendConfig: Dict[str, str]) -> None:
-	"""
-	Performs a hardware audit.
+	logger.notice("Fetching hardware information from Registry")
+	values = getHardwareInformationFromRegistry(config, values)
 
-	This method extracts information about the hardware from the backend config,
-	WMI and the registry. The results are sent to and stored at the backend.
+	logger.notice("Extracting dellexpresscode (if any)")
+	values = getDellExpressCode(config, values)
 
-	:param backendConfig: Dictionary containing the configuration of the backend.
-	:type backendConfig: dict
-	"""
-	with JSONRPCBackend(**backendConfig) as backend:
-		logger.notice("Connected to opsi server")
+	logger.info(
+		"Hardware information from WMI:\n%s", objectToBeautifiedText(values)
+	)
+	audit_hardware_on_hosts = []
+	for hardwareClass, devices in values.items():
+		if hardwareClass == "SCANPROPERTIES":
+			continue
 
-		logger.notice("Fetching opsi hw audit configuration")
-		config = backend.auditHardware_getConfig()
-		# config = OPSI_HARDWARE_CLASSES
+		for device in devices:
+			data = {str(attribute): value for attribute, value in device.items()}
+			data["hardwareClass"] = hardwareClass
+			data["hostId"] = host_id
+			audit_hardware_on_hosts.append(AuditHardwareOnHost.fromHash(data))
 
-		logger.notice("Fetching hardware information from WMI")
-		values = getHardwareInformationFromWMI(config)
-
-		logger.notice("Fetching hardware information from Registry")
-		values = getHardwareInformationFromRegistry(config, values)
-
-		# logger.notice("Fetching hardware information from Executing Command")
-		# values = getHardwareInformationFromExecuteCommand(config, values)
-
-		logger.notice("Extracting dellexpresscode (if any)")
-		values = getDellExpressCode(config, values)
-
-		logger.info(
-			"Hardware information from WMI:\n%s", objectToBeautifiedText(values)
-		)
-		auditHardwareOnHosts = []
-		for hardwareClass, devices in values.items():
-			if hardwareClass == "SCANPROPERTIES":
-				continue
-
-			for device in devices:
-				data = {str(attribute): value for attribute, value in device.items()}
-				data["hardwareClass"] = hardwareClass
-				data["hostId"] = backendConfig.get("host_id")
-				auditHardwareOnHosts.append(AuditHardwareOnHost.fromHash(data))
-
-		logger.info("Obsoleting old hardware audit data")
-		backend.auditHardwareOnHost_setObsolete(backendConfig.get("host_id"))
-		logger.notice("Sending hardware information to service")
-		logger.trace(auditHardwareOnHosts)
-		backend.auditHardwareOnHost_updateObjects(auditHardwareOnHosts)
+	return audit_hardware_on_hosts
