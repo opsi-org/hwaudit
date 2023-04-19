@@ -488,6 +488,8 @@ def getDellExpressCode(conf, opsiValues):
 	return opsiValues
 
 def get_hwaudit(config: dict, host_id: str) -> list[AuditHardwareOnHost]:
+	AuditHardwareOnHost.setHardwareConfig(config)
+
 	logger.notice("Fetching hardware information from WMI")
 	values = getHardwareInformationFromWMI(config)
 
