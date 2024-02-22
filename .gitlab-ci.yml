@@ -1,8 +1,19 @@
 image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-default
 
 stages:
+  - test
   - build
   - package
+
+
+lint:
+  stage: test
+  script:
+    - poetry lock --no-update
+    - poetry install
+    - poetry run ruff hwaudit
+    - poetry run mypy hwaudit
+
 
 linux-pyinstaller:
   stage: build
