@@ -18,8 +18,7 @@ name = "PyPI"
 [tool.poetry.dependencies]
 python = ">=3.11, <3.12"
 argparse = "^1.4.0"
-python-opsi = "^4.3.0"
-#python-opsi = {path = "../python-opsi/"}
+python-opsi-common = "^4.3.0"
 pywin32 = { version = "^303", platform = "win32" }
 wmi  = { version = "^1.5.1", platform = "win32" }
 pywin32-ctypes = { version = "^0.2.0", platform = "win32" }
