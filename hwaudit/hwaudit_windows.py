@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import json
 import re
+from typing import Any
 
 import pywintypes  # type: ignore[import]
 import wmi  # type: ignore[import]
-
-from typing import Any
 from opsicommon.logging import get_logger
-from opsicommon.objects import AuditHardwareOnHost
+from opsicommon.objects import AuditHardwareOnHost, serialize
 from opsicommon.types import (
 	forceHardwareDeviceId,
 	forceHardwareVendorId,
@@ -16,8 +16,6 @@ from opsicommon.types import (
 	forceUnicode,
 	forceUnicodeList,
 )
-
-from OPSI.Util import objectToBeautifiedText  # type: ignore[import]
 
 from hwaudit.windows_values import VALUE_MAPPING
 
@@ -480,7 +478,7 @@ def get_hwaudit(config: list[dict[str, Any]], host_id: str) -> list[AuditHardwar
 	logger.notice("Extracting dellexpresscode (if any)")
 	values = getDellExpressCode(config, values)
 
-	logger.info("Hardware information from WMI:\n%s", objectToBeautifiedText(values))
+	logger.info("Hardware information from WMI:\n%s", json.dumps(serialize(values), indent=4))
 	audit_hardware_on_hosts = []
 	for hardwareClass, devices in values.items():
 		if hardwareClass == "SCANPROPERTIES":
