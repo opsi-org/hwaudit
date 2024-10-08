@@ -23,11 +23,11 @@ line-length = 140
 
 [tool.poetry.dependencies]
 python = ">=3.11, <3.12"
-argparse = "^1.4.0"
-python-opsi = "^4.3.0"
-python-opsi-common = "^4.3.0"
-pefile = "^2023.2"
-bs4 = "^0.0.2"
+argparse = "^1.4"
+python-opsi = ">=4.3.6.3,<4.4"
+python-opsi-common = ">=4.3,<4.4"
+pefile = "^2024.8"
+bs4 = "^0.0"
 
 [tool.poetry.scripts]
 hwaudit = "hwaudit.__main__:main"
@@ -53,6 +53,6 @@ platform = "darwin"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1"
-pyinstaller = "^5.0"
-ruff = "^0.3"
+pyinstaller = "^6.10"
+ruff = "^0.6"
 mypy = "^1.9"
