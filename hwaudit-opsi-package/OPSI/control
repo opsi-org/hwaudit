@@ -1,24 +1,24 @@
 [Package]
 version: 1
-depends:
+depends: 
 
 [Product]
 type: localboot
 id: hwaudit
 name: Client Hardwareinventory Windows / Linux / OSX
 description: Hardwareinventarisierung
-advice:
+advice: 
 version: 4.3.0.0
 priority: 0
 licenseRequired: False
-productClasses:
+productClasses: 
 setupScript: hwaudit.opsiscript
-uninstallScript:
-updateScript:
+uninstallScript: 
+updateScript: 
 alwaysScript: hwaudit.opsiscript
-onceScript:
-customScript:
-userLoginScript:
+onceScript: 
+customScript: 
+userLoginScript: 
 
 [ProductProperty]
 type: unicode
@@ -26,7 +26,7 @@ name: timeout
 multivalue: False
 editable: False
 description: TimeOutSeconds hwaudit process
-values: ["300", "600", "90", "notimeout"]
+values: ["300","600","90","notimeout"]
 default: ["300"]
 
 [ProductProperty]
@@ -35,7 +35,7 @@ name: loglevel
 multivalue: False
 editable: False
 description: LogLevel from hwaudit
-values: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+values: ["0","1","2","3","4","5","6","7","8","9"]
 default: ["5"]
 
 [ProductProperty]
@@ -53,7 +53,7 @@ name: tail-lines
 multivalue: False
 editable: True
 description: linecount that will be included in instlog
-values: ["100", "200", "30"]
+values: ["100","200","30"]
 default: ["30"]
 
 [ProductProperty]
@@ -61,4 +61,3 @@ type: bool
 name: force_install
 description: Should we always reinstall the hwaudit software
 default: False
-
