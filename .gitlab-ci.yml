@@ -11,7 +11,7 @@ lint:
   script:
     - poetry lock --no-update
     - poetry install
-    - poetry run ruff hwaudit
+    - poetry run ruff check hwaudit
     - poetry run mypy hwaudit
 
 
