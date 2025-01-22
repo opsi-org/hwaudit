@@ -69,3 +69,23 @@ makeopsipackage:
     - opsi-dev-cli -l 6 binary pull
     - opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
     - upload-package hwaudit*.opsi
+
+
+test_tagged_manual:
+  stage: test
+  when: manual
+  script:
+    - version=$(opsi-dev-cli opsi-package get-value productVersion)
+    - package=$(opsi-dev-cli opsi-package get-value packageVersion)
+    - version="$version-$(echo $package | tr '.' '~')"
+    - opsi-dev-cli -l info jenkins test --versions="$version"
+
+test_tagged:
+  stage: test
+  only:
+    - tags
+  script:
+    - version=$(opsi-dev-cli opsi-package get-value productVersion)
+    - package=$(opsi-dev-cli opsi-package get-value packageVersion)
+    - version="$version-$(echo $package | tr '.' '~')"
+    - opsi-dev-cli -l info jenkins test --versions="$version"
