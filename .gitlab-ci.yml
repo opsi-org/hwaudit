@@ -91,7 +91,7 @@ test_tagged:
   only:
     - tags
   script:
-    - version=$(opsi-dev-cli opsi-package get-value productVersion)
-    - package=$(opsi-dev-cli opsi-package get-value packageVersion)
+    - version=$(opsi-dev-cli opsi-package --path=hwaudit-opsi-package get-value productVersion)
+    - package=$(opsi-dev-cli opsi-package --path=hwaudit-opsi-package get-value packageVersion)
     - version="$version-$(echo $package | tr '.' '~')"
     - opsi-dev-cli -l info jenkins test --versions="$version"
