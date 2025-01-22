@@ -1,15 +1,16 @@
-image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-default
+image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
 
 stages:
   - test
   - build
   - package
+  - integration_test
 
 
 lint:
   stage: test
   script:
-    - poetry lock --no-update
+    - poetry lock
     - poetry install
     - poetry run ruff check hwaudit
     - poetry run mypy hwaudit
@@ -18,7 +19,7 @@ lint:
 linux-pyinstaller:
   stage: build
   script:
-    - poetry lock --no-update
+    - poetry lock
     - poetry install
     - poetry run opsi-dev-cli -l info pyinstaller build
     - dist/opsi-hwaudit --help
@@ -34,7 +35,7 @@ windows-pyinstaller:
     - Invoke-WebRequest -UseBasicParsing -Uri "$OPSIDEVTOOLS_URL_WINDOWS_X86" -OutFile opsi-dev-tools.zip
     - Expand-Archive opsi-dev-tools.zip -DestinationPath .
     - Copy-Item opsi-dev-tool.exe opsi-dev-cli.exe
-    - poetry lock --no-update
+    - poetry lock
     - poetry install
     - poetry run .\opsi-dev-cli.exe -l info pyinstaller build
     - poetry run .\opsi-dev-tool.exe -l info --signserver-sign dist\opsi-hwaudit.exe
@@ -51,7 +52,7 @@ osx-pyinstaller:
     - curl -o opsi-dev-tools.tar.gz "$OPSIDEVTOOLS_URL_DARWIN_X64"
     - tar -xvf opsi-dev-tools.tar.gz
     - mv opsi-dev-tool opsi-dev-cli
-    - poetry lock --no-update
+    - poetry lock
     - poetry install
     - poetry run ./opsi-dev-cli -l info pyinstaller build
     - dist/opsi-hwaudit --help
@@ -72,7 +73,7 @@ makeopsipackage:
 
 
 test_tagged_manual:
-  stage: test
+  stage: integration_test
   when: manual
   script:
     - version=$(opsi-dev-cli opsi-package get-value productVersion)
@@ -81,7 +82,7 @@ test_tagged_manual:
     - opsi-dev-cli -l info jenkins test --versions="$version"
 
 test_tagged:
-  stage: test
+  stage: integration_test
   only:
     - tags
   script:
