@@ -71,6 +71,10 @@ makeopsipackage:
     - opsi-dev-cli -l 6 binary pull
     - opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
     - upload-package hwaudit*.opsi
+  artifacts:
+    name: prepared_files
+    paths:
+      - hwaudit-opsi-package/OPSI/control
 
 
 test_tagged_manual:
