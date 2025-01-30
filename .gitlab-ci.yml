@@ -69,6 +69,8 @@ makeopsipackage:
     - opsi-dev-cli -l 5 opsi-package --path=hwaudit-opsi-package set-value packageVersion "$newpackage"
     - opsi-dev-cli -l 5 opsi-package --path=hwaudit-opsi-package set-value productVersion "$version"
     - opsi-dev-cli -l 6 binary pull
+    - opsi-dev-cli changelog from-git output
+    - cp output/changelog.md hwaudit-opsi-package/OPSI/CHANGELOG.md
     - opsi-makepackage --no-set-rights -l 6 hwaudit-opsi-package
     - upload-package hwaudit*.opsi
   artifacts:
