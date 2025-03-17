@@ -1,7 +1,7 @@
 variables:
   version: "%version%"
 
-pyinstaller-poetry:
+pyinstaller:
   one_file: yes
   hidden_imports:
     all: []
