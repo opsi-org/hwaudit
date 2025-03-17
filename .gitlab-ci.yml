@@ -36,7 +36,7 @@ windows-pyinstaller:
     - Expand-Archive opsi-dev-tools.zip -DestinationPath .
     - Copy-Item opsi-dev-tool.exe opsi-dev-cli.exe
     - env:UV_PYTHON_PREFERENCE = "only-managed"
-	- env:UV_PYTHON = "3.11"
+    - env:UV_PYTHON = "3.11"
     - uv self update
     - uv sync --frozen
     - uv run .\opsi-dev-cli.exe -l debug pyinstaller build
