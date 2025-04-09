@@ -39,7 +39,7 @@ windows-pyinstaller:
     - $Env:UV_CACHE_DIR = "c:\\uv\\cache"
     - $Env:UV_PYTHON = ((uv python list --managed-python --all-arches | findstr 3.11 | findstr "\-x86\-" | findstr /v freethreaded) -split ' ')[0]
     - $Env:UV_PYTHON_PREFERENCE = "only-managed"
-    - uv sync --no-cache --frozen
+    - uv sync --frozen
     - uv run .\opsi-dev-cli.exe -l debug pyinstaller build
     - .\opsi-dev-tool.exe -l info --signserver-sign dist\opsi-hwaudit.exe
     - dist\opsi-hwaudit.exe --help
