@@ -1,11 +1,10 @@
 # Changelog hwaudit
 
-## [4.3.0.1-2] - 2025-01-22
+## [4.3.1.0-2] - 2025-05-27
 
 ### Changed
 
 - added opsi-meta-data.toml and changed control to control.toml (doerrer <n.doerrer@uib.de>)
-
 
 ## [4.3.0.1-1] - 2025-01-22
 
