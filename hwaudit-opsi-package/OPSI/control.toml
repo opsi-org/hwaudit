@@ -1,0 +1,80 @@
+[Package]
+version = "2"
+depends = []
+
+[Product]
+type = "LocalbootProduct"
+id = "hwaudit"
+name = "Client Hardwareinventory Windows / Linux / OSX"
+description = """Hardwareinventarisierung"""
+version = "4.3.0.1"
+priority = 0
+licenseRequired = false
+productClasses = []
+setupScript = "hwaudit.opsiscript"
+alwaysScript = "hwaudit.opsiscript"
+windowsSoftwareIds = []
+
+[[ProductProperty]]
+type = "UnicodeProductProperty"
+name = "timeout"
+description = """TimeOutSeconds hwaudit process"""
+default = ["300"]
+values = [
+    "300",
+    "600",
+    "90",
+    "notimeout",
+]
+multivalue = false
+editable = false
+
+[[ProductProperty]]
+type = "UnicodeProductProperty"
+name = "loglevel"
+description = """LogLevel from hwaudit"""
+default = ["5"]
+values = [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+]
+multivalue = false
+editable = false
+
+[[ProductProperty]]
+type = "UnicodeProductProperty"
+name = "logfile"
+description = """LogFile from hwaudit default ("" or "auto") C:\\opsi.org\\tmp"""
+default = [""]
+values = [
+    "",
+]
+multivalue = false
+editable = false
+
+[[ProductProperty]]
+type = "UnicodeProductProperty"
+name = "tail-lines"
+description = """linecount that will be included in instlog"""
+default = ["30"]
+values = [
+    "100",
+    "200",
+    "30",
+]
+multivalue = false
+editable = true
+
+[[ProductProperty]]
+type = "BoolProductProperty"
+name = "force_install"
+description = """Should we always reinstall the hwaudit software"""
+default = [false]
