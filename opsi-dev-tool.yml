@@ -32,7 +32,7 @@ pyinstaller:
 pull-binaries:
   - name: hwaudit
     server-type: binaryindex
-    destination: hwaudit-opsi-package/CLIENT_DATA/files/lin/
+    destination: CLIENT_DATA/files/lin/
     extract: true
     post-script: []
     os: linux
@@ -42,7 +42,7 @@ pull-binaries:
     server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
     server-type: binaryindex
-    destination: hwaudit-opsi-package/CLIENT_DATA/files/win/
+    destination: CLIENT_DATA/files/win/
     extract: true
     post-script: []
     os: windows
@@ -52,7 +52,7 @@ pull-binaries:
     server-url: http://binaryindex.uib.gmbh
   - name: hwaudit
     server-type: binaryindex
-    destination: hwaudit-opsi-package/CLIENT_DATA/files/mac/
+    destination: CLIENT_DATA/files/mac/
     extract: true
     post-script: []
     os: darwin
