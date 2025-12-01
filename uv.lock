@@ -371,6 +371,7 @@ dev = [
     { name = "pyinstaller" },
     { name = "pytest" },
     { name = "ruff" },
+    { name = "types-pywin32" },
 ]
 
 [package.metadata]
@@ -394,6 +395,7 @@ dev = [
     { name = "pyinstaller", specifier = ">=6.12" },
     { name = "pytest", specifier = ">=8.1" },
     { name = "ruff", specifier = ">=0.9" },
+    { name = "types-pywin32", specifier = ">=311.0.0.20251008" },
 ]
 
 [[package]]
@@ -1332,6 +1334,15 @@ source = { registry = "https://pypi.uib.gmbh/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/5e/72/6b9d2bc6a0709c071687bd29afdf9069db64c751df647475c761cfca6841/types-netifaces-0.11.0.20241025.tar.gz", hash = "sha256:0877b98a80e53e08dcb0e2d562772f6d0c4eee8bd0e1101a1ee78d17a88c3c8d", size = 2688, upload-time = "2024-10-25T02:45:03.523Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b0/ea/503f8bc06ab9903e0302d9b94f10d3fb8f599353874cb7e8b6d2fd453079/types_netifaces-0.11.0.20241025-py3-none-any.whl", hash = "sha256:b760315d043acbb1f96232094ab05751f1cec9863df09cd95f533bd1aaee6da8", size = 3023, upload-time = "2024-10-25T02:45:02.462Z" },
+]
+
+[[package]]
+name = "types-pywin32"
+version = "311.0.0.20251008"
+source = { registry = "https://pypi.uib.gmbh/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1a/05/cd94300066241a7abb52238f0dd8d7f4fe1877cf2c72bd1860856604d962/types_pywin32-311.0.0.20251008.tar.gz", hash = "sha256:d6d4faf8e0d7fdc0e0a1ff297b80be07d6d18510f102d793bf54e9e3e86f6d06", size = 329561, upload-time = "2025-10-08T02:51:39.436Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/af/08/00a38e6b71585e6741d5b3b4cc9dd165cf549b6f1ed78815c6585f8b1b58/types_pywin32-311.0.0.20251008-py3-none-any.whl", hash = "sha256:775e1046e0bad6d29ca47501301cce67002f6661b9cebbeca93f9c388c53fab4", size = 392942, upload-time = "2025-10-08T02:51:38.327Z" },
 ]
 
 [[package]]

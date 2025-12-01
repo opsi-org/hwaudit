@@ -14,7 +14,13 @@ name = "uib GmbH"
 email = "info@uib.de"
 
 [dependency-groups]
-dev = [ "mypy>=1.9", "pyinstaller>=6.12", "pytest>=8.1", "ruff>=0.9",]
+dev = [
+ "mypy>=1.9",
+ "pyinstaller>=6.12",
+ "pytest>=8.1",
+ "ruff>=0.9",
+ "types-pywin32>=311.0.0.20251008",
+]
 
 [build-system]
 requires = [ "setuptools>=42",]

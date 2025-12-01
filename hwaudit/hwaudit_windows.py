@@ -3,9 +3,9 @@
 import re
 
 import pywintypes
-import wmi
+import wmi  # type: ignore[import-not-found]
 
-from opsicommon.logging import logger
+from opsicommon.logging import get_logger
 from opsicommon.objects import AuditHardwareOnHost
 from opsicommon.types import (
 	forceHardwareDeviceId,
@@ -15,31 +15,25 @@ from opsicommon.types import (
 	forceUnicode,
 	forceUnicodeList,
 )
-from opsicommon.client.opsiservice import ServiceClient
 
-from OPSI.Util import objectToBeautifiedText
+from OPSI.Util import objectToBeautifiedText  # type: ignore[import]
 from OPSI.System import hardwarePredefinedInventory  # type: ignore[import]
 
-from hwaudit import __version__
 from hwaudit.windows_values import VALUE_MAPPING
 
-# from hwaudit.opsihwauditconf import OPSI_HARDWARE_CLASSES
+logger = get_logger()
 
 
 def make_wmi_objects(conf):
 	namespaces = ["root\cimv2"]
 	for oneClass in conf:
-		if (
-			oneClass.get("Class") is None
-			or oneClass["Class"].get("Opsi") is None
-			or oneClass["Class"].get("WMI") is None
-		):
+		if oneClass.get("Class") is None or oneClass["Class"].get("Opsi") is None or oneClass["Class"].get("WMI") is None:
 			continue
 		wmiQuery = oneClass["Class"]["WMI"]
 		if wmiQuery.startswith("namespace="):
 			namespace = wmiQuery.split(":", 1)[0]
 			namespace = namespace.split("=", 1)[1].strip().lower()
-			if not namespace in namespaces:
+			if namespace not in namespaces:
 				namespaces.append(namespace)
 	return {n: wmi.WMI(namespace=n) for n in namespaces}
 
@@ -60,17 +54,12 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 	opsiValues = {}
 
 	for oneClass in conf:
-		if (
-			oneClass.get("Class") is None
-			or oneClass["Class"].get("Opsi") is None
-			or oneClass["Class"].get("WMI") is None
-		):
+		if oneClass.get("Class") is None or oneClass["Class"].get("Opsi") is None or oneClass["Class"].get("WMI") is None:
 			continue
 
 		opsiName = oneClass["Class"]["Opsi"]
 		wmiQueries = oneClass["Class"]["WMI"].split(";")
 		for wmiQuery in wmiQueries:
-
 			mapClass = ""
 
 			mapSep = "&"
@@ -161,9 +150,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 										v,
 										evalError,
 									)
-									logger.warning(
-										"Method '%s' failed on value '%s'", meth, v
-									)
+									logger.warning("Method '%s' failed on value '%s'", meth, v)
 
 							if op and v is not None:
 								try:
@@ -175,9 +162,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 										v,
 										evalError,
 									)
-									logger.warning(
-										"Operation '%s' failed on value '%s'", op, v
-									)
+									logger.warning("Operation '%s' failed on value '%s'", op, v)
 
 							if item["Opsi"] in ("vendorId", "subsystemVendorId"):
 								try:
@@ -213,9 +198,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 							if valueMappingKey in VALUE_MAPPING:
 								v = forceList(v)
 								for i in range(len(v)):
-									v[i] = VALUE_MAPPING[valueMappingKey].get(
-										str(v[i]), v[i]
-									)
+									v[i] = VALUE_MAPPING[valueMappingKey].get(str(v[i]), v[i])
 
 								if len(v) == 1:
 									v = v[0]
@@ -227,9 +210,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 							if item["Type"].startswith("varchar"):
 								v = forceUnicode(v)
-								maxLen = forceInt(
-									item["Type"].split("(")[1].split(")")[0].strip()
-								)
+								maxLen = forceInt(item["Type"].split("(")[1].split(")")[0].strip())
 
 								if len(v) > maxLen:
 									logger.warning(
@@ -264,7 +245,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 
 	:returns: Dictionary containing the results of the audit.
 	"""
-	from OPSI.System.Windows import (
+	from OPSI.System.Windows import (  # type: ignore[import-untyped]
 		HKEY_CURRENT_USER,
 		HKEY_LOCAL_MACHINE,
 		getRegistryValue,
@@ -324,9 +305,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 
 # TODO: deprecated (4.2.0.1 at 05.06.2020) - dellexpresscode.exe from lazarus now integrated in hwaudit.py
 def getHardwareInformationFromExecuteCommand(conf, opsiValues):
-	logger.warning(
-		"use of deprecated function getHardwareInformationFromExecuteCommand"
-	)
+	logger.warning("use of deprecated function getHardwareInformationFromExecuteCommand")
 	from OPSI.System.Windows import execute
 
 	regex = re.compile(r"^#(?P<cmd>.*)#(?P<extend>.*)$")
@@ -369,13 +348,10 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 			try:
 				result = execute(executeCommand)
 				if result and extend:
-					res = result[0]
 					value = eval("res%s" % extend)
 			except Exception as error:
 				logger.logException(error)
-				logger.error(
-					"Failed to execute command: '%s' error: '%s'", executeCommand, error
-				)
+				logger.error("Failed to execute command: '%s' error: '%s'", executeCommand, error)
 				continue
 
 			if isinstance(value, bytes):
@@ -418,7 +394,7 @@ def numstring2Dec(numstring: str, base: int = 36) -> int:
 	return result
 
 
-def getWMIProperty(key: str, table: str, condition: str = None) -> str:
+def getWMIProperty(key: str, table: str, condition: str | None = None) -> str | None:
 	"""
 	Retrieves WMI properties.
 
@@ -436,7 +412,7 @@ def getWMIProperty(key: str, table: str, condition: str = None) -> str:
 	"""
 	wmiObj = wmi.WMI()
 	wmiQuery = f"Select {key} from {table}"
-	if not condition is None:
+	if condition is not None:
 		wmiQuery = wmiQuery.join(" where ").join(condition)
 	logger.info("performing query: %s", wmiQuery)
 	reply = wmiObj.query(wmiQuery)
@@ -488,7 +464,8 @@ def getDellExpressCode(conf, opsiValues):
 					logger.notice(f"stored dellexpresscode {value}")
 	return opsiValues
 
-def get_hwaudit(config: dict, host_id: str) -> list[AuditHardwareOnHost]:
+
+def get_hwaudit(config: list[dict[str, str]], host_id: str) -> list[AuditHardwareOnHost]:
 	AuditHardwareOnHost.setHardwareConfig(config)
 
 	logger.notice("Fetching hardware information from WMI")

@@ -2,14 +2,14 @@ from opsicommon.logging import get_logger
 from opsicommon.objects import AuditHardwareOnHost
 from opsicommon.types import forceHostId
 
-from OPSI.Util import objectToBeautifiedText
+from OPSI.Util import objectToBeautifiedText  # type: ignore[import]
 from OPSI.System import hardwarePredefinedInventory  # type: ignore[import]
 from OPSI.System.Posix import hardwareInventory, hardwareExtendedInventory  # type: ignore[import]
 
 logger = get_logger("hwaudit")
 
 
-def get_hwaudit(config: dict, host_id: str) -> list[AuditHardwareOnHost]:
+def get_hwaudit(config: list[dict[str, str]], host_id: str) -> list[AuditHardwareOnHost]:
 	logger.notice("Running hardware inventory")
 	host_id = forceHostId(host_id)
 	AuditHardwareOnHost.setHardwareConfig(config)
