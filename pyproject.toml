@@ -16,7 +16,8 @@ dependencies = [
 	"pywin32>=308; sys_platform == 'win32'",
 	"wmi>=1.5.1; sys_platform == 'win32'",
 	"pywin32-ctypes>=0.2.0; sys_platform == 'win32'",
-	"macholib>=1.14;sys_platform == 'darwin'"
+	"pywinpty<3.0; sys_platform == 'win32'",
+	"macholib>=1.14; sys_platform == 'darwin'",
 ]
 
 [[project.authors]]
