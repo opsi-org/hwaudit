@@ -56,10 +56,10 @@ osx-pyinstaller:
     - curl http://binaryindex.uib.gmbh/development/opsi-dev-tools/darwin/x64/installer.sh | sh
     - uv self update
     - uv sync --frozen
-    - uv run ./opsi-dev-cli -l debug pyinstaller build
+    - uv run opsi-dev-cli -l debug pyinstaller build
     - dist/opsi-hwaudit --help
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-cli -l info binary push dist/opsi-hwaudit --prerelease="$CI_JOB_ID"'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-cli -l info binary push dist/opsi-hwaudit'
+    - '[ "$CI_COMMIT_TAG" = "" ] && opsi-dev-cli -l info binary push dist/opsi-hwaudit --prerelease="$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || opsi-dev-cli -l info binary push dist/opsi-hwaudit'
 
 
 makeopsipackage:
