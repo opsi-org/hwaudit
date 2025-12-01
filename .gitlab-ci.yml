@@ -65,6 +65,7 @@ osx-pyinstaller:
 makeopsipackage:
   stage: package
   script:
+    - opsi-dev-cli self upgrade
     - export version=$(opsi-dev-cli project info version)
     - newpackage=$(opsi-dev-cli -l 6 opsi-package get-value packageVersion)
     - '[ "$CI_COMMIT_TAG" = "" ] && newpackage="$newpackage.$CI_JOB_ID"'
@@ -84,6 +85,7 @@ test_tagged_manual:
   stage: integration_test
   when: manual
   script:
+    - opsi-dev-cli self upgrade
     - version=$(opsi-dev-cli opsi-package get-value productVersion)
     - package=$(opsi-dev-cli opsi-package get-value packageVersion)
     - version="$version-$(echo $package | tr '.' '~')"
@@ -94,6 +96,7 @@ test_tagged:
   only:
     - tags
   script:
+    - opsi-dev-cli self upgrade
     - version=$(opsi-dev-cli opsi-package get-value productVersion)
     - package=$(opsi-dev-cli opsi-package get-value packageVersion)
     - version="$version-$(echo $package | tr '.' '~')"
