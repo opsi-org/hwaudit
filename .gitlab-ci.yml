@@ -19,6 +19,7 @@ linux-pyinstaller:
   script:
     - export UV_PYTHON_PREFERENCE="only-managed"
     - export UV_PYTHON="3.14"
+    - opsi-dev-cli self upgrade
     - uv self update
     - uv sync --frozen
     - uv run opsi-dev-cli -l debug pyinstaller build
@@ -32,13 +33,11 @@ windows-pyinstaller:
   tags:
     - win10-py311-x86
   script:
-    - Invoke-WebRequest -UseBasicParsing -Uri "$OPSIDEVTOOLS_URL_WINDOWS_X86" -OutFile opsi-dev-tools.zip
-    - Expand-Archive opsi-dev-tools.zip -DestinationPath .
-    - Copy-Item opsi-dev-tool.exe opsi-dev-cli.exe
     - $Env:UV_PYTHON_INSTALL_DIR = "c:\\uv\\python"
     - $Env:UV_CACHE_DIR = "c:\\uv\\cache"
     - $Env:UV_PYTHON = ((uv python list --managed-python --all-arches | findstr 3.14 | findstr "\-x86\-" | findstr /v freethreaded) -split ' ')[0]
     - $Env:UV_PYTHON_PREFERENCE = "only-managed"
+    - powershell -ExecutionPolicy ByPass -c "irm http://binaryindex.uib.gmbh/development/opsi-dev-tools/windows/x86/installer.ps1 | iex"
     - uv sync --frozen
     - uv run .\opsi-dev-cli.exe -l debug pyinstaller build
     - .\opsi-dev-tool.exe -l info --signserver-sign dist\opsi-hwaudit.exe
@@ -52,11 +51,9 @@ osx-pyinstaller:
   tags:
     - catalina-py311-x64
   script:
-    - curl -o opsi-dev-tools.tar.gz "$OPSIDEVTOOLS_URL_DARWIN_X64"
-    - tar -xvf opsi-dev-tools.tar.gz
-    - mv opsi-dev-tool opsi-dev-cli
     - export UV_PYTHON_PREFERENCE="only-managed"
     - export UV_PYTHON="3.14"
+    - curl http://binaryindex.uib.gmbh/development/opsi-dev-tools/darwin/x64/installer.sh | sh
     - uv self update
     - uv sync --frozen
     - uv run ./opsi-dev-cli -l debug pyinstaller build
@@ -82,7 +79,6 @@ makeopsipackage:
     name: prepared_files
     paths:
       - OPSI/control
-
 
 test_tagged_manual:
   stage: integration_test
