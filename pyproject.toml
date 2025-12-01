@@ -2,9 +2,23 @@
 name = "hwaudit"
 version = "4.3.1.0"
 description = "opsi hardware audit"
+license = "AGPL-3.0-only"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [ "argparse>=1.4", "python-opsi>=4.3.6,<4.4", "python-opsi-common>=4.3.24.1,<4.4", "pefile>=2022.8", "bs4>=0.0", "cryptography>=42.0.0,<43.0.0", "pyzsync>=1.2.6,<1.3", "pywin32>=308; sys_platform == 'win32'", "wmi>=1.5.1; sys_platform == 'win32'", "pywin32-ctypes>=0.2.0; sys_platform == 'win32'", "macholib>=1.14;sys_platform == 'darwin'",]
+dependencies = [
+	"argparse>=1.4",
+	"python-opsi>=4.3.6,<4.4",
+	"python-opsi-common>=4.3.24.1,<4.4",
+	"pefile>=2022.8",
+	"bs4>=0.0",
+	"cryptography>=42.0.0,<43.0.0",
+	"pyzsync>=1.2.6,<1.3",
+	"pywin32>=308; sys_platform == 'win32'",
+	"wmi>=1.5.1; sys_platform == 'win32'",
+	"pywin32-ctypes>=0.2.0; sys_platform == 'win32'",
+	"macholib>=1.14;sys_platform == 'darwin'"
+]
+
 [[project.authors]]
 name = "uib GmbH"
 email = "info@uib.de"
@@ -26,9 +40,6 @@ dev = [
 requires = [ "setuptools>=42",]
 build-backend = "setuptools.build_meta"
 
-[project.license]
-text = "AGPL-3.0"
-
 [project.urls]
 Homepage = "https://www.opsi.org"
 
@@ -47,4 +58,4 @@ line-length = 140
 indent-style = "tab"
 
 [tool.setuptools.packages.find]
-include = [ "hwaudit", "hwaudit.*",]
+include = [ "hwaudit", "hwaudit.*"]
