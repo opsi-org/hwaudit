@@ -105,8 +105,7 @@ def main():
 	architecture/platform, different methods are important and called
 	to perform the Hardware Audit.
 	"""
-	RUNS_ON_WINDOWS = sys.platform in ("nt", "win32")
-	if RUNS_ON_WINDOWS:
+	if sys.platform in ("nt", "win32"):
 		from .hwaudit_windows import get_hwaudit
 
 		if os.path.exists(r"C:\opsi.org\log"):

@@ -1,4 +1,4 @@
-image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.13
 
 stages:
   - test
@@ -18,7 +18,7 @@ linux-pyinstaller:
   stage: build
   script:
     - export UV_PYTHON_PREFERENCE="only-managed"
-    - export UV_PYTHON="3.11"
+    - export UV_PYTHON="3.14"
     - uv self update
     - uv sync --frozen
     - uv run opsi-dev-cli -l debug pyinstaller build
@@ -37,7 +37,7 @@ windows-pyinstaller:
     - Copy-Item opsi-dev-tool.exe opsi-dev-cli.exe
     - $Env:UV_PYTHON_INSTALL_DIR = "c:\\uv\\python"
     - $Env:UV_CACHE_DIR = "c:\\uv\\cache"
-    - $Env:UV_PYTHON = ((uv python list --managed-python --all-arches | findstr 3.11 | findstr "\-x86\-" | findstr /v freethreaded) -split ' ')[0]
+    - $Env:UV_PYTHON = ((uv python list --managed-python --all-arches | findstr 3.14 | findstr "\-x86\-" | findstr /v freethreaded) -split ' ')[0]
     - $Env:UV_PYTHON_PREFERENCE = "only-managed"
     - uv sync --frozen
     - uv run .\opsi-dev-cli.exe -l debug pyinstaller build
@@ -56,7 +56,7 @@ osx-pyinstaller:
     - tar -xvf opsi-dev-tools.tar.gz
     - mv opsi-dev-tool opsi-dev-cli
     - export UV_PYTHON_PREFERENCE="only-managed"
-    - export UV_PYTHON="3.11"
+    - export UV_PYTHON="3.14"
     - uv self update
     - uv sync --frozen
     - uv run ./opsi-dev-cli -l debug pyinstaller build
