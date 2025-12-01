@@ -1,4 +1,4 @@
-image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.13
+image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
 
 stages:
   - test
@@ -18,7 +18,7 @@ linux-pyinstaller:
   stage: build
   script:
     - export UV_PYTHON_PREFERENCE="only-managed"
-    - export UV_PYTHON="3.14"
+    - export UV_PYTHON="3.13"
     - opsi-dev-cli self upgrade
     - uv self update
     - uv sync --frozen
@@ -35,7 +35,7 @@ windows-pyinstaller:
   script:
     - $Env:UV_PYTHON_INSTALL_DIR = "c:\\uv\\python"
     - $Env:UV_CACHE_DIR = "c:\\uv\\cache"
-    - $Env:UV_PYTHON = ((uv python list --managed-python --all-arches | findstr 3.14 | findstr "\-x86\-" | findstr /v freethreaded) -split ' ')[0]
+    - $Env:UV_PYTHON = ((uv python list --managed-python --all-arches | findstr 3.13 | findstr "\-x86\-" | findstr /v freethreaded) -split ' ')[0]
     - $Env:UV_PYTHON_PREFERENCE = "only-managed"
     - powershell -ExecutionPolicy ByPass -c "irm http://binaryindex.uib.gmbh/development/opsi-dev-tools/windows/x86/installer.ps1 | iex"
     - uv sync --frozen
@@ -52,7 +52,7 @@ osx-pyinstaller:
     - catalina-py311-x64
   script:
     - export UV_PYTHON_PREFERENCE="only-managed"
-    - export UV_PYTHON="3.14"
+    - export UV_PYTHON="3.13"
     - curl http://binaryindex.uib.gmbh/development/opsi-dev-tools/darwin/x64/installer.sh | sh
     - uv self update
     - uv sync --frozen
