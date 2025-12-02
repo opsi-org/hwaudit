@@ -27,7 +27,7 @@ values = [
     "notimeout",
 ]
 multivalue = false
-editable = false
+editable = true
 
 [[ProductProperty]]
 type = "UnicodeProductProperty"
@@ -47,7 +47,7 @@ values = [
     "9",
 ]
 multivalue = false
-editable = false
+editable = true
 
 [[ProductProperty]]
 type = "UnicodeProductProperty"
@@ -58,7 +58,7 @@ values = [
     "",
 ]
 multivalue = false
-editable = false
+editable = true
 
 [[ProductProperty]]
 type = "UnicodeProductProperty"
