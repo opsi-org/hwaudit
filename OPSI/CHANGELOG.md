@@ -1,16 +1,23 @@
 # Changelog hwaudit
 
+## [4.3.2.0-1] - 2025-12-02
+
+### Changed
+
+- Added BIOS.UEFIBootActive, BIOS.SecureBootActive and BIOS.SecureBootWindowsCA2023 (Jan Schneider <j.schneider@uib.de>)
+- Use Python 3.13 and update dependencies
+
 ## [4.3.1.0-2] - 2025-05-27
 
 ### Changed
 
-- added opsi-meta-data.toml and changed control to control.toml (doerrer <n.doerrer@uib.de>)
+- Added opsi-meta-data.toml and changed control to control.toml (doerrer <n.doerrer@uib.de>)
 
 ## [4.3.0.1-1] - 2025-01-22
 
 ### Changed
 
-- updated python packages. Reenabled win7 support (doerrer <n.doerrer@uib.de>)
+- Updated python packages. Reenabled win7 support (doerrer <n.doerrer@uib.de>)
 
 ## [4.3.0.0-1] - 2024-10-08
 
