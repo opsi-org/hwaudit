@@ -349,7 +349,7 @@ wheels = [
 
 [[package]]
 name = "hwaudit"
-version = "4.3.1.0"
+version = "4.3.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "argparse" },
@@ -1054,7 +1054,7 @@ wheels = [
 
 [[package]]
 name = "python-opsi"
-version = "4.3.10.1"
+version = "4.3.10.3"
 source = { registry = "https://pypi.uib.gmbh/simple" }
 dependencies = [
     { name = "attrs" },
@@ -1082,9 +1082,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "wmi", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.1.tar.gz", hash = "sha256:b15f4366290c27a5260b64ba7a32c892f950716dc5ad78afd1409641edd7577c" }
+sdist = { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.3.tar.gz", hash = "sha256:66ad14dc94ccccbc8d58acfe5afe9492e7b1bfc83d1e04bdc0fdb8d2d0330157" }
 wheels = [
-    { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.1-py3-none-any.whl", hash = "sha256:2c8f0f26daf17afb538a3441a56759665124037addbf6ae60ed2536f7e48113a" },
+    { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.3-py3-none-any.whl", hash = "sha256:03be8867519c5967e38db409299fdfeb17a333f2241a3d6bf9837c8d23a832bf" },
 ]
 
 [[package]]
