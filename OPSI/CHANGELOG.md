@@ -1,5 +1,11 @@
 # Changelog hwaudit
 
+## [4.3.2.1-1] - 2026-01-20
+
+### Fixed
+
+- Fixed timeout handling (Jan Schneider <j.schneider@uib.de>)
+
 ## [4.3.2.0-1] - 2025-12-02
 
 ### Changed
