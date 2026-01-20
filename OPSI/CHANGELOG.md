@@ -1,5 +1,11 @@
 # Changelog hwaudit
 
+## [4.3.2.2-1] - 2026-01-20
+
+### Fixed
+
+- Fix reading SecureBoot CAs on Windows (Jan Schneider <j.schneider@uib.de>)
+
 ## [4.3.2.1-1] - 2026-01-20
 
 ### Fixed

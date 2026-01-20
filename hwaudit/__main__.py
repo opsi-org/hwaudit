@@ -108,7 +108,7 @@ def main():
 	if sys.platform in ("nt", "win32"):
 		from .hwaudit_windows import get_hwaudit
 
-		log_dir = r"C:\opsi.org\log"
+		log_dir = r"C:\opsi.org\tmp"
 	else:
 		from .hwaudit_posix import get_hwaudit
 
