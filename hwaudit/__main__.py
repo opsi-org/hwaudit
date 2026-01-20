@@ -13,7 +13,7 @@ from hwaudit import __version__
 logger = get_logger("hwaudit")
 
 
-def init_audit(logFile: str) -> tuple[str, ServiceClient]:
+def init_audit(logFile: str | None) -> tuple[str, ServiceClient]:
 	"""
 	Initialize hardware audit.
 
@@ -59,7 +59,7 @@ def init_audit(logFile: str) -> tuple[str, ServiceClient]:
 	password = opts.password
 
 	secret_filter.add_secrets(password)
-	logFile = os.path.expanduser(re.sub("""['"]""", "", opts.logFile))
+	logFile = os.path.expanduser(re.sub("""['"]""", "", opts.logFile)) if opts.logFile else None
 
 	init_logging(stderr_format=DEFAULT_COLORED_FORMAT, stderr_level=opts.logLevel, file_level=opts.logLevel, log_file=logFile)
 
@@ -114,10 +114,14 @@ def main():
 
 		log_dir = "/var/log/opsi"
 
-	if not os.path.exists(log_dir):
-		os.makedirs(log_dir, exist_ok=True)
-
 	log_file = os.path.join(log_dir, "hwaudit.log")
+	try:
+		if not os.path.exists(log_dir):
+			os.makedirs(log_dir, exist_ok=True)
+	except Exception as err:
+		logger.error("Could not create log directory '%s': %s", log_dir, err, exc_info=True)
+		log_file = None
+
 
 	host_id, service_client = init_audit(log_file)
 	logger.notice("Connecting to service at '%s' as '%s'", service_client.base_url, service_client.username)
