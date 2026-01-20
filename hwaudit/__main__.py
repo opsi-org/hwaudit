@@ -1,11 +1,11 @@
-import sys
-import os
 import argparse
+import os
 import re
+import sys
 
-from opsicommon.logging import get_logger, secret_filter, init_logging
-from opsicommon.logging.constants import DEFAULT_COLORED_FORMAT, LOG_ERROR, TRACE
 from opsicommon.client.opsiservice import ServiceClient
+from opsicommon.logging import get_logger, init_logging, secret_filter
+from opsicommon.logging.constants import DEFAULT_COLORED_FORMAT, LOG_ERROR, TRACE
 from opsicommon.objects import to_json
 
 from hwaudit import __version__
@@ -63,7 +63,7 @@ def init_audit(logFile: str) -> tuple[str, ServiceClient]:
 
 	init_logging(stderr_format=DEFAULT_COLORED_FORMAT, stderr_level=opts.logLevel, file_level=opts.logLevel, log_file=logFile)
 
-	logger.notice("starting hardware audit (script version %s)", __version__)
+	logger.notice("Starting hardware audit version %s", __version__)
 
 	address = re.sub("""['"]""", "", opts.address)
 
@@ -108,17 +108,15 @@ def main():
 	if sys.platform in ("nt", "win32"):
 		from .hwaudit_windows import get_hwaudit
 
-		if os.path.exists(r"C:\opsi.org\log"):
-			log_dir = r"C:\opsi.org\log"
-		else:
-			log_dir = r"C:\opsi.org\tmp"
+		log_dir = r"C:\opsi.org\log"
 	else:
 		from .hwaudit_posix import get_hwaudit
 
-		if os.path.exists("/var/log/opsi"):
-			log_dir = "/var/log/opsi"
-		else:
-			log_dir = "/var/log"
+		log_dir = "/var/log/opsi"
+
+	if not os.path.exists(log_dir):
+		os.makedirs(log_dir, exist_ok=True)
+
 	log_file = os.path.join(log_dir, "hwaudit.log")
 
 	host_id, service_client = init_audit(log_file)
