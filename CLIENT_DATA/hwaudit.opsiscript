@@ -95,7 +95,7 @@ endif
 Files_copy_hwaudit
 
 if not($timeout$  = "notimeout")
-	shellInAnIcon_hwaudit /TimeOutSeconds $timeout$
+	shellInAnIcon_hwaudit winst /TimeOutSeconds $timeout$
 else
 	shellInAnIcon_hwaudit
 endif

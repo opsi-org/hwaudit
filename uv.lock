@@ -1054,7 +1054,7 @@ wheels = [
 
 [[package]]
 name = "python-opsi"
-version = "4.3.10.4"
+version = "4.3.10.5"
 source = { registry = "https://pypi.uib.gmbh/simple" }
 dependencies = [
     { name = "attrs" },
@@ -1082,9 +1082,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "wmi", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.4.tar.gz", hash = "sha256:8b20da220f17751e6814d98d00be225dab8471fbd12ce14bde85ea77e99347ab" }
+sdist = { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.5.tar.gz", hash = "sha256:10a9a78e747f93fadb53d44f42482991ef28f1c1565bb2323706838ed5acec5e" }
 wheels = [
-    { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.4-py3-none-any.whl", hash = "sha256:cbbc289be410948d67b44f540a4b55ad9b36e385ace5803b08dd73d7faa8abef" },
+    { url = "https://pypi.uib.gmbh/packages/python_opsi-4.3.10.5-py3-none-any.whl", hash = "sha256:9663944b093f0ed20b4655c12d53a38b5913a027f2a4628ce7177a9078a493fa" },
 ]
 
 [[package]]
