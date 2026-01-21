@@ -1,5 +1,11 @@
 # Changelog hwaudit
 
+## [4.3.2.3-1] - 2026-01-21
+
+### Fixed
+
+- Use UTC timestamps for firstSeen and lastSeen (Jan Schneider <j.schneider@uib.de>)
+
 ## [4.3.2.2-1] - 2026-01-20
 
 ### Fixed
