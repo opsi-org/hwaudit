@@ -1,10 +1,10 @@
+__pycache__
+*.dll
+*.egg-info
+*.exe
 *.opsi
 *.opsi.md5
 *.opsi.zsync
-*~
-*.swp
 *.swo
-*.exe
-*.dll
-*.egg-info
-__pycache__
+*.swp
+*~
