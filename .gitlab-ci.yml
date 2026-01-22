@@ -11,7 +11,7 @@ lint:
   stage: test
   script:
     - uv run ruff check hwaudit
-    - uv run mypy hwaudit
+    - uv run ty check hwaudit
 
 
 linux-pyinstaller:
