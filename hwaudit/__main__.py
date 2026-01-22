@@ -122,24 +122,23 @@ def main():
 		logger.error("Could not create log directory '%s': %s", log_dir, err, exc_info=True)
 		log_file = None
 
-
 	host_id, service_client = init_audit(log_file)
 	logger.notice("Connecting to service at '%s' as '%s'", service_client.base_url, service_client.username)
 	with service_client.connection():
 		try:
 			logger.notice("Fetching opsi hw audit configuration")
-			config = service_client.auditHardware_getConfig()
+			config = service_client.auditHardware_getConfig()  # type: ignore[unresolved-attribute]
 
 			logger.notice("Running hardware inventory")
 			audit_hardware_on_hosts = get_hwaudit(config=config, host_id=host_id)
 
 			logger.notice("Marking hardware information as obsolete")
-			service_client.auditHardwareOnHost_setObsolete(host_id)
+			service_client.auditHardwareOnHost_setObsolete(host_id)  # type: ignore[unresolved-attribute]
 
 			logger.notice("Sending hardware information to service")
 			if logger.isEnabledFor(TRACE):
 				logger.trace(to_json(audit_hardware_on_hosts))
-			service_client.auditHardwareOnHost_createObjects(audit_hardware_on_hosts)
+			service_client.auditHardwareOnHost_createObjects(audit_hardware_on_hosts)  # type: ignore[unresolved-attribute]
 		except Exception as err:
 			logger.error(err, exc_info=True)
 	logger.notice("Exiting...")

@@ -4,20 +4,11 @@ import re
 
 import pywintypes
 import wmi  # type: ignore[import-not-found]
-
+from OPSI.System import hardwarePredefinedInventory
+from OPSI.Util import objectToBeautifiedText
 from opsicommon.logging import get_logger
 from opsicommon.objects import AuditHardwareOnHost
-from opsicommon.types import (
-	forceHardwareDeviceId,
-	forceHardwareVendorId,
-	forceInt,
-	forceList,
-	forceUnicode,
-	forceUnicodeList,
-)
-
-from OPSI.Util import objectToBeautifiedText  # type: ignore[import]
-from OPSI.System import hardwarePredefinedInventory  # type: ignore[import]
+from opsicommon.types import forceHardwareDeviceId, forceHardwareVendorId, forceInt, forceList, forceUnicode, forceUnicodeList
 
 from hwaudit.windows_values import VALUE_MAPPING
 
@@ -222,7 +213,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 							if v is not None:
 								break
-					if v and not opsiValues.get(opsiName)[-1].get(item["Opsi"]):
+					if v and not opsiValues.get(opsiName)[-1].get(item["Opsi"]):  # type: ignore[not-subscriptable]
 						opsiValues[opsiName][-1][item["Opsi"]] = v
 
 				logger.debug("Hardware object is now: '%s'", opsiValues[opsiName][-1])
@@ -245,11 +236,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 
 	:returns: Dictionary containing the results of the audit.
 	"""
-	from OPSI.System.Windows import (  # type: ignore[import-untyped]
-		HKEY_CURRENT_USER,
-		HKEY_LOCAL_MACHINE,
-		getRegistryValue,
-	)
+	from OPSI.System.Windows import HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, getRegistryValue
 
 	regex = re.compile(r"^\[\s*([^\]]+)\s*\]\s*(\S+.*)\s*$")
 	for oneClass in conf:
@@ -350,8 +337,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 				if result and extend:
 					value = eval("res%s" % extend)
 			except Exception as error:
-				logger.logException(error)
-				logger.error("Failed to execute command: '%s' error: '%s'", executeCommand, error)
+				logger.error("Failed to execute command: '%s' error: '%s'", executeCommand, error, exc_info=True)
 				continue
 
 			if isinstance(value, bytes):
@@ -366,7 +352,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 	return opsiValues
 
 
-def numstring2Dec(numstring: str, base: int = 36) -> int:
+def numstring2Dec(numstring: str, base: int = 36) -> int | None:
 	"""
 	Comutes decimal representation.
 

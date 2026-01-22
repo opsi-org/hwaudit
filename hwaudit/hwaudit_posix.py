@@ -1,10 +1,9 @@
+from OPSI.System import hardwarePredefinedInventory
+from OPSI.System.Posix import hardwareExtendedInventory, hardwareInventory
+from OPSI.Util import objectToBeautifiedText
 from opsicommon.logging import get_logger
 from opsicommon.objects import AuditHardwareOnHost
 from opsicommon.types import forceHostId
-
-from OPSI.Util import objectToBeautifiedText  # type: ignore[import]
-from OPSI.System import hardwarePredefinedInventory  # type: ignore[import]
-from OPSI.System.Posix import hardwareInventory, hardwareExtendedInventory  # type: ignore[import]
 
 logger = get_logger("hwaudit")
 
