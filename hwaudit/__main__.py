@@ -3,10 +3,9 @@ import os
 import re
 import sys
 
-from opsicommon.client.opsiservice import ServiceClient
-from opsicommon.logging import get_logger, init_logging, secret_filter
-from opsicommon.logging.constants import DEFAULT_COLORED_FORMAT, LOG_ERROR, TRACE
-from opsicommon.objects import to_json
+from opsi.logging import DEFAULT_COLORED_FORMAT, LOG_ERROR, TRACE, get_logger, logging_config, secret_filter
+from opsi.opsi.service.client import ServiceClient
+from opsi.opsi.service.model.object import to_json
 
 from hwaudit import __version__
 
@@ -61,7 +60,7 @@ def init_audit(logFile: str | None) -> tuple[str, ServiceClient]:
 	secret_filter.add_secrets(password)
 	logFile = os.path.expanduser(re.sub("""['"]""", "", opts.logFile)) if opts.logFile else None
 
-	init_logging(stderr_format=DEFAULT_COLORED_FORMAT, stderr_level=opts.logLevel, file_level=opts.logLevel, log_file=logFile)
+	logging_config(stderr_format=DEFAULT_COLORED_FORMAT, stderr_level=opts.logLevel, file_level=opts.logLevel, log_file=logFile)
 
 	logger.notice("Starting hardware audit version %s", __version__)
 
@@ -127,18 +126,18 @@ def main():
 	with service_client.connection():
 		try:
 			logger.notice("Fetching opsi hw audit configuration")
-			config = service_client.auditHardware_getConfig()  # type: ignore[unresolved-attribute]
+			config = service_client.auditHardware_getConfig()  # ty: ignore[unresolved-attribute]
 
 			logger.notice("Running hardware inventory")
 			audit_hardware_on_hosts = get_hwaudit(config=config, host_id=host_id)
 
 			logger.notice("Marking hardware information as obsolete")
-			service_client.auditHardwareOnHost_setObsolete(host_id)  # type: ignore[unresolved-attribute]
+			service_client.auditHardwareOnHost_setObsolete(host_id)  # ty: ignore[unresolved-attribute]
 
 			logger.notice("Sending hardware information to service")
 			if logger.isEnabledFor(TRACE):
 				logger.trace(to_json(audit_hardware_on_hosts))
-			service_client.auditHardwareOnHost_createObjects(audit_hardware_on_hosts)  # type: ignore[unresolved-attribute]
+			service_client.auditHardwareOnHost_createObjects(audit_hardware_on_hosts)  # ty: ignore[unresolved-attribute]
 		except Exception as err:
 			logger.error(err, exc_info=True)
 	logger.notice("Exiting...")
