@@ -79,7 +79,7 @@ makeopsipackage:
   artifacts:
     name: prepared_files
     paths:
-      - OPSI/control
+      - OPSI/control.toml
 
 test_tagged_manual:
   stage: integration_test
