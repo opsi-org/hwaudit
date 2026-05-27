@@ -67,4 +67,4 @@ jenkins-test:
   PRODUCTS: hwaudit
   PROPERTIES: {}
   SNAPSHOT: patched
-  SYSTEMS: win10-21h1,win10-x64-21h1,win11-x64-22h2,win7
+  SYSTEMS: windows,linux,macos

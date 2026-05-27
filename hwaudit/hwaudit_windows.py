@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
+import json
 import re
 
 import pywintypes
-import wmi  # type: ignore[import-not-found]
-from OPSI.System import hardwarePredefinedInventory
-from OPSI.Util import objectToBeautifiedText
-from opsicommon.logging import get_logger
-from opsicommon.objects import AuditHardwareOnHost
-from opsicommon.types import forceHardwareDeviceId, forceHardwareVendorId, forceInt, forceList, forceUnicode, forceUnicodeList
+from opsi.logging import get_logger
+from opsi.opsi.service.model.object import AuditHardwareOnHost, serialize
+from opsi.opsi.service.model.type import to_hardware_device_id, to_hardware_vendor_id, to_int, to_list
+from opsi_legacy.System import hardwarePredefinedInventory
 
 from hwaudit.windows_values import VALUE_MAPPING
 
-logger = get_logger()
+logger = get_logger("hwaudit")
 
 
 def make_wmi_objects(conf):
@@ -26,6 +25,10 @@ def make_wmi_objects(conf):
 			namespace = namespace.split("=", 1)[1].strip().lower()
 			if namespace not in namespaces:
 				namespaces.append(namespace)
+	# Import wmi only when needed
+	# Import on module level can lead to problems during system startup
+	import wmi  # ty: ignore[unresolved-import]
+
 	return {n: wmi.WMI(namespace=n) for n in namespaces}
 
 
@@ -157,7 +160,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 							if item["Opsi"] in ("vendorId", "subsystemVendorId"):
 								try:
-									v = forceHardwareVendorId(v)
+									v = to_hardware_vendor_id(v)
 								except ValueError as hwVendError:
 									logger.debug(
 										"Forcing hardware vendor id on '%s' failed: %s",
@@ -167,7 +170,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 									v = None
 							elif item["Opsi"] in ("deviceId", "subsystemDeviceId"):
 								try:
-									v = forceHardwareDeviceId(v)
+									v = to_hardware_device_id(v)
 								except ValueError as hwDevError:
 									logger.debug(
 										"Forcing hardware device id on '%s' failed: %s",
@@ -180,14 +183,11 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 								continue
 
 							if isinstance(v, str):
-								v = forceUnicode(v.strip())
-							# if isinstance(v, bytes):
-							# 	v = v.strip()
-
+								v = v.strip()
 							valueMappingKey = "%s.%s" % (attrclass, attribute)
 							logger.debug("Searching mapping for '%s'", valueMappingKey)
 							if valueMappingKey in VALUE_MAPPING:
-								v = forceList(v)
+								v = to_list(v)
 								for i in range(len(v)):
 									v[i] = VALUE_MAPPING[valueMappingKey].get(str(v[i]), v[i])
 
@@ -197,11 +197,10 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 								logger.debug("Mapping applied. Value:'%s'", v)
 
 							if isinstance(v, (list, tuple)):
-								v = ", ".join(forceUnicodeList(v))
+								v = ", ".join(list(v))
 
 							if item["Type"].startswith("varchar"):
-								v = forceUnicode(v)
-								maxLen = forceInt(item["Type"].split("(")[1].split(")")[0].strip())
+								maxLen = to_int(item["Type"].split("(")[1].split(")")[0].strip())
 
 								if len(v) > maxLen:
 									logger.warning(
@@ -213,7 +212,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 							if v is not None:
 								break
-					if v and not opsiValues.get(opsiName)[-1].get(item["Opsi"]):  # type: ignore[not-subscriptable]
+					if v and not opsiValues.get(opsiName)[-1].get(item["Opsi"]):  # ty: ignore[not-subscriptable]
 						opsiValues[opsiName][-1][item["Opsi"]] = v
 
 				logger.debug("Hardware object is now: '%s'", opsiValues[opsiName][-1])
@@ -236,7 +235,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 
 	:returns: Dictionary containing the results of the audit.
 	"""
-	from OPSI.System.Windows import HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, getRegistryValue
+	from opsi_legacy.System.Windows import HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, getRegistryValue
 
 	regex = re.compile(r"^\[\s*([^\]]+)\s*\]\s*(\S+.*)\s*$")
 	for oneClass in conf:
@@ -293,7 +292,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 # TODO: deprecated (4.2.0.1 at 05.06.2020) - dellexpresscode.exe from lazarus now integrated in hwaudit.py
 def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 	logger.warning("use of deprecated function getHardwareInformationFromExecuteCommand")
-	from OPSI.System.Windows import execute
+	from opsi_legacy.System.Windows import execute
 
 	regex = re.compile(r"^#(?P<cmd>.*)#(?P<extend>.*)$")
 	for oneClass in conf:
@@ -396,6 +395,8 @@ def getWMIProperty(key: str, table: str, condition: str | None = None) -> str | 
 
 	:returns: value containing the reply on the query.
 	"""
+	import wmi  # ty: ignore[unresolved-import]
+
 	wmiObj = wmi.WMI()
 	wmiQuery = f"Select {key} from {table}"
 	if condition is not None:
@@ -411,6 +412,7 @@ def getWMIProperty(key: str, table: str, condition: str | None = None) -> str | 
 	return None
 
 
+# TODO: deprecated
 def getDellExpressCode(conf, opsiValues):
 	"""
 	Extracts the DELL expresscode.
@@ -432,10 +434,10 @@ def getDellExpressCode(conf, opsiValues):
 	# reply[0] = "asdfDEllasdf"
 	# reply[1] = "2y4955j"
 	value = ""
-	if re.search("dell", reply[0].lower()) is None:
+	if re.search("dell", reply[0].lower()) is None:  # ty: ignore[unresolved-attribute]
 		logger.notice("Manufacturer is not DELL, no dellexpresscode stored.")
 		return opsiValues
-	value = numstring2Dec(reply[1])
+	value = numstring2Dec(reply[1])  # ty: ignore[invalid-argument-type]
 
 	for oneClass in conf:
 		if oneClass.get("Class") is None or oneClass["Class"].get("Opsi") is None:
@@ -466,7 +468,7 @@ def get_hwaudit(config: list[dict[str, str]], host_id: str) -> list[AuditHardwar
 	logger.notice("Fetching predefined hardware information")
 	info = hardwarePredefinedInventory(config, info)
 
-	logger.info("Hardware information:\n%s", objectToBeautifiedText(info))
+	logger.info("Hardware information:\n%s", json.dumps(serialize(info), indent=4))
 
 	audit_hardware_on_hosts = []
 	for hardwareClass, devices in info.items():

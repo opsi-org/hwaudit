@@ -22,4 +22,5 @@
 		"--cov-report=xml",
 		"tests"
 	],
+	"python-envs.defaultEnvManager": "ms-python.python:venv",
 }
