@@ -395,6 +395,8 @@ def getWMIProperty(key: str, table: str, condition: str | None = None) -> str | 
 
 	:returns: value containing the reply on the query.
 	"""
+	import wmi  # ty: ignore[unresolved-import]
+
 	wmiObj = wmi.WMI()
 	wmiQuery = f"Select {key} from {table}"
 	if condition is not None:
