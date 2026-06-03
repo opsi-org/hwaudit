@@ -281,6 +281,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 				value = value.encode("utf-8")
 
 			if opsiName not in opsiValues:
+				opsiValues[opsiName] = []
 				opsiValues[opsiName].append({})
 
 			for i in range(len(opsiValues[opsiName])):
@@ -343,6 +344,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 				value = value.encode("utf-8")
 
 			if opsiName not in opsiValues:
+				opsiValues[opsiName] = []
 				opsiValues[opsiName].append({})
 
 			for i in range(len(opsiValues[opsiName])):
