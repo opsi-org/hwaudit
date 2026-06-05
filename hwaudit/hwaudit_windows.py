@@ -200,6 +200,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 								v = ", ".join(list(v))
 
 							if item["Type"].startswith("varchar"):
+								v = str(v)
 								maxLen = to_int(item["Type"].split("(")[1].split(")")[0].strip())
 
 								if len(v) > maxLen:
