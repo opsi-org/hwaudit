@@ -1,6 +1,6 @@
 [project]
 name = "hwaudit"
-version = "4.3.2.5"
+version = "4.3.2.6"
 description = "opsi hardware audit"
 license = "AGPL-3.0-only"
 readme = "README.md"
