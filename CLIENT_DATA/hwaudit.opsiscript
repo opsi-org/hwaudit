@@ -3,27 +3,20 @@
 ; and published under the Terms of the General Public License.
 
 [Actions]
-requiredWinstVersion >= "4.12.4.17"
+requiredOpsiscriptVersion >= "4.12.4.17"
 
-DefVar $loglevel$
-DefVar $logfile$
 DefVar $exitcode$
-DefVar $timeout$
-DefVar $tempdir$
-DefVar $taillines$
-DefVar $force_install$
-DefVar $copy_option$
 DefVar $hw_dir$
-DefVar $hw_bin$
 DefVar $hw_bin_path$
-DefVar $pathdelim$
-DefVar $command$
-
-set $tempdir$ = "%opsiTmpDir%"
-set $loglevel$ = getProductProperty("loglevel", "5")
-Set $timeout$ = GetProductProperty("timeout","300")
-Set $taillines$ = GetProductProperty("tail-lines", "10")
-Set $force_install$ = GetProductProperty("force_install", "false")
+DefVar $hw_bin$ = "opsi-hwaudit"
+DefVar $pathdelim$ = "/"
+DefVar $command$ = ""
+DefVar $tempdir$ = "%opsiTmpDir%"
+DefVar $loglevel$ = getProductProperty("loglevel", "5")
+DefVar $timeout$ = GetProductProperty("timeout","300")
+DefVar $taillines$ = GetProductProperty("tail-lines", "10")
+DefVar $force_install$ = GetProductProperty("force_install", "false")
+DefVar $copy_option$ = ""
 
 setloglevel = $loglevel$
 
@@ -36,8 +29,7 @@ Switch GetOs
 		set $hw_bin$ = "opsi-hwaudit.exe"
 		set $hw_bin_path$ = "%programfiles64dir%\opsi.org\hwaudit\"
 		set $pathdelim$ = "\"
-		set $command$ = ""
-		set $copy_option$ = "-u"
+		set $copy_option$ = "-V"
 	Endcase
 
 	Case "Linux"
@@ -45,11 +37,8 @@ Switch GetOs
 		DefVar $result$
 
 		set $hw_dir$ = "lin"
-		set $hw_bin$ = "opsi-hwaudit"
 		set $hw_bin_path$ = "/usr/local/bin/"
-		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
-		set $copy_option$ = ""
 		message "Checking for missing Unix-Programs"
 		if isOneInstalled(createStringList("lshw")) = "False"
 			message "installing lshw"
@@ -71,18 +60,15 @@ Switch GetOs
 
 	Case "macos"
 		set $hw_dir$ = "mac"
-		set $hw_bin$ = "opsi-hwaudit"
 		set $hw_bin_path$ = "/usr/local/bin/"
-		set $pathdelim$ = "/"
 		set $command$ = "chmod 755 "+$hw_bin_path$+$hw_bin$
-		set $copy_option$ = ""
 	Endcase
 	DefaultCase
 		LogError "Unknown OS: "+ $OS$
 		isFatalError
 	Endcase
 Endswitch
-set $logfile$ = $tempdir$+$pathdelim$+"hwaudit.log"
+DefVar $logfile$ = $tempdir$+$pathdelim$+"hwaudit.log"
 set $logfile$ = getProductProperty("logfile", $logfile$)
 if ($logfile$ = "") or ($logfile$ = "auto")
 	set $logfile$ = $tempdir$+$pathdelim$+"hwaudit.log"
