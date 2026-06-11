@@ -1,5 +1,29 @@
 # Changelog hwaudit
 
+## [4.3.2.7-1] - 2026-06-10
+
+### Changed
+
+- refactored hwaudit installation script. Copying windows binary only if incorporated version changed (doerrer <n.doerrer@uib.de>)
+
+## [4.3.2.6-1] - 2026-06-05
+
+### Fixed
+
+- fixed string operations on int value in getHardwareInformationFromWMI (doerrer <n.doerrer@uib.de>)
+
+## [4.3.2.5-1] - 2026-06-03
+
+### Fixed
+
+- fixed getHardwareInformationFromRegistry in case of custom classes (doerrer <n.doerrer@uib.de>)
+
+## [4.3.2.4-1] - 2026-05-28
+
+### Fixed
+
+- Fixed Problem with old windows machines (doerrer <n.doerrer@uib.de>)
+
 ## [4.3.2.3-1] - 2026-01-21
 
 ### Fixed
