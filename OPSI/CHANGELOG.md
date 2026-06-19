@@ -1,5 +1,11 @@
 # Changelog hwaudit
 
+## [4.3.2.8-1] - 2026-06-19
+
+### Changed
+
+- reverted copy option change of 4.3.2.7 (doerrer <n.doerrer@uib.de>)
+
 ## [4.3.2.7-1] - 2026-06-10
 
 ### Changed

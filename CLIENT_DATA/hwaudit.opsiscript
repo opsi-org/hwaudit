@@ -29,7 +29,7 @@ Switch GetOs
 		set $hw_bin$ = "opsi-hwaudit.exe"
 		set $hw_bin_path$ = "%programfiles64dir%\opsi.org\hwaudit\"
 		set $pathdelim$ = "\"
-		set $copy_option$ = "-V"
+		set $copy_option$ = "-u"
 	Endcase
 
 	Case "Linux"
