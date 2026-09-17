@@ -19,6 +19,7 @@ linux-pyinstaller:
   script:
     - export UV_PYTHON_PREFERENCE="only-managed"
     - export UV_PYTHON="3.13"
+    - export CFLAGS="${CFLAGS//-fstack-clash-protection/}"
     - opsi-dev-cli self upgrade
     - uv self update
     - uv sync --frozen
