@@ -118,7 +118,7 @@ def main():
 		if not os.path.exists(log_dir):
 			os.makedirs(log_dir, exist_ok=True)
 	except Exception as err:
-		logger.error("Could not create log directory '%s': %s", log_dir, err, exc_info=True)
+		logger.error("Could not create log directory '%s': %s", log_dir, err, exc_info=True)  # noqa
 		log_file = None
 
 	host_id, service_client = init_audit(log_file)
@@ -139,7 +139,7 @@ def main():
 				logger.trace(to_json(audit_hardware_on_hosts))
 			service_client.auditHardwareOnHost_createObjects(audit_hardware_on_hosts)  # ty: ignore[unresolved-attribute]
 		except Exception as err:
-			logger.error(err, exc_info=True)
+			logger.error(err, exc_info=True)  # noqa
 	logger.notice("Exiting...")
 
 

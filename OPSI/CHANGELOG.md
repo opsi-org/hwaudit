@@ -1,6 +1,10 @@
 # Changelog hwaudit
 
-## [4.3.2.8-1] - 2026-06-19
+## [4.3.2.8-1] - 2026-09-17
+
+### Fixed
+
+- upgraded python-opsi-legacy to 4.3.13.2 (fixed predefined hwaudit value type for WAN/VPN sync) (Nils Doerrer <n.doerrer@uib.de>)
 
 ### Changed
 

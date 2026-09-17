@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import json
 import re
 
@@ -15,7 +13,7 @@ logger = get_logger("hwaudit")
 
 
 def make_wmi_objects(conf):
-	namespaces = ["root\cimv2"]
+	namespaces = [r"root\cimv2"]
 	for oneClass in conf:
 		if oneClass.get("Class") is None or oneClass["Class"].get("Opsi") is None or oneClass["Class"].get("WMI") is None:
 			continue
@@ -63,7 +61,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 			objects = []
 			try:
-				namespace = "root\cimv2"
+				namespace = r"root\cimv2"
 				if wmiQuery.startswith("namespace="):
 					namespace, wmiQuery = wmiQuery.split(":", 1)
 					namespace = namespace.split("=", 1)[1].strip().lower()
@@ -136,8 +134,8 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 							if meth and v is not None:
 								try:
-									v = eval("v.%s" % meth)
-								except Exception as evalError:
+									v = eval("v.%s" % meth)  # noqa
+								except Exception as evalError:  # noqa
 									logger.debug(
 										"Method '%s' on function value '%s' failed: '%s'",
 										meth,
@@ -148,8 +146,8 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 							if op and v is not None:
 								try:
-									v = eval("v%s" % op)
-								except Exception as evalError:
+									v = eval("v%s" % op)  # noqa
+								except Exception as evalError:  # noqa
 									logger.debug(
 										"Operation '%s' on function value '%s' failed: '%s'",
 										op,
@@ -184,7 +182,7 @@ def getHardwareInformationFromWMI(conf):  # pylint: disable=too-many-locales
 
 							if isinstance(v, str):
 								v = v.strip()
-							valueMappingKey = "%s.%s" % (attrclass, attribute)
+							valueMappingKey = "%s.%s" % (attrclass, attribute)  # noqa
 							logger.debug("Searching mapping for '%s'", valueMappingKey)
 							if valueMappingKey in VALUE_MAPPING:
 								v = to_list(v)
@@ -249,7 +247,7 @@ def getHardwareInformationFromRegistry(conf, opsiValues):
 			if not registryQuery:
 				continue
 
-			logger.info("Querying: %s" % registryQuery)
+			logger.info("Querying: %s" % registryQuery)  # noqa
 			match = re.search(regex, registryQuery)
 			if not match:
 				logger.error("Bad registry query '%s'", registryQuery)
@@ -336,9 +334,9 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 			try:
 				result = execute(executeCommand)
 				if result and extend:
-					value = eval("res%s" % extend)
+					value = eval("res%s" % extend)  # noqa
 			except Exception as error:
-				logger.error("Failed to execute command: '%s' error: '%s'", executeCommand, error, exc_info=True)
+				logger.error("Failed to execute command: '%s' error: '%s'", executeCommand, error, exc_info=True)  # noqa
 				continue
 
 			if isinstance(value, bytes):
