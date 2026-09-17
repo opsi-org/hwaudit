@@ -316,7 +316,7 @@ def getHardwareInformationFromExecuteCommand(conf, opsiValues):
 					for i in range(len(opsiValues[opsiName])):
 						value = opsiValues[opsiName][i].get(val, "")
 						if value:
-							conditionmatch = re.search(conditionregex, value)
+							conditionmatch = re.search(conditionregex, value)  # ty: ignore[no-matching-overload]
 
 							if not conditionmatch:
 								continue
