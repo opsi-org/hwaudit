@@ -1,6 +1,6 @@
 # Changelog hwaudit
 
-## [4.3.2.8-1] - 2026-09-17
+## [4.3.3.0-1] - 2026-09-17
 
 ### Fixed
 
@@ -8,8 +8,13 @@
 
 ### Changed
 
-- reverted copy option change of 4.3.2.7 (Nils Doerrer <n.doerrer@uib.de>)
 - building 64 bit binary instead of 32 bit (Nils Doerrer <n.doerrer@uib.de>)
+
+## [4.3.2.8-1] - 2026-06-17
+
+### Changed
+
+- reverted copy option change of 4.3.2.7 (Nils Doerrer <n.doerrer@uib.de>)
 
 ## [4.3.2.7-1] - 2026-06-10
 
