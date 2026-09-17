@@ -46,7 +46,7 @@ pull-binaries:
     extract: true
     post-script: []
     os: windows
-    architecture: x86
+    architecture: x64
     version: "~{{version}}"
     branch: development
     server-url: http://binaryindex.uib.gmbh

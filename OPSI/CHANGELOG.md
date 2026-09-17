@@ -8,7 +8,8 @@
 
 ### Changed
 
-- reverted copy option change of 4.3.2.7 (doerrer <n.doerrer@uib.de>)
+- reverted copy option change of 4.3.2.7 (Nils Doerrer <n.doerrer@uib.de>)
+- building 64 bit binary instead of 32 bit (Nils Doerrer <n.doerrer@uib.de>)
 
 ## [4.3.2.7-1] - 2026-06-10
 

@@ -1,4 +1,4 @@
-image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.13
 
 stages:
   - test
@@ -32,12 +32,13 @@ linux-pyinstaller:
 windows-pyinstaller:
   stage: build
   tags:
-    - win10-py311-x86
+    - win10-x64
   script:
     - $Env:UV_PYTHON_INSTALL_DIR = "c:\\uv\\python"
     - $Env:UV_CACHE_DIR = "c:\\uv\\cache"
-    - $Env:UV_PYTHON = ((uv python list --managed-python --all-arches | findstr 3.13 | findstr "\-x86\-" | findstr /v freethreaded) -split ' ')[0]
     - $Env:UV_PYTHON_PREFERENCE = "only-managed"
+    - $Env:UV_PYTHON = "3.13-x86_64"
+    - $Env:RUSTUP_TOOLCHAIN = "stable-x86_64-pc-windows-msvc"
     - powershell -ExecutionPolicy ByPass -c "irm http://binaryindex.uib.gmbh/development/opsi-dev-tools/windows/x86/installer.ps1 | iex"
     - uv sync --frozen
     - uv run opsi-dev-cli -l debug pyinstaller build
@@ -50,7 +51,7 @@ windows-pyinstaller:
 osx-pyinstaller:
   stage: build
   tags:
-    - catalina-py311-x64
+    - catalina-x64
   script:
     - export UV_PYTHON_PREFERENCE="only-managed"
     - export UV_PYTHON="3.13"
