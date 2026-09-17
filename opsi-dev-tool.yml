@@ -67,4 +67,4 @@ jenkins-test:
   PRODUCTS: hwaudit
   PROPERTIES: {}
   SNAPSHOT: patched
-  SYSTEMS: windows,linux,macos
+  SYSTEMS: winx64,linux,macos
