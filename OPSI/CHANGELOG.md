@@ -1,5 +1,11 @@
 # Changelog hwaudit
 
+## [4.3.3.1-1] - 2026-10-26
+
+### Changed
+
+- update dependencies (Franziska Mueller <f.mueller@uib.de>)
+
 ## [4.3.3.0-1] - 2026-09-17
 
 ### Fixed
