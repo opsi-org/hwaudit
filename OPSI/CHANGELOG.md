@@ -1,5 +1,12 @@
 # Changelog hwaudit
 
+## [4.3.3.1-2] - 2026-10-29
+
+### Changed
+
+- rebuild as deep signed onefile binary -> for Smart App Control (Nils Doerrer <n.doerrer@uib.de>)
+
+
 ## [4.3.3.1-1] - 2026-10-26
 
 ### Changed
